@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مفقودات السودان | بإشراف سفير القوافي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --navy: #1a3a5a; --sky: #5dade2; --bg: #f0f4f8; --white: #fff; --green: #28a745; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; text-align: center; color: #333; }
+        header { background: var(--navy); color: white; padding: 15px; font-weight: bold; position: sticky; top: 0; z-index: 100; }
+        .container { max-width: 500px; margin: auto; padding: 15px; }
+        
+        .card { background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; text-align: center; font-size: 16px; }
+        .btn { background: var(--navy); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn:hover { opacity: 0.9; }
+        
+        /* البروفايل */
+        .manager-card { border-right: 6px solid var(--navy); text-align: right; }
+        .avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 3px solid var(--sky); margin-left: 15px; }
+        
+        .intro-img { max-width: 100%; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        .footer-legal { font-size: 11px; color: #777; padding: 20px; line-height: 1.6; background: #e9ecef; }
+        
+        .admin-btn { font-size: 10px; color: var(--sky); cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<header>منصة السيارات المفقودة - السودان</header>
+
+<div class="container">
+    <img src="1000026301.jpg" alt="سيارات السودان" class="intro-img">
+
+    <div class="card manager-card">
+        <div style="display: flex; align-items: center;">
+            <img src="1000026303.jpg" alt="سفير القوافي" class="avatar">
+            <div>
+                <strong style="font-size: 18px; color: var(--navy);">سفير القوافي</strong><br>
+                <small style="color: var(--sky);">المدير العام للمنصة</small>
+            </div>
+        </div>
+        <p style="font-style: italic; margin-top: 10px; font-size: 13px;">"حبابكم، مكاننا ده لخدمتكم. لو لقيت تطابق، أرفع إثبات الملكية عشان نتم الإجراءات ونرجع الحلال لأصحابو."</p>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-top: 0; color: var(--navy);">فتِّش برقم الشاسي</h3>
+        <input type="text" id="chassisSearch" placeholder="أدخل رقم الشاسي هنا...">
+        <button class="btn" onclick="startSearch()">فتِّش هسة</button>
+        <div onclick="toggleAdmin()" class="admin-btn" style="margin-top: 10px;">دخول الإدارة</div>
+    </div>
+
+    <div id="resultArea"></div>
+
+    <div id="regBox" class="card hidden">
+        <h3 style="color: var(--green)">مبروك، الشاسي موجود!</h3>
+        <p style="font-size: 14px;">دخل رقم تلفونك عشان نربطك بالبلاغ:</p>
+        <input type="number" id="phoneInput" placeholder="0XXXXXXXXX">
+        <div style="font-size: 12px; margin: 10px 0;">
+            <input type="checkbox" id="terms"> أوافق على شروط الاستخدام وإخلاء المسؤولية
+        </div>
+        <button class="btn" style="background: var(--green)" onclick="goToVerify()">تأكيد ورفع الإثبات</button>
+    </div>
+
+    <div id="notifyBox" class="card hidden">
+        <h3 style="color: #dc3545">النتيجة غير موجودة حالياً</h3>
+        <p style="font-size: 14px;">دايرنا نرسل ليك تنبيه أول ما الشاسي ده يظهر عندنا؟</p>
+        <input type="number" id="notifyPhone" placeholder="رقم هاتفك للتنبيه">
+        <button class="btn" style="background: var(--sky)" onclick="activateNotify()">تفعيل إشعارات الشاسي</button>
+    </div>
+
+    <div id="adminPanel" class="card hidden" style="background: #eee;">
+        <h4>إضافة شاشيهات جديدة</h4>
+        <textarea id="bulkData" style="width:100%; height:80px;" placeholder="الاسم،الشاسي"></textarea>
+        <button class="btn" style="margin-top:10px;" onclick="saveNewCars()">حفظ في القاعدة</button>
+    </div>
+</div>
+
+<div class="footer-legal">
+    <strong>إخلاء مسؤولية قانوني:</strong> المنصة وسيط تقني بإشراف <strong>سفير القوافي</strong>. لا نتحمل مسؤولية صحة البيانات المرفوعة. إثبات الملكية (شهادة البحث) شرط أساسي للحصول على تفاصيل التواصل.
+</div>
+
+<script>
+    // قاعدة البيانات الأولية
+    let cars = [
+        {id: "359006", name: "سانتيفيا سلفر"},
+        {id: "531806", name: "كيا 2014"}
+    ];
+
+    if(localStorage.getItem('carsDB')) cars = JSON.parse(localStorage.getItem('carsDB'));
+
+    function startSearch() {
+        const query = document.getElementById('chassisSearch').value.trim();
+        const area = document.getElementById('resultArea');
+        const reg = document.getElementById('regBox');
+        const notify = document.getElementById('notifyBox');
+
+        area.innerHTML = "";
+        reg.classList.add('hidden');
+        notify.classList.add('hidden');
+
+        const car = cars.find(c => c.id === query);
+        if (car) {
+            area.innerHTML = `<div class="card" style="border-right:5px solid var(--green)">تم العثور على: <strong>${car.name}</strong></div>`;
+            reg.classList.remove('hidden');
+        } else {
+            area.innerHTML = `<div class="card" style="border-right:5px solid #dc3545">الشاسي غير موجود حالياً.</div>`;
+            notify.classList.remove('hidden');
+        }
+    }
+
+    function goToVerify() {
+        if(!document.getElementById('terms').checked) return alert("يرجى الموافقة على الشروط أولاً");
+        alert("تم تسجيل رقمك. يرجى الآن تجهيز صورة شهادة البحث للتحقق من ملكيتك.");
+    }
+
+    function activateNotify() {
+        const p = document.getElementById('notifyPhone').value;
+        if(p.length < 10) return alert("أدخل رقم هاتف صحيح");
+        alert("أبشر! تم تفعيل التنبيه بنجاح.");
+    }
+
+    function toggleAdmin() {
+        if(prompt("رمز الإدارة:") === "1234") document.getElementById('adminPanel').classList.toggle('hidden');
+    }
+
+    function saveNewCars() {
+        const raw = document.getElementById('bulkData').value;
+        const lines = raw.split('\n');
+        lines.forEach(l => {
+            const p = l.split('،');
+            if(p.length === 2) cars.push({name: p[0].trim(), id: p[1].trim()});
+        });
+        localStorage.setItem('carsDB', JSON.stringify(cars));
+        alert("تم التحديث بنجاح!");
+    }
+</script>
+</body>
+</html>
