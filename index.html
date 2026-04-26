@@ -65,42 +65,100 @@
    
  <script src="https://pl29267992.profitablecpmratenetwork.com/6e/07/8c/6e078cbdb8836eed5a8f0aef473e0539.js"></script>
 
-<div style="text-align: center; margin: 15px 0;">
-    <button onclick="showTable()" style="background: #1a3a5f; color: white; padding: 12px 20px; border: none; border-radius: 50px; cursor: pointer; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-        📊 عرض جدول الشاسيهات والسيارات
-    </button>
-</div>
 
-<div id="tableModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); overflow: auto;">
-    <div style="background: #fff; margin: 15% auto; padding: 20px; border-radius: 15px; width: 90%; max-width: 500px; direction: rtl; font-family: sans-serif;">
-        <h3 style="text-align: center; color: #1a3a5f; border-bottom: 2px solid #eee; padding-bottom: 10px;">بيانات السيارات المسجلة</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-            <thead>
-                <tr style="background: #f8f9fa;">
-                    <th style="padding: 10px; border: 1px solid #ddd;">الماركة</th>
-                    <th style="padding: 10px; border: 1px solid #ddd;">رقم الشاسيه</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="padding: 10px; border: 1px solid #ddd;">ليكزس (Lexus)</td>
-                    <td style="padding: 10px; border: 1px solid #ddd;">جاري التحديث...</td>
-                </tr>
-                <tr>
-                    <td style="padding: 10px; border: 1px solid #ddd;">جيلي (Geely)</td>
-                    <td style="padding: 10px; border: 1px solid #ddd;">جاري التحديث...</td>
-                </tr>
-            </tbody>
-        </table>
-        <button onclick="document.getElementById('tableModal').style.display='none'" style="display: block; margin: 20px auto 0; padding: 10px 30px; background: #cc0000; color: white; border: none; border-radius: 5px; cursor: pointer;">إغلاق</button>
+    <div style="text-align: center; margin: 15px 0;">
+        <button onclick="showTable()" style="background: #1a3a5f; color: white; padding: 12px 20px; border: none; border-radius: 50px; cursor: pointer; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-weight: bold;">
+            📊 عرض سجل السيارات والشاسيهات المحدث
+        </button>
     </div>
-</div>
 
-<script>
-function showTable() {
-    document.getElementById('tableModal').style.display = 'block';
-}
-</script>
+    <div id="tableModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); overflow: auto;">
+        <div style="background: #fff; margin: 5% auto; padding: 20px; border-radius: 15px; width: 95%; max-width: 700px; direction: rtl; font-family: sans-serif;">
+            <h3 style="text-align: center; color: #1a3a5f; border-bottom: 2px solid #eee; padding-bottom: 10px;">📋 سجل بيانات السيارات</h3>
+            
+            <div style="overflow-x:auto; max-height: 400px;">
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
+                    <thead>
+                        <tr style="background: #1a3a5f; color: white;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">نوع السيارة / الموديل</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">رقم الشاسيه / اللوحة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>عربية صالون</td><td>546987</td></tr>
+                        <tr><td>عربية افانتي 2006</td><td>343591</td></tr>
+                        <tr><td>عربية بوكسي 2015</td><td>3406036</td></tr>
+                        <tr><td>عربية هونداي</td><td>067173</td></tr>
+                        <tr><td>عربية برادو 2014</td><td>4154929</td></tr>
+                        <tr><td>عربية كلك</td><td>070576</td></tr>
+                        <tr><td>عربية هونداي</td><td>172558</td></tr>
+                        <tr><td>عربية صالون (إستثمار)</td><td>966</td></tr>
+                        <tr><td>عربية هونداي</td><td>216881</td></tr>
+                        <tr><td>عربية سحليه</td><td>246932</td></tr>
+                        <tr><td>عربية برادو 2010</td><td>1047614</td></tr>
+                        <tr><td>عربية اكسنت 2015</td><td>008926</td></tr>
+                        <tr><td>عربية صالون (لوحة)</td><td>66745</td></tr>
+                        <tr><td>عربية صالون</td><td>421144</td></tr>
+                        <tr><td>عربية هونداي</td><td>393597</td></tr>
+                        <tr><td>كلك</td><td>346624</td></tr>
+                        <tr><td>صالون</td><td>049527</td></tr>
+                        <tr><td>استبوتاج</td><td>7465707</td></tr>
+                        <tr><td>كلك</td><td>406174</td></tr>
+                        <tr><td>كلك</td><td>127312</td></tr>
+                        <tr><td>كورلا</td><td>4623658</td></tr>
+                        <tr><td>بيكانتو</td><td>013678</td></tr>
+                        <tr><td>توسان</td><td>134658</td></tr>
+                        <tr><td>كلك</td><td>060812</td></tr>
+                        <tr><td>افانتي</td><td>981550</td></tr>
+                        <tr><td>اكسن</td><td>004612</td></tr>
+                        <tr><td>ايون</td><td>406550</td></tr>
+                        <tr><td>مضلع</td><td>283969</td></tr>
+                        <tr><td>اكسن</td><td>77247</td></tr>
+                        <tr><td>اكسن</td><td>064213</td></tr>
+                        <tr><td>صالون</td><td>000303</td></tr>
+                        <tr><td>مضلع</td><td>001304</td></tr>
+                        <tr><td>بوكسي</td><td>008937</td></tr>
+                        <tr><td>بي واي دي</td><td>003107</td></tr>
+                        <tr><td>بوكسي</td><td>02487</td></tr>
+                        <tr><td>اكسن</td><td>099957</td></tr>
+                        <tr><td>ايون</td><td>577523</td></tr>
+                        <tr><td>مستبيشو</td><td>000243</td></tr>
+                        <tr><td>كريز سيلفر</td><td>536459</td></tr>
+                        <tr><td>مارسدس</td><td>919287</td></tr>
+                        <tr><td>كورلا</td><td>856689</td></tr>
+                        <tr><td>اكسن</td><td>228546</td></tr>
+                        <tr><td>افانتي</td><td>687114</td></tr>
+                        <tr><td>اكسن</td><td>275068</td></tr>
+                        <tr><td>اكسن</td><td>504019</td></tr>
+                        <tr><td>صالون</td><td>5305486</td></tr>
+                        <tr><td>هايس</td><td>5036001</td></tr>
+                        <tr><td>اكسن</td><td>081420</td></tr>
+                        <tr><td>فتستو يااتوس</td><td>321363</td></tr>
+                        <tr><td>كورلا</td><td>53082755</td></tr>
+                        <tr><td>سوناتا</td><td>000880</td></tr>
+                        <tr><td>اكسن</td><td>230744</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+
+            <div style="text-align: center;">
+                <p style="font-weight: bold; color: #333; margin-bottom: 10px;">للتواصل والاستفسار عبر الواتساب:</p>
+                <a href="https://wa.me/249907539574" target="_blank" style="display: inline-flex; align-items: center; background: #25D366; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                    💬 مراسلة واتساب
+                </a>
+            </div>
+
+            <button onclick="document.getElementById('tableModal').style.display='none'" style="display: block; margin: 20px auto 0; padding: 10px 40px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+    function showTable() {
+        document.getElementById('tableModal').style.display = 'block';
+    }
+    </script>
 
 
     <img src="1000026301.jpg" style="width:100%; border-radius:20px; margin-bottom:15px;">
