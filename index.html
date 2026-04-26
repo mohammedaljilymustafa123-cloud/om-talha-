@@ -3,43 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مفقودات السيارات | السودان</title>
+    <title>منصة مفقودات السيارات | نظام الإدارة المتكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #1a3a5a; --secondary: #5dade2; --bg: #f4f7f6; --white: #ffffff; }
+        :root { --primary: #1a3a5a; --secondary: #3498db; --success: #27ae60; --danger: #e74c3c; --bg: #f8fafc; }
         * { box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; color: #333; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; color: #334155; }
 
-        /* الهيدر مع شعار الصقر */
-        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        header { background: var(--primary); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .logo-area { display: flex; align-items: center; }
-        .logo-img { width: 45px; height: 45px; border-radius: 8px; margin-left: 10px; border: 1px solid var(--secondary); }
-        .logo-text { font-weight: 700; font-size: 15px; }
+        .logo-img { width: 42px; height: 42px; border-radius: 8px; margin-left: 10px; border: 1px solid var(--secondary); }
 
-        .container { max-width: 480px; margin: auto; padding: 15px; }
+        .container { max-width: 500px; margin: auto; padding: 15px; }
 
-        /* بانر مجموعة السيارات الرئيسي */
-        .main-banner { width: 100%; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px; display: block; }
+        /* ميزة التنبيه */
+        .notify-bar { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; text-align: center; }
 
-        /* كرت بروفايل سفير القوافي */
-        .profile-card { background: var(--white); border-radius: 20px; padding: 15px; display: flex; align-items: center; margin-bottom: 20px; border: 1px solid #ddd; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .profile-img { width: 75px; height: 75px; border-radius: 50%; border: 3px solid var(--secondary); object-fit: cover; margin-left: 15px; }
-        .profile-info h2 { margin: 0; font-size: 18px; color: var(--primary); }
-        .profile-info p { margin: 2px 0 0; font-size: 13px; color: var(--secondary); font-weight: 600; }
+        /* بروفايل المدير */
+        .profile-card { background: white; border-radius: 20px; padding: 15px; display: flex; align-items: center; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        .profile-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--secondary); object-fit: cover; margin-left: 15px; }
 
-        /* بانر الحماية الرقمية */
-        .security-box { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 20px; border: 1px solid #ddd; }
-        .security-img { width: 100%; height: 200px; object-fit: cover; }
-        .security-content { padding: 15px; text-align: center; }
-        .verify-btn { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; width: 100%; font-weight: 700; cursor: pointer; }
+        /* نظام البلاغ العاجل (للجمهور) */
+        .report-section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .report-section h3 { margin-top: 0; color: var(--danger); font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
 
-        /* البحث والقائمة */
-        .search-area { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-        input { width: 100%; padding: 14px; border: 1px solid #eee; border-radius: 12px; background: #f9f9f9; text-align: center; font-size: 16px; margin-bottom: 10px; }
-        .car-row { background: white; padding: 12px 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-right: 5px solid var(--secondary); }
-        .chassis-tag { background: #e3f2fd; color: var(--primary); padding: 4px 12px; border-radius: 8px; font-family: monospace; font-weight: 700; }
+        /* لوحة تحكم المدير السرية */
+        #adminPanel { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: none; }
+        
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: 'Cairo'; font-size: 14px; }
+        .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
+        .btn-whatsapp { background: #25d366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-size: 12px; display: inline-flex; align-items: center; font-weight: bold; }
 
-        .footer { background: var(--primary); color: white; padding: 25px; text-align: center; border-radius: 25px 25px 0 0; font-size: 12px; line-height: 1.6; }
+        /* عرض السيارات مع العلامة المائية */
+        .car-card { background: white; border-radius: 18px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; position: relative; }
+        .watermark { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 5px; font-size: 10px; color: var(--primary); font-weight: bold; pointer-events: none; }
+        .car-img { width: 100%; height: 210px; object-fit: cover; }
+        .car-details { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+
+        .footer { background: var(--primary); color: white; padding: 30px 15px; text-align: center; border-radius: 25px 25px 0 0; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -47,74 +48,120 @@
 <header>
     <div class="logo-area">
         <img src="1000026112.jpg" class="logo-img" alt="Logo">
-        <div class="logo-text">منصة مفقودات السيارات</div>
+        <span style="font-weight:700;">منصة مفقودات السيارات</span>
     </div>
-    <div style="font-size: 22px;">☰</div>
+    <div style="cursor:pointer; font-size:20px;" onclick="checkAdmin()">⚙️</div>
 </header>
 
 <div class="container">
-    <img src="1000026301.jpg" class="main-banner" alt="سيارات السودان">
+    <div class="notify-bar">
+        🔔 <b>تنبيه:</b> سجل رقم الشاسي المفقود لنقوم بتنبيهك فور العثور عليه.
+    </div>
 
     <div class="profile-card">
-        <img src="1000026303.jpg" class="profile-img" alt="سفير القوافي">
-        <div class="profile-info">
-            <h2>سفير القوافي</h2>
-            <p>المدير العام للمنصة</p>
+        <img src="1000026303.jpg" class="profile-img">
+        <div>
+            <h2 style="margin:0; font-size:17px;">سفير القوافي</h2>
+            <p style="margin:0; color:var(--secondary); font-size:12px;">إدارة المنصة والتحقق السيبراني</p>
         </div>
     </div>
 
-    <div class="security-box">
-        <img src="1000026303.jpg" class="security-img" alt="Security">
-        <div class="security-content">
-            <h3 style="margin: 0 0 10px 0; font-size: 16px;">نظام التحقق الذكي</h3>
-            <p style="font-size: 12px; color: #777; margin-bottom: 15px;">نستخدم أحدث التقنيات لضمان وصول السيارات لأصحابها الحقيقيين.</p>
-            <button class="verify-btn">إرسال بيانات شاسي للتحقق</button>
+    <div class="report-section">
+        <h3>🚨 بلاغ عاجل عن سيارة مفقودة</h3>
+        <p style="font-size:12px; color:#666;">أدخل البيانات ليتم مراجعتها ونشرها فوراً</p>
+        <input type="text" id="repName" placeholder="نوع السيارة">
+        <input type="text" id="repID" placeholder="رقم الشاسي">
+        <button class="btn-main" style="background:var(--danger);" onclick="submitReport()">إرسال البلاغ للمدير</button>
+    </div>
+
+    <div id="adminPanel">
+        <h3 style="text-align:center; color:var(--primary);">🛠️ لوحة تحكم سفير القوافي</h3>
+        <label>إضافة سيارة جديدة للمنصة:</label>
+        <input type="text" id="adminCarName" placeholder="نوع السيارة">
+        <input type="text" id="adminChassis" placeholder="رقم الشاسي">
+        <input type="text" id="adminImg" placeholder="رابط صورة السيارة">
+        <button class="btn-main" onclick="adminAdd()">نشر في الموقع ✅</button>
+        <hr>
+        <div id="pendingReports">
+            <p style="font-size:12px; text-align:center;">لا توجد بلاغات معلقة حالياً</p>
         </div>
     </div>
 
-    <div class="search-area">
-        <h4 style="text-align: center; margin-top: 0;">فتِّش برقم الشاسي</h4>
-        <input type="text" id="q" placeholder="أدخل رقم الشاسي هنا..." onkeyup="search()">
+    <div style="margin-bottom:20px;">
+        <input type="text" id="search" placeholder="ابحث برقم الشاسي..." onkeyup="search()">
     </div>
 
-    <div id="list"></div>
+    <div id="carList"></div>
 </div>
 
 <div class="footer">
-    <strong>جميع الحقوق محفوظة © 2026</strong><br>
-    بإشراف مباشر من <b>سفير القوافي</b><br>
-    نعمل لاسترداد الحقوق لأهلها بكل أمان ومصداقية.
+    <div style="font-size:24px;">🛡️</div>
+    <b>جميع الحقوق محفوظة لمنصة مفقودات السودان © 2026</b><br>
+    بإشراف تقني من <b>سفير القوافي</b>
 </div>
 
 <script>
-    const data = [
-        {n: "توسان سلفر", id: "0002F734X"},
-        {n: "كيا ريو", id: "521884"},
-        {n: "لاندكروزر GXR", id: "448102"},
-        {n: "بوكس تويوتا", id: "2109"},
-        {n: "كليك", id: "962988"},
-        {n: "سكودا", id: "3111138"}
+    const ADMIN_PASS = "1234";
+    let cars = JSON.parse(localStorage.getItem('finalCars')) || [
+        {name: "لاندكروزر GXR", id: "448102", img: "1000026301.jpg"}
     ];
 
-    function render(arr) {
-        const div = document.getElementById('list');
-        div.innerHTML = "";
-        arr.forEach(item => {
-            div.innerHTML += `
-                <div class="car-row">
-                    <span style="font-weight:600;">✅ ${item.n}</span>
-                    <span class="chassis-tag">${item.id}</span>
+    function checkAdmin() {
+        if(prompt("كلمة مرور المدير:") === ADMIN_PASS) {
+            document.getElementById('adminPanel').style.display = 'block';
+            window.scrollTo(0,0);
+        }
+    }
+
+    function submitReport() {
+        const n = document.getElementById('repName').value;
+        const i = document.getElementById('repID').value;
+        if(n && i) {
+            alert("شكراً لك. تم إرسال البلاغ للمدير (سفير القوافي) للمراجعة.");
+            document.getElementById('repName').value = "";
+            document.getElementById('repID').value = "";
+        }
+    }
+
+    function adminAdd() {
+        const n = document.getElementById('adminCarName').value;
+        const i = document.getElementById('adminChassis').value;
+        const img = document.getElementById('adminImg').value || "1000026301.jpg";
+        
+        if(n && i) {
+            cars.push({name: n, id: i, img: img});
+            localStorage.setItem('finalCars', JSON.stringify(cars));
+            location.reload();
+        }
+    }
+
+    function render(data) {
+        const list = document.getElementById('carList');
+        list.innerHTML = "";
+        data.forEach(c => {
+            list.innerHTML += `
+                <div class="car-card">
+                    <div class="watermark">منصة مفقودات السودان</div>
+                    <img src="${c.img}" class="car-img">
+                    <div class="car-details">
+                        <div>
+                            <div style="font-weight:700;">✅ ${c.name}</div>
+                            <div style="color:var(--secondary); font-family:monospace; font-size:14px;">${c.id}</div>
+                        </div>
+                        <a href="https://wa.me/249900000000?text=أنا صاحب السيارة ${c.name} شاسي ${c.id}" class="btn-whatsapp">
+                            واتساب 💬
+                        </a>
+                    </div>
                 </div>`;
         });
     }
 
     function search() {
-        const val = document.getElementById('q').value.trim();
-        const filtered = data.filter(i => i.id.includes(val) || i.n.includes(val));
-        render(filtered);
+        const q = document.getElementById('search').value.toLowerCase();
+        render(cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q)));
     }
 
-    window.onload = () => render(data);
+    window.onload = () => render(cars);
 </script>
 
 </body>
