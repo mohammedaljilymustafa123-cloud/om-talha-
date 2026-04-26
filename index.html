@@ -3,44 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مفقودات السيارات | نظام الإدارة المتكامل</title>
+    <title>منصة مفقودات السيارات | سفير القوافي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #1a3a5a; --secondary: #3498db; --success: #27ae60; --danger: #e74c3c; --bg: #f8fafc; }
         * { box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; color: #334155; }
+        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; }
 
-        header { background: var(--primary); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        header { background: var(--primary); color: white; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
         .logo-area { display: flex; align-items: center; }
-        .logo-img { width: 42px; height: 42px; border-radius: 8px; margin-left: 10px; border: 1px solid var(--secondary); }
+        .logo-img { width: 40px; height: 40px; border-radius: 8px; margin-left: 10px; border: 1px solid var(--secondary); }
 
         .container { max-width: 500px; margin: auto; padding: 15px; }
-
-        /* ميزة التنبيه */
-        .notify-bar { background: #fff3cd; border: 1px solid #ffeeba; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; text-align: center; }
 
         /* بروفايل المدير */
         .profile-card { background: white; border-radius: 20px; padding: 15px; display: flex; align-items: center; margin-bottom: 20px; border: 1px solid #e2e8f0; }
         .profile-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--secondary); object-fit: cover; margin-left: 15px; }
 
-        /* نظام البلاغ العاجل (للجمهور) */
-        .report-section { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .report-section h3 { margin-top: 0; color: var(--danger); font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-
-        /* لوحة تحكم المدير السرية */
+        /* لوحة التحكم */
         #adminPanel { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: none; }
-        
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: 'Cairo'; font-size: 14px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: 'Cairo'; }
         .btn-main { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
-        .btn-whatsapp { background: #25d366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-size: 12px; display: inline-flex; align-items: center; font-weight: bold; }
 
-        /* عرض السيارات مع العلامة المائية */
-        .car-card { background: white; border-radius: 18px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; position: relative; }
-        .watermark { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.7); padding: 2px 8px; border-radius: 5px; font-size: 10px; color: var(--primary); font-weight: bold; pointer-events: none; }
-        .car-img { width: 100%; height: 210px; object-fit: cover; }
+        /* كرت السيارة */
+        .car-card { background: white; border-radius: 18px; overflow: hidden; margin-bottom: 20px; border: 1px solid #eee; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .watermark { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.8); padding: 2px 8px; border-radius: 5px; font-size: 10px; color: var(--primary); font-weight: bold; z-index: 10; }
+        .car-img { width: 100%; height: 200px; object-fit: cover; }
         .car-details { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .chassis-box { background: #e3f2fd; color: var(--primary); padding: 5px 10px; border-radius: 8px; font-family: monospace; font-size: 14px; font-weight: 700; display: block; margin-top: 5px; }
 
-        .footer { background: var(--primary); color: white; padding: 30px 15px; text-align: center; border-radius: 25px 25px 0 0; font-size: 12px; }
+        .btn-whatsapp { background: #25d366; color: white; text-decoration: none; padding: 8px 15px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+        .footer { background: var(--primary); color: white; padding: 25px; text-align: center; border-radius: 25px 25px 0 0; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -50,94 +43,64 @@
         <img src="1000026112.jpg" class="logo-img" alt="Logo">
         <span style="font-weight:700;">منصة مفقودات السيارات</span>
     </div>
-    <div style="cursor:pointer; font-size:20px;" onclick="checkAdmin()">⚙️</div>
+    <div style="cursor:pointer;" onclick="checkAdmin()">⚙️</div>
 </header>
 
 <div class="container">
-    <div class="notify-bar">
-        🔔 <b>تنبيه:</b> سجل رقم الشاسي المفقود لنقوم بتنبيهك فور العثور عليه.
-    </div>
+    <img src="1000026301.jpg" style="width:100%; border-radius:20px; margin-bottom:20px; border:2px solid white;">
 
     <div class="profile-card">
         <img src="1000026303.jpg" class="profile-img">
         <div>
-            <h2 style="margin:0; font-size:17px;">سفير القوافي</h2>
-            <p style="margin:0; color:var(--secondary); font-size:12px;">إدارة المنصة والتحقق السيبراني</p>
+            <h2 style="margin:0; font-size:18px;">سفير القوافي</h2>
+            <p style="margin:0; color:var(--secondary); font-size:12px;">المدير العام للمنصة</p>
         </div>
-    </div>
-
-    <div class="report-section">
-        <h3>🚨 بلاغ عاجل عن سيارة مفقودة</h3>
-        <p style="font-size:12px; color:#666;">أدخل البيانات ليتم مراجعتها ونشرها فوراً</p>
-        <input type="text" id="repName" placeholder="نوع السيارة">
-        <input type="text" id="repID" placeholder="رقم الشاسي">
-        <button class="btn-main" style="background:var(--danger);" onclick="submitReport()">إرسال البلاغ للمدير</button>
     </div>
 
     <div id="adminPanel">
-        <h3 style="text-align:center; color:var(--primary);">🛠️ لوحة تحكم سفير القوافي</h3>
-        <label>إضافة سيارة جديدة للمنصة:</label>
+        <h3 style="text-align:center;">🛠️ إضافة شاسي جديد</h3>
         <input type="text" id="adminCarName" placeholder="نوع السيارة">
         <input type="text" id="adminChassis" placeholder="رقم الشاسي">
-        <input type="text" id="adminImg" placeholder="رابط صورة السيارة">
-        <button class="btn-main" onclick="adminAdd()">نشر في الموقع ✅</button>
-        <hr>
-        <div id="pendingReports">
-            <p style="font-size:12px; text-align:center;">لا توجد بلاغات معلقة حالياً</p>
-        </div>
+        <button class="btn-main" onclick="adminAdd()">نشر الآن ✅</button>
+        <button onclick="clearData()" style="margin-top:10px; background:none; border:none; color:red; font-size:10px; cursor:pointer;">إعادة ضبط القائمة (حذف الكل)</button>
     </div>
 
     <div style="margin-bottom:20px;">
-        <input type="text" id="search" placeholder="ابحث برقم الشاسي..." onkeyup="search()">
+        <input type="text" id="search" placeholder="فتِّش برقم الشاسي أو النوع..." onkeyup="search()">
     </div>
 
-    <div id="carList"></div>
+    <div id="carList">
+        </div>
 </div>
 
 <div class="footer">
-    <div style="font-size:24px;">🛡️</div>
-    <b>جميع الحقوق محفوظة لمنصة مفقودات السودان © 2026</b><br>
-    بإشراف تقني من <b>سفير القوافي</b>
+    <b>جميع الحقوق محفوظة © 2026</b><br>
+    بإشراف: سفير القوافي
 </div>
 
 <script>
-    const ADMIN_PASS = "1234";
-    let cars = JSON.parse(localStorage.getItem('finalCars')) || [
-        {name: "لاندكروزر GXR", id: "448102", img: "1000026301.jpg"}
+    // هذه هي القائمة التي ستظهر فوراً عند فتح الموقع
+    const defaultCars = [
+        {name: "توسان سلفر", id: "0002F734X", img: "1000026301.jpg"},
+        {name: "كيا ريو", id: "521884", img: "1000026301.jpg"},
+        {name: "لاندكروزر GXR", id: "448102", img: "1000026301.jpg"},
+        {name: "كليك", id: "962988", img: "1000026301.jpg"},
+        {name: "سكودا", id: "3111138", img: "1000026301.jpg"},
+        {name: "اكسنت جياد", id: "280742", img: "1000026301.jpg"}
     ];
 
-    function checkAdmin() {
-        if(prompt("كلمة مرور المدير:") === ADMIN_PASS) {
-            document.getElementById('adminPanel').style.display = 'block';
-            window.scrollTo(0,0);
-        }
-    }
-
-    function submitReport() {
-        const n = document.getElementById('repName').value;
-        const i = document.getElementById('repID').value;
-        if(n && i) {
-            alert("شكراً لك. تم إرسال البلاغ للمدير (سفير القوافي) للمراجعة.");
-            document.getElementById('repName').value = "";
-            document.getElementById('repID').value = "";
-        }
-    }
-
-    function adminAdd() {
-        const n = document.getElementById('adminCarName').value;
-        const i = document.getElementById('adminChassis').value;
-        const img = document.getElementById('adminImg').value || "1000026301.jpg";
-        
-        if(n && i) {
-            cars.push({name: n, id: i, img: img});
-            localStorage.setItem('finalCars', JSON.stringify(cars));
-            location.reload();
-        }
-    }
+    // تحميل البيانات
+    let cars = JSON.parse(localStorage.getItem('finalList')) || defaultCars;
 
     function render(data) {
         const list = document.getElementById('carList');
         list.innerHTML = "";
+        
+        if(data.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#999;'>لا توجد نتائج مطابقة</p>";
+            return;
+        }
+
         data.forEach(c => {
             list.innerHTML += `
                 <div class="car-card">
@@ -145,12 +108,10 @@
                     <img src="${c.img}" class="car-img">
                     <div class="car-details">
                         <div>
-                            <div style="font-weight:700;">✅ ${c.name}</div>
-                            <div style="color:var(--secondary); font-family:monospace; font-size:14px;">${c.id}</div>
+                            <div style="font-weight:700; color:var(--primary);">✅ ${c.name}</div>
+                            <div class="chassis-box">${c.id}</div>
                         </div>
-                        <a href="https://wa.me/249900000000?text=أنا صاحب السيارة ${c.name} شاسي ${c.id}" class="btn-whatsapp">
-                            واتساب 💬
-                        </a>
+                        <a href="https://wa.me/249900000000?text=استفسار عن السيارة: ${c.name}" class="btn-whatsapp">تواصل 💬</a>
                     </div>
                 </div>`;
         });
@@ -158,9 +119,37 @@
 
     function search() {
         const q = document.getElementById('search').value.toLowerCase();
-        render(cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q)));
+        const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
+        render(filtered);
     }
 
+    function checkAdmin() {
+        if(prompt("كلمة مرور المدير:") === "1234") {
+            document.getElementById('adminPanel').style.display = 'block';
+        }
+    }
+
+    function adminAdd() {
+        const n = document.getElementById('adminCarName').value;
+        const i = document.getElementById('adminChassis').value;
+        if(n && i) {
+            cars.push({name: n, id: i, img: "1000026301.jpg"});
+            localStorage.setItem('finalList', JSON.stringify(cars));
+            render(cars);
+            document.getElementById('adminCarName').value = "";
+            document.getElementById('adminChassis').value = "";
+            alert("تمت الإضافة بنجاح!");
+        }
+    }
+
+    function clearData() {
+        if(confirm("هل تريد حذف كافة الإضافات والعودة للقائمة الافتراضية؟")) {
+            localStorage.removeItem('finalList');
+            location.reload();
+        }
+    }
+
+    // تشغيل القائمة فور تحميل الصفحة
     window.onload = () => render(cars);
 </script>
 
