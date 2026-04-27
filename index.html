@@ -1,187 +1,251 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة السودان للاستعلام</title>
+    <title>منصة السودان الذكية</title>
     <style>
-        :root { --main-color: #1a3a5f; --accent-color: #28a745; --bg-color: #f4f7f6; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); direction: rtl; margin: 0; padding: 0; }
-        
-        /* الهيدر والبروفايل */
-        .profile-section { text-align: center; padding: 25px; background: white; border-bottom: 4px solid var(--main-color); position: relative; }
-        .profile-card img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--main-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .profile-card h2 { margin: 10px 0 5px; color: var(--main-color); font-size: 22px; }
+        :root {
+            --bg-dark: #1a1f3c; /* الكحلي العميق من الصورة */
+            --bg-light: #f4f7fd; /* الأبيض السحابي */
+            --accent-orange: #ff5f40; /* البرتقالي للأزرار */
+            --text-main: #2d3436;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
 
-        .container { max-width: 700px; margin: auto; padding: 15px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            color: var(--text-main);
+        }
 
-        /* لوحة الإدارة العلوية */
-        #adminPanel { display: none; background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--main-color); margin-bottom: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        #bulkInput { width: 100%; height: 150px; padding: 12px; border-radius: 10px; border: 1px solid #ccc; margin-bottom: 10px; resize: none; box-sizing: border-box; font-size: 14px; }
-        .btn-admin { width: 100%; background: var(--accent-color); color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        /* الهيدر المنحني الاحترافي */
+        .header {
+            background-color: var(--bg-dark);
+            color: white;
+            padding: 40px 20px 80px;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            text-align: center;
+            position: relative;
+        }
 
-        /* النصائح */
-        .tips-box { background: #fff3cd; border-right: 5px solid #ffc107; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; color: #856404; line-height: 1.6; }
+        .profile-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 30px; /* زوايا دائرية ناعمة */
+            border: 4px solid rgba(255,255,255,0.2);
+            object-fit: cover;
+        }
 
-        /* البحث */
-        .search-wrapper { position: relative; margin-bottom: 20px; }
-        .search-box { width: 100%; padding: 15px 45px 15px 15px; border-radius: 50px; border: 2px solid var(--main-color); box-sizing: border-box; font-size: 16px; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .search-icon { position: absolute; right: 18px; top: 16px; font-size: 20px; color: var(--main-color); }
+        /* لوحة التحكم بأسلوب Modychat */
+        .container {
+            max-width: 500px;
+            margin: -50px auto 20px;
+            padding: 0 15px;
+        }
 
-        /* الجدول المنسق */
-        .table-title { display: flex; align-items: center; gap: 8px; color: var(--main-color); font-weight: bold; margin-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        th { background: var(--main-color); color: white; padding: 12px; font-size: 14px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; font-size: 14px; }
-        tr:nth-child(even) { background: #fafafa; }
-        .chassis-cell { font-family: 'Courier New', monospace; font-weight: bold; color: #d63031; }
+        .search-card {
+            background: white;
+            padding: 25px;
+            border-radius: 35px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+        }
 
-        .btn-more { display: block; width: 100%; background: #eee; color: #555; text-align: center; padding: 10px; margin-top: 10px; border-radius: 8px; text-decoration: none; font-size: 13px; cursor: pointer; border: none; }
+        .search-input {
+            width: 100%;
+            padding: 18px;
+            border-radius: 20px;
+            border: none;
+            background: #f0f2f8;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            color: var(--bg-dark);
+        }
 
-        .footer { text-align: center; padding: 25px; color: #666; font-size: 12px; background: #fff; margin-top: 30px; border-top: 1px solid #ddd; }
-        .admin-trigger { position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: 0.2; }
+        /* الجدول الأنيق */
+        .table-section {
+            background: white;
+            border-radius: 35px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .car-row {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: 0.3s;
+        }
+
+        .car-icon {
+            width: 50px;
+            height: 50px;
+            background: #e8ebf5;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            font-size: 20px;
+        }
+
+        .car-details { flex-grow: 1; }
+        .car-name { font-weight: bold; font-size: 16px; color: var(--bg-dark); }
+        .car-id { color: var(--accent-orange); font-family: monospace; font-weight: bold; }
+
+        /* أزرار الإدارة والأكشن */
+        .btn-main {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(255, 95, 64, 0.3);
+        }
+
+        #adminPanel {
+            display: none;
+            background: var(--bg-dark);
+            color: white;
+            padding: 25px;
+            border-radius: 35px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            border-radius: 15px;
+            padding: 15px;
+            border: none;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 13px;
+        }
+
+        .admin-trigger {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            opacity: 0.3;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-<div class="profile-section">
+<div class="header">
     <div class="admin-trigger" onclick="openAdmin()">⚙️</div>
-    <div class="profile-card">
-        <img src="1000026303.jpg" alt="سفير القوافي">
-        <h2>منصة السودان للاستعلام</h2>
-        <p>دقة، سرعة، وموثوقية في عرض البيانات</p>
-    </div>
+    <img src="1000026303.jpg" class="profile-img" alt="البروفايل">
+    <h2 style="margin: 15px 0 5px;">سفير القوافي</h2>
+    <p style="margin: 0; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
 </div>
 
 <div class="container">
-    <div class="tips-box">
-        💡 <b>إرشادات:</b> يرجى التأكد من كتابة رقم الشاسيه بشكل صحيح. النظام يقوم بتحديث البيانات تلقائياً فور إضافتها من قبل الإدارة.
-    </div>
-
     <div id="adminPanel">
-        <h4 style="margin:0 0 10px 0; text-align:center; color:var(--main-color);">📥 الإضافة الجماعية الذكية</h4>
-        <textarea id="bulkInput" placeholder="ألصق القائمة من الواتساب هنا... مثال:&#10;بيكانتو 609059&#10;أكسنت 252344"></textarea>
-        <button class="btn-admin" onclick="addBulkCars()">🚀 اعتماد ونشر البيانات</button>
+        <h3>📥 إضافة جماعية ذكية</h3>
+        <p style="font-size: 12px; opacity: 0.7;">ألصق نص الواتساب وسنقوم بفلترته تلقائياً</p>
+        <textarea id="bulkInput" placeholder="اكسنت 123456..."></textarea>
+        <button class="btn-main" onclick="addBulkCars()">تحديث البيانات الآن</button>
     </div>
 
-    <div class="search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search" class="search-box" oninput="doSearch()" placeholder="ابحث برقم الشاسيه أو اسم السيارة...">
+    <div class="search-card">
+        <input type="text" id="search" class="search-input" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه أو سيارة...">
     </div>
 
-    <div class="table-title">📊 <span>جدول آخر الإضافات</span></div>
-    <table id="carsTable">
-        <thead>
-            <tr>
-                <th>نوع السيارة</th>
-                <th>رقم الشاسيه (ENG)</th>
-                <th>المراسلة</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody">
-            </tbody>
-    </table>
-    <button id="loadMoreBtn" class="btn-more" onclick="toggleMore()">عرض المزيد من السيارات...</button>
-
-    <div id="searchResults" style="margin-top: 20px;"></div>
+    <div class="table-section">
+        <h3 style="margin-right: 15px; color: var(--bg-dark);">📊 آخر 10 إضافات</h3>
+        <div id="carsList">
+            </div>
+        <button id="moreBtn" onclick="toggleView()" style="background:none; border:none; color:var(--accent-orange); font-weight:bold; width:100%; padding:15px; cursor:pointer;">المزيد لرؤية باقي السيارات...</button>
+    </div>
 </div>
 
 <div class="footer">
     <b>2026 © جميع الحقوق محفوظة لمنصة السودان</b><br>
-    إشراف وتطوير: سفير القوافي | نظام الاستعلام v5.0
+    بإشراف وتطوير: سفير القوافي
 </div>
 
 <script>
-    // 1. قاعدة البيانات (تبدأ بالقائمة التي أرسلتها)
-    let initialData = [
-        {name: "بيكانتو أو مورنينغ", id: "609059"},
-        {name: "بيكانتو (م ح)", id: "479420"},
-        {name: "أكسنت 2006", id: "6006196"},
-        {name: "لاندكروزر 2004", id: "043026511"}
-    ];
+    let cars = JSON.parse(localStorage.getItem('cars')) || [];
+    let showFull = false;
 
-    let cars = JSON.parse(localStorage.getItem('cars')) || initialData;
-    let showAll = false;
-
-    // 2. وظيفة معالجة النصوص (فلترة الواتساب)
+    // وظيفة الإضافة الجماعية الذكية
     function addBulkCars() {
         const input = document.getElementById('bulkInput').value;
-        if(!input.trim()) return alert("الخانة فارغة!");
+        if(!input.trim()) return;
 
         const lines = input.split('\n');
         let count = 0;
         lines.forEach(line => {
-            // استخراج الأرقام الإنجليزية فقط
             const matchId = line.match(/\d+/);
             if(matchId) {
                 const id = matchId[0];
-                // تنظيف الاسم من الأرقام والرموز
-                let name = line.replace(id, '').replace(/[0-9]|/g, '').replace(/[/\\#,+()$~%.'":*?<>{}|١٢٣٤٥٦٧٨٩٠]/g, '').trim();
+                let name = line.replace(id, '').replace(/[0-9]|/g, '').replace(/[،,-]/g, '').trim();
                 if(!name) name = "سيارة غير مسمى";
-                
-                // منع التكرار
                 if(!cars.some(c => c.id === id)) {
-                    cars.unshift({name, id}); // الإضافة للأعلى
+                    cars.unshift({name, id});
                     count++;
                 }
             }
         });
-
         localStorage.setItem('cars', JSON.stringify(cars));
-        renderTable();
+        render();
         document.getElementById('bulkInput').value = "";
-        alert("تمت إضافة " + count + " سيارة جديدة بنجاح!");
+        alert("تمت إضافة " + count + " سيارة");
     }
 
-    // 3. وظيفة عرض الجدول (آخر 10)
-    function renderTable() {
-        const body = document.getElementById('tableBody');
-        body.innerHTML = "";
-        const limit = showAll ? cars.length : 10;
-        
-        cars.slice(0, limit).forEach(c => {
-            const row = `<tr>
-                <td>${c.name}</td>
-                <td class="chassis-cell">${c.id}</td>
-                <td><a href="https://wa.me/249900000000" style="text-decoration:none;">🟢</a></td>
-            </tr>`;
-            body.innerHTML += row;
-        });
+    // وظيفة العرض المنسقة
+    function render(data = cars) {
+        const list = document.getElementById('carsList');
+        list.innerHTML = "";
+        const displayData = (data === cars && !showFull) ? data.slice(0, 10) : data;
 
-        document.getElementById('loadMoreBtn').innerText = showAll ? "إظهار أقل" : "المزيد لرؤية باقي السيارات المرفوعة...";
-    }
-
-    // 4. وظيفة البحث
-    function doSearch() {
-        const q = document.getElementById('search').value.trim();
-        const resultsDiv = document.getElementById('searchResults');
-        
-        if(!q) { resultsDiv.innerHTML = ""; return; }
-
-        const filtered = cars.filter(c => c.id.includes(q) || c.name.includes(q));
-        resultsDiv.innerHTML = filtered.length > 0 ? "<b>نتائج البحث:</b>" : "❌ لا توجد نتائج";
-
-        filtered.forEach(c => {
-            resultsDiv.innerHTML += `
-                <div style="background:white; padding:15px; border-radius:10px; margin-top:10px; border-right:5px solid #28a745; display:flex; justify-content:space-between;">
-                    <span>✅ ${c.name}</span>
-                    <span class="chassis-cell">${c.id}</span>
+        displayData.forEach(c => {
+            list.innerHTML += `
+                <div class="car-row">
+                    <div class="car-icon">🚗</div>
+                    <div class="car-details">
+                        <div class="car-name">${c.name}</div>
+                        <div class="car-id">ID: ${c.id}</div>
+                    </div>
+                    <a href="https://wa.me/249900000000" style="text-decoration:none; font-size:22px;">💬</a>
                 </div>`;
         });
     }
 
-    // 5. التحكم
-    function toggleMore() { showAll = !showAll; renderTable(); }
-    function openAdmin() {
-        if(prompt("كلمة مرور المدير") === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-            window.scrollTo(0,0);
-        }
+    function doSearch() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
+        render(filtered);
     }
 
-    // التشغيل الأولي
-    renderTable();
-</script>
+    function toggleView() {
+        showFull = !showFull;
+        render();
+        document.getElementById('moreBtn').innerText = showFull ? "إظهار أقل" : "المزيد لرؤية باقي السيارات...";
+    }
 
+    function openAdmin() {
+        if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block';
+    }
+
+    render();
+</script>
 </body>
 </html>
