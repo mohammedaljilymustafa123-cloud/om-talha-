@@ -492,6 +492,50 @@
         pointer-events: none !important;
     }
 </style>
+<script class="smart-addon">
+    function restoreAdminIconWithProtection() {
+        // 1. البحث عن مكان الهيدر لإضافة الترس فيه من جديد
+        const header = document.querySelector('.header');
+        if (header && !document.getElementById('protectedAdminBtn')) {
+            const adminBtn = document.createElement('div');
+            adminBtn.id = 'protectedAdminBtn';
+            // وضع الأيقونة في نفس مكانها القديم (أعلى اليسار)
+            adminBtn.style = "position: absolute; top: 25px; left: 20px; cursor: pointer; font-size: 20px; z-index: 1000;";
+            adminBtn.innerHTML = "⚙️";
+            
+            // إضافة الوظيفة الذكية عند الضغط
+            adminBtn.onclick = function() {
+                // سؤال الزوار أولاً: هل أنت المدير؟
+                const confirmManager = confirm("⚠️ تنبيه: هذه المنطقة مخصصة لإدارة منصة السودان فقط.\n\nهل أنت مدير الموقع؟");
+                
+                if (confirmManager) {
+                    // إذا أجاب بنعم، نطلب كلمة السر
+                    const pass = prompt("الرجاء إدخال كلمة سر المدير للوصول إلى لوحة التحكم:");
+                    if (pass === "3344") {
+                        // إذا كانت صحيحة تفتح اللوحة (يجب أن تكون وظيفة openAdmin موجودة في كودك)
+                        if (typeof openAdmin === "function") {
+                            openAdmin();
+                        } else {
+                            // إذا كانت اللوحة مخفية بـ CSS نظهرها
+                            const panel = document.getElementById('adminPanel');
+                            if(panel) panel.style.display = 'block';
+                        }
+                    } else if (pass !== null) {
+                        alert("❌ عذراً، كلمة السر غير صحيحة. لا تملك صلاحية الدخول.");
+                    }
+                } else {
+                    // إذا ضغط "إلغاء" تظهر له رسالة تحذير
+                    alert("🚫 الوصول ممنوع! تم تسجيل محاولة دخول غير مصرح بها.");
+                }
+            };
+            
+            header.appendChild(adminBtn);
+        }
+    }
+
+    // تشغيل الكود فوراً
+    setTimeout(restoreAdminIconWithProtection, 500);
+</script>
 
 </body>
 </html>
