@@ -452,6 +452,47 @@
 
     setTimeout(setupSeparateAdmin, 800);
 </script>
+<style class="smart-addon">
+    /* إخفاء أيقونة الترس تماماً عن الأعين */
+    .admin-trigger {
+        opacity: 0 !important; /* شفافة تماماً */
+        cursor: default !important; /* تظهر كسهم عادي وليس كيد ضاغطة */
+        pointer-events: auto; /* لكنها لا تزال قابلة للنقر لمن يعرف مكانها */
+        width: 40px;
+        height: 40px;
+        z-index: 2000;
+    }
+</style>
+
+<script class="smart-addon">
+    function setupSecretAccess() {
+        // إخفاء الأيقونة برمجياً للتأكيد
+        const adminIcon = document.querySelector('.admin-trigger');
+        if (adminIcon) {
+            adminIcon.style.opacity = '0';
+            adminIcon.title = ""; // إزالة أي نص يظهر عند الوقوف عليها
+        }
+    }
+
+    // إضافة طريقة إضافية للدخول (النقر 3 مرات على صورة البروفايل)
+    // هذه طريقة بديلة وأكثر أماناً لك يا مدير
+    let clickCount = 0;
+    const profileImg = document.querySelector('.profile-img');
+    if (profileImg) {
+        profileImg.style.cursor = 'pointer';
+        profileImg.onclick = function() {
+            clickCount++;
+            if (clickCount === 3) {
+                openAdmin(); // استدعاء وظيفة فتح الإدارة الأصلية
+                clickCount = 0;
+            }
+            // تصغير العداد بعد 2 ثانية إذا لم تكتمل النقرات
+            setTimeout(() => { clickCount = 0; }, 2000);
+        };
+    }
+
+    setTimeout(setupSecretAccess, 900);
+</script>
 
 </body>
 </html>
