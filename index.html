@@ -6,43 +6,59 @@
     <title>منصة السودان للاستعلام</title>
     <style>
         :root { --main-color: #1a3a5f; --accent-color: #28a745; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; direction: rtl; margin: 0; padding: 0; }
-        .header { background: var(--main-color); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; direction: rtl; margin: 0; padding: 0; }
+        
+        /* الهيدر وصورة البروفايل */
+        .profile-section { text-align: center; padding: 30px 20px; background: white; border-bottom: 3px solid var(--main-color); }
+        .profile-card img { width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--main-color); object-fit: cover; }
+        .profile-card h2 { margin: 10px 0 5px; color: var(--main-color); }
+        
         .container { max-width: 600px; margin: auto; padding: 20px; }
         
-        /* تصميم لوحة الإدارة */
-        #adminPanel { display: none; background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--main-color); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        #bulkInput { width: 100%; height: 150px; padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; resize: none; margin-bottom: 10px; }
-        .btn-add { width: 100%; background: var(--accent-color); color: white; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        /* النصائح المرضية */
+        .tips-box { background: #fff3cd; border-right: 5px solid #ffc107; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; color: #856404; }
         
-        /* تصميم البحث والقائمة */
-        .search-box { width: 100%; padding: 15px; border-radius: 50px; border: 2px solid var(--main-color); margin-bottom: 20px; text-align: center; font-size: 16px; box-sizing: border-box; outline: none; }
-        .car-item { background: white; margin-bottom: 12px; padding: 15px; border-radius: 12px; border-right: 6px solid var(--main-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
-        .car-info { display: flex; justify-content: space-between; align-items: center; }
-        .car-name { font-weight: bold; color: var(--main-color); font-size: 17px; }
-        .chassis-no { background: #eef2f7; padding: 5px 12px; border-radius: 8px; font-family: monospace; font-weight: bold; color: #333; }
+        /* لوحة الإدارة */
+        #adminPanel { display: none; background: #fff; padding: 20px; border-radius: 15px; border: 2px solid var(--main-color); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #bulkInput { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 10px; resize: none; box-sizing: border-box; }
         
-        .footer { text-align: center; padding: 30px; color: #666; font-size: 13px; }
-        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 40px; height: 40px; background: var(--main-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.3; }
+        /* البحث والجدول */
+        .search-wrapper { position: relative; margin-bottom: 20px; }
+        .search-box { width: 100%; padding: 15px 45px 15px 15px; border-radius: 50px; border: 2px solid var(--main-color); box-sizing: border-box; font-size: 16px; outline: none; }
+        .search-icon { position: absolute; right: 15px; top: 15px; font-size: 20px; }
+        
+        .car-item { background: white; margin-bottom: 10px; padding: 15px; border-radius: 10px; border-right: 5px solid var(--main-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .car-row { display: flex; justify-content: space-between; align-items: center; }
+        .wa-btn { display: block; text-align: center; background: #25d366; color: white; padding: 8px; border-radius: 5px; text-decoration: none; margin-top: 10px; font-size: 14px; font-weight: bold; }
+        
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; background: #eee; margin-top: 20px; }
+        .admin-btn { position: fixed; bottom: 10px; left: 10px; opacity: 0.2; cursor: pointer; font-size: 20px; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <h1>🔍 نظام الاستعلام الذكي</h1>
-    <p>أدخل رقم الشاسيه أو اسم السيارة للبحث</p>
+<div class="profile-section">
+    <div class="profile-card">
+        <img src="1000026303.jpg" alt="Profile"> <h2>منصة السودان للاستعلام</h2>
+        <p>نحن هنا لخدمتكم وتسهيل وصولكم للبيانات</p>
+    </div>
 </div>
 
 <div class="container">
-    <div id="adminPanel">
-        <h3 style="text-align: center; margin-top: 0;">📥 إضافة قائمة سيارات جماعية</h3>
-        <p style="font-size: 12px; color: #666;">يمكنك لصق القائمة من الواتساب مباشرة (مثال: اكسنت 123456)</p>
-        <textarea id="bulkInput" placeholder="ألصق القائمة هنا..."></textarea>
-        <button class="btn-add" onclick="addBulkCars()">🚀 اعتماد وإضافة للموقع</button>
-        <button onclick="clearData()" style="width:100%; background:none; color:red; border:none; margin-top:10px; cursor:pointer; font-size:12px;">🗑 مسح كل البيانات</button>
+    <div class="tips-box">
+        💡 <b>نصيحة:</b> تأكد دائماً من مطابقة رقم الشاسيه المكتوب مع أوراق السيارة الرسمية لتجنب أي خطأ.
     </div>
 
-    <input type="text" id="search" class="search-box" oninput="doSearch()" placeholder="ابحث هنا عن السيارة أو الشاسيه...">
+    <div id="adminPanel">
+        <h4 style="text-align:center;">📥 إضافة جماعية (للمدير)</h4>
+        <textarea id="bulkInput" placeholder="ألصق القائمة هنا..."></textarea>
+        <button onclick="addBulkCars()" style="width:100%; background:var(--accent-color); color:white; padding:12px; border:none; border-radius:8px; cursor:pointer;">اعتماد القائمة ✅</button>
+    </div>
+
+    <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" class="search-box" oninput="doSearch()" placeholder="ابحث برقم الشاسيه أو اسم السيارة...">
+    </div>
 
     <div id="mainList"></div>
 </div>
@@ -52,89 +68,58 @@
     إشراف: سفير القوافي
 </div>
 
-<div class="admin-trigger" onclick="openAdmin()">⚙️</div>
+<div class="admin-btn" onclick="openAdmin()">⚙️</div>
 
 <script>
-    // 1. البيانات الأساسية
-    const starterCars = []; // الموقع يبدأ نظيفاً
-    let cars = JSON.parse(localStorage.getItem('cars')) || starterCars;
+    let cars = JSON.parse(localStorage.getItem('cars')) || [
+        {name: "عربية صالون", id: "546987"},
+        {name: "عربية افانتي 2006", id: "343591"}
+    ];
 
-    // 2. وظيفة عرض البيانات
     function render(data = cars) {
         const list = document.getElementById('mainList');
         list.innerHTML = "";
-        
-        if (data.length === 0) {
-            list.innerHTML = "<p style='text-align:center; color:#999;'>لا توجد بيانات مضافة حالياً</p>";
-            return;
-        }
-
         data.forEach(c => {
             list.innerHTML += `
                 <div class="car-item">
-                    <div class="car-info">
-                        <span class="car-name">✅ ${c.name}</span>
-                        <span class="chassis-no">${c.id}</span>
+                    <div class="car-row">
+                        <span style="font-weight:bold;">✅ ${c.name}</span>
+                        <span style="background:#f0f2f5; padding:5px; border-radius:5px;">${c.id}</span>
                     </div>
+                    <a href="https://wa.me/249900000000" class="wa-btn">💬 تواصل عبر واتساب مباشر</a>
                 </div>`;
         });
     }
 
-    // 3. وظيفة الإضافة الجماعية (الذكية)
     function addBulkCars() {
         const input = document.getElementById('bulkInput').value;
-        if (!input.trim()) return alert("الخانة فارغة!");
-
+        if(!input.trim()) return;
         const lines = input.split('\n');
-        let count = 0;
-        
         lines.forEach(line => {
-            const matchId = line.match(/\d+/); // استخراج أول مجموعة أرقام كشاسيه
-            if (matchId) {
+            const matchId = line.match(/\d+/);
+            if(matchId) {
                 const id = matchId[0];
                 const name = line.replace(id, '').replace(/[،,-]/g, '').trim();
-                if (name) {
-                    cars.unshift({ name: name, id: id }); // إضافة السيارة في أول القائمة
-                    count++;
-                }
+                if(name) cars.unshift({name, id});
             }
         });
-
         localStorage.setItem('cars', JSON.stringify(cars));
         render();
-        document.getElementById('bulkInput').value = '';
-        alert("تمت إضافة " + count + " سيارة بنجاح!");
+        document.getElementById('bulkInput').value = "";
+        alert("تمت الإضافة بنجاح!");
     }
 
-    // 4. وظيفة البحث السريع
     function doSearch() {
         const q = document.getElementById('search').value.toLowerCase();
         const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
         render(filtered);
     }
 
-    // 5. وظيفة فتح لوحة الإدارة
     function openAdmin() {
-        if (prompt("أدخل كلمة مرور المدير:") === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-            window.scrollTo(0, 0);
-        } else {
-            alert("كلمة المرور غير صحيحة!");
-        }
+        if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block';
     }
 
-    // 6. مسح البيانات (للمدير فقط)
-    function clearData() {
-        if (confirm("هل أنت متأكد من حذف جميع السيارات من الموقع؟")) {
-            cars = [];
-            localStorage.removeItem('cars');
-            render();
-        }
-    }
-
-    // تشغيل الموقع عند التحميل
     render();
 </script>
-
 </body>
 </html>
