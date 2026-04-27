@@ -162,6 +162,80 @@
     // تشغيل الإضافة فوراً
     setTimeout(runTestAddon, 500);
 </script>
+<style class="smart-addon">
+    /* تنسيق مستطيل النتيجة الذكي */
+    #searchStatusBox {
+        display: none; /* مخفي افتراضياً */
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        text-align: center;
+        animation: fadeIn 0.4s ease;
+        line-height: 1.6;
+    }
+    .status-found {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .status-not-found {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script class="smart-addon">
+    function initSmartSearch() {
+        const searchInput = document.getElementById('search');
+        const searchCard = document.querySelector('.search-card');
+        
+        // إضافة مستطيل النتيجة تحت مستطيل البحث برمجياً
+        if (searchCard && !document.getElementById('searchStatusBox')) {
+            const statusBox = document.createElement('div');
+            statusBox.id = 'searchStatusBox';
+            searchCard.appendChild(statusBox);
+        }
+
+        // تعديل وظيفة البحث الأصلية لإظهار الرسائل
+        const originalDoSearch = window.doSearch;
+        window.doSearch = function() {
+            // تشغيل البحث الأصلي أولاً
+            if (originalDoSearch) originalDoSearch();
+            
+            const q = searchInput.value.trim();
+            const statusBox = document.getElementById('searchStatusBox');
+            
+            if (q.length < 3) {
+                statusBox.style.display = 'none';
+                return;
+            }
+
+            // البحث في مصفوفة السيارات
+            const found = cars.some(c => c.id.includes(q));
+            statusBox.style.display = 'block';
+
+            if (found) {
+                statusBox.className = 'status-found';
+                statusBox.innerHTML = `🎉 <b>مبروك!</b> تم العثور على الشاسيه ضمن قوائمنا.`;
+            } else {
+                statusBox.className = 'status-not-found';
+                statusBox.innerHTML = `
+                    ⚠️ <b>عذراً، الشاسيه غير موجود حالياً.</b><br>
+                    سجل رقمك في القائمة الجانبية، وعند توفره سنرسل لك رسالة تلقائية عبر واتساب تنبهك بنزوله في <b>منصة السودان</b>.
+                `;
+            }
+        };
+    }
+
+    // تشغيل المحرك الذكي
+    setTimeout(initSmartSearch, 600);
+</script>
 
 </body>
 </html>
