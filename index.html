@@ -452,47 +452,46 @@
 
     setTimeout(setupSeparateAdmin, 800);
 </script>
-<style class="smart-addon">
-    /* إخفاء أيقونة الترس تماماً عن الأعين */
-    .admin-trigger {
-        opacity: 0 !important; /* شفافة تماماً */
-        cursor: default !important; /* تظهر كسهم عادي وليس كيد ضاغطة */
-        pointer-events: auto; /* لكنها لا تزال قابلة للنقر لمن يعرف مكانها */
-        width: 40px;
-        height: 40px;
-        z-index: 2000;
-    }
-</style>
-
 <script class="smart-addon">
-    function setupSecretAccess() {
-        // إخفاء الأيقونة برمجياً للتأكيد
-        const adminIcon = document.querySelector('.admin-trigger');
-        if (adminIcon) {
-            adminIcon.style.opacity = '0';
-            adminIcon.title = ""; // إزالة أي نص يظهر عند الوقوف عليها
+    function hideAdminIconForever() {
+        // 1. البحث عن أيقونة الترس وحذفها نهائياً من الواجهة
+        const adminElements = document.querySelectorAll('.admin-trigger, [onclick="openAdmin()"]');
+        adminElements.forEach(el => {
+            el.style.display = 'none'; // إخفاء تماماً
+            el.style.visibility = 'hidden'; 
+            el.removeAttribute('onclick'); // تعطيل وظيفة النقر من العنصر القديم
+        });
+
+        // 2. تفعيل الدخول السري عبر الصورة الشخصية (3 نقرات)
+        const profileImg = document.querySelector('.profile-img');
+        if (profileImg) {
+            let secretClicks = 0;
+            profileImg.style.cursor = 'pointer'; // لتعرف أنت مكان الضغط
+            profileImg.onclick = function() {
+                secretClicks++;
+                if (secretClicks === 3) {
+                    openAdmin(); // استدعاء لوحة التحكم
+                    secretClicks = 0;
+                }
+                // تصغير العداد إذا تأخرت في النقرات
+                setTimeout(() => { secretClicks = 0; }, 1500);
+            };
         }
     }
 
-    // إضافة طريقة إضافية للدخول (النقر 3 مرات على صورة البروفايل)
-    // هذه طريقة بديلة وأكثر أماناً لك يا مدير
-    let clickCount = 0;
-    const profileImg = document.querySelector('.profile-img');
-    if (profileImg) {
-        profileImg.style.cursor = 'pointer';
-        profileImg.onclick = function() {
-            clickCount++;
-            if (clickCount === 3) {
-                openAdmin(); // استدعاء وظيفة فتح الإدارة الأصلية
-                clickCount = 0;
-            }
-            // تصغير العداد بعد 2 ثانية إذا لم تكتمل النقرات
-            setTimeout(() => { clickCount = 0; }, 2000);
-        };
-    }
-
-    setTimeout(setupSecretAccess, 900);
+    // تشغيل الإخفاء فوراً وعند اكتمال تحميل الصفحة
+    hideAdminIconForever();
+    window.addEventListener('load', hideAdminIconForever);
 </script>
+
+<style class="smart-addon">
+    /* تأكيد الإخفاء عبر CSS أيضاً */
+    .admin-trigger, [onclick="openAdmin()"] {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+</style>
 
 </body>
 </html>
