@@ -3,156 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة السودان الذكية</title>
-    <style>
-        :root {
-            --bg-dark: #1a1f3c; 
-            --bg-light: #f4f7fd; 
-            --accent-orange: #ff5f40; 
-            --text-main: #2d3436;
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: var(--bg-light);
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        /* الهيدر مع أيقونة المنيو */
-        .header {
-            background-color: var(--bg-dark);
-            color: white;
-            padding: 30px 20px 60px;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
-            text-align: center;
-            position: relative;
-        }
-
-        .menu-btn {
-            position: absolute;
-            top: 25px;
-            right: 20px;
-            font-size: 24px;
-            cursor: pointer;
-            color: white;
-        }
-
-        /* القائمة الجانبية */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            right: -280px;
-            width: 280px;
-            height: 100%;
-            background: white;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            z-index: 1000;
-            transition: 0.3s;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
+    <title>منصة السودان - النظام الذكي</title>
+    <style id="dynamic-styles">
+        :root { --bg-dark: #1a1f3c; --bg-light: #f4f7fd; --accent-orange: #ff5f40; --text-main: #2d3436; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-light); margin: 0; overflow-x: hidden; }
+        .header { background-color: var(--bg-dark); color: white; padding: 30px 20px 60px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
+        .side-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
         .side-menu.active { right: 0; }
-        .menu-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            color: var(--bg-dark);
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        /* الإحصائيات */
-        .stat-box {
-            background: #f8f9ff;
-            padding: 15px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-            text-align: center;
-            border: 1px solid #e0e4f5;
-        }
-        .stat-num { color: var(--accent-orange); font-size: 20px; font-weight: bold; }
-
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            z-index: 999;
-        }
-
-        /* باقي تنسيقاتك الأصلية كما هي */
-        .visitor-counter { position: absolute; top: 25px; left: 60px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px; }
-        .profile-img { width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover; }
         .container { max-width: 500px; margin: -35px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
-        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
-        .search-input { width: 100%; padding: 15px 20px; border-radius: 18px; border: none; background: #f0f2f8; font-size: 16px; box-sizing: border-box; outline: none; }
-        .table-section { background: white; border-radius: 30px; padding: 15px; box-shadow: var(--card-shadow); }
-        .car-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f2f2f2; }
-        .car-details { flex-grow: 1; }
-        .car-name { font-weight: bold; font-size: 15px; }
-        .car-id { color: var(--accent-orange); font-family: monospace; font-weight: bold; }
-        #adminPanel { display: none; background: white; padding: 20px; border-radius: 25px; margin-bottom: 20px; border: 2px solid var(--bg-dark); }
-        .admin-trigger { position: absolute; top: 25px; left: 20px; opacity: 0.3; cursor: pointer; color: white; font-size: 20px; }
+        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .car-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f2f2f2; background: white; border-radius: 10px; margin-bottom: 5px; }
+        .stat-box { background: #f8f9ff; padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: center; border: 1px solid #e0e4f5; }
+        .stat-num { color: var(--accent-orange); font-size: 20px; font-weight: bold; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
     </style>
 </head>
 <body>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<div class="header">
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
-    <div class="admin-trigger" onclick="openAdmin()">⚙️</div>
-    
-    <div class="visitor-counter">👁️ <span id="visitorCount">0</span></div>
-
-    <img src="1000026303.jpg" class="profile-img">
-    <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
-    <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
-</div>
-
-<div class="side-menu" id="sideMenu">
-    <h3 style="color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px;">القائمة</h3>
-    <div class="menu-item" onclick="location.reload()">🏠 الرئيسية</div>
-    
-    <div style="margin-top:20px;">
-        <h4 style="font-size:14px; color:#666;">📊 إحصائيات النظام</h4>
-        <div class="stat-box">إجمالي السيارات<br><span class="stat-num" id="totalCars">0</span></div>
-        <div class="stat-box">عمليات البحث<br><span class="stat-num" id="totalSearch">0</span></div>
-        <div class="stat-box">إجمالي المستلمين<br><span class="stat-num" id="totalClicks">0</span></div>
+<div id="app-structure">
+    <div class="header">
+        <div style="position: absolute; top: 25px; right: 20px; font-size: 24px; cursor: pointer;" onclick="toggleMenu()">☰</div>
+        <div style="position: absolute; top: 25px; left: 20px; opacity: 0.3; cursor: pointer;" onclick="openAdmin()">⚙️</div>
+        <div style="position: absolute; top: 25px; left: 60px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px;">👁️ <span id="visitorCount">0</span></div>
+        
+        <img src="1000026303.jpg" style="width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover;">
+        <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
     </div>
 
-    <div style="margin-top:20px;">
-        <h4 style="font-size:14px; color:#666;">📱 حسابي</h4>
-        <input type="text" id="userPhone" placeholder="سجل برقم هاتفك" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
-        <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ الرقم</button>
-    </div>
-</div>
-
-<div class="container">
-    <div id="adminPanel">
-        <h4 style="margin-top:0;">🔧 إدارة المحتوى</h4>
-        <input type="text" id="customPhone" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;" placeholder="رقم التواصل لهذه المجموعة">
-        <textarea id="bulkInput" style="width:100%; height:100px; padding:10px; border-radius:10px; border:1px solid #ddd;" placeholder="اكسنت 123456..."></textarea>
-        <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; font-weight:bold;">🚀 نشر المجموعة</button>
-    </div>
-
-    <div class="search-card">
-        <input type="text" id="search" class="search-input" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه أو سيارة...">
+    <div class="side-menu" id="sideMenu">
+        <h3 style="color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px;">القائمة</h3>
+        <div style="margin-top:20px;">
+            <h4 style="font-size:14px; color:#666;">📊 إحصائيات النظام</h4>
+            <div class="stat-box">إجمالي السيارات<br><span class="stat-num" id="totalCars">0</span></div>
+            <div class="stat-box">عمليات البحث<br><span class="stat-num" id="totalSearch">0</span></div>
+            <div class="stat-box">إجمالي المستلمين<br><span class="stat-num" id="totalClicks">0</span></div>
+        </div>
+        <div style="margin-top:20px;">
+            <h4 style="font-size:14px; color:#666;">📱 حسابي</h4>
+            <input type="text" id="userPhone" placeholder="سجل برقمك للمراسلة" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+            <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ الرقم</button>
+        </div>
     </div>
 
-    <div class="table-section">
-        <h3 style="margin-right: 10px; font-size: 16px; color: var(--bg-dark);">📊 السيارات المتاحة</h3>
+    <div class="container">
+        <div id="adminPanel" style="display:none; background:white; padding:20px; border-radius:25px; margin-bottom:20px; border:2px solid var(--bg-dark);">
+            <input type="text" id="customPhone" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px;" placeholder="رقم التواصل لهذه المجموعة">
+            <textarea id="bulkInput" style="width:100%; height:100px; padding:10px; border-radius:10px;" placeholder="اكسنت 123456..."></textarea>
+            <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; font-weight:bold;">🚀 نشر المجموعة</button>
+        </div>
+
+        <div class="search-card">
+            <input type="text" id="search" style="width:100%; padding:15px; border-radius:18px; border:none; background:#f0f2f8; outline:none;" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه أو سيارة...">
+        </div>
+
         <div id="carsList"></div>
     </div>
 </div>
 
-<script>
+<script id="main-logic">
     let cars = JSON.parse(localStorage.getItem('cars')) || [];
     let stats = JSON.parse(localStorage.getItem('siteStats')) || { search: 0, clicks: 0 };
     const defaultPhone = "249129642174";
@@ -165,33 +76,39 @@
         updateStatDisplay();
     }
 
-    function saveUserPhone() {
-        const ph = document.getElementById('userPhone').value;
-        if(ph) {
-            localStorage.setItem('registeredPhone', ph);
-            alert("تم حفظ رقمك بنجاح");
-        }
+    function render(data = cars) {
+        const list = document.getElementById('carsList');
+        list.innerHTML = data.slice(0, 20).map(c => `
+            <div class="car-row">
+                <div style="flex-grow:1"><b>${c.name}</b><br><small style="color:var(--accent-orange)">ID: ${c.id}</small></div>
+                <div onclick="checkContact('${c.phone || defaultPhone}')" style="cursor:pointer; font-size:22px;">💬</div>
+            </div>
+        `).join('');
+        updateStatDisplay();
     }
 
     function checkContact(phone) {
-        const registered = localStorage.getItem('registeredPhone');
-        if(!registered) {
-            alert("⚠️ عذراً، يجب التسجيل برقم هاتفك أولاً في القائمة الجانبية لتتمكن من المراسلة.");
+        if(!localStorage.getItem('registeredPhone')) {
+            alert("⚠️ سجل رقمك أولاً في القائمة الجانبية لتتمكن من المراسلة.");
             toggleMenu();
         } else {
             stats.clicks++;
-            localStorage.setItem('siteStats', JSON.stringify(stats));
+            saveStats();
             window.open(`https://wa.me/${phone}`, '_blank');
         }
+    }
+
+    function doSearch() {
+        stats.search++;
+        saveStats();
+        const q = document.getElementById('search').value.toLowerCase();
+        render(cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q)));
     }
 
     function addBulkCars() {
         const input = document.getElementById('bulkInput').value;
         const groupPhone = document.getElementById('customPhone').value.trim() || defaultPhone;
-        if(!input.trim()) return;
-
-        const lines = input.split('\n');
-        lines.forEach(line => {
+        input.split('\n').forEach(line => {
             const matchId = line.match(/\d+/);
             if(matchId) {
                 const id = matchId[0];
@@ -201,15 +118,7 @@
         });
         localStorage.setItem('cars', JSON.stringify(cars));
         render();
-        alert("تم التحديث");
-    }
-
-    function doSearch() {
-        stats.search++;
-        localStorage.setItem('siteStats', JSON.stringify(stats));
-        const q = document.getElementById('search').value.toLowerCase();
-        const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
-        render(filtered);
+        alert("تمت الإضافة بنجاح");
     }
 
     function updateStatDisplay() {
@@ -218,31 +127,20 @@
         document.getElementById('totalClicks').innerText = stats.clicks;
     }
 
-    function render(data = cars) {
-        const list = document.getElementById('carsList');
-        list.innerHTML = "";
-        data.slice(0, 20).forEach(c => {
-            list.innerHTML += `
-                <div class="car-row">
-                    <div class="car-details">
-                        <div class="car-name">${c.name}</div>
-                        <div class="car-id">ID: ${c.id}</div>
-                    </div>
-                    <div onclick="checkContact('${c.phone || defaultPhone}')" style="cursor:pointer; font-size:22px;">💬</div>
-                </div>`;
-        });
-        updateStatDisplay();
+    function saveStats() { localStorage.setItem('siteStats', JSON.stringify(stats)); }
+    function saveUserPhone() {
+        const p = document.getElementById('userPhone').value;
+        if(p) { localStorage.setItem('registeredPhone', p); alert("تم الحفظ"); }
     }
+    function openAdmin() { if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block'; }
 
     // عداد الزوار
-    let vCount = localStorage.getItem('visitorCount') || 1240;
-    vCount++;
-    localStorage.setItem('visitorCount', vCount);
-    document.getElementById('visitorCount').innerText = vCount;
-
-    function openAdmin() { if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block'; }
+    let v = parseInt(localStorage.getItem('visitorCount') || 1240) + 1;
+    localStorage.setItem('visitorCount', v);
+    document.getElementById('visitorCount').innerText = v;
 
     render();
 </script>
+
 </body>
 </html>
