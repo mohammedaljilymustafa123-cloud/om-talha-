@@ -17,9 +17,10 @@
             font-family: 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--bg-light);
             margin: 0;
-            color: var(--text-main);
+            overflow-x: hidden;
         }
 
+        /* الهيدر مع أيقونة المنيو */
         .header {
             background-color: var(--bg-dark);
             color: white;
@@ -30,148 +31,115 @@
             position: relative;
         }
 
-        /* تنسيق عداد الزوار */
-        .visitor-counter {
+        .menu-btn {
             position: absolute;
-            top: 20px;
+            top: 25px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .profile-img {
-            width: 85px;
-            height: 85px;
-            border-radius: 25px;
-            border: 3px solid rgba(255,255,255,0.2);
-            object-fit: cover;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .container {
-            max-width: 500px;
-            margin: -35px auto 20px;
-            padding: 0 15px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .search-card {
-            background: white;
-            padding: 20px;
-            border-radius: 30px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 18px;
-            border: none;
-            background: #f0f2f8;
-            font-size: 16px;
-            box-sizing: border-box;
-            outline: none;
-        }
-
-        .table-section {
-            background: white;
-            border-radius: 30px;
-            padding: 15px;
-            box-shadow: var(--card-shadow);
-        }
-
-        .car-row {
-            display: flex;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #f2f2f2;
-        }
-
-        .car-icon {
-            width: 45px;
-            height: 45px;
-            background: #eef1f9;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 12px;
-            font-size: 18px;
-        }
-
-        .car-details { flex-grow: 1; }
-        .car-name { font-weight: bold; font-size: 15px; color: var(--bg-dark); }
-        .car-id { color: var(--accent-orange); font-family: monospace; font-size: 13px; font-weight: bold; }
-
-        .btn-main {
-            background: var(--accent-orange);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 15px;
-            font-weight: bold;
+            font-size: 24px;
             cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
+            color: white;
         }
 
-        #adminPanel {
-            display: none;
+        /* القائمة الجانبية */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 280px;
+            height: 100%;
             background: white;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: 0.3s;
             padding: 20px;
-            border-radius: 25px;
-            margin-bottom: 20px;
-            border: 2px solid var(--bg-dark);
-            color: var(--text-main);
-            text-align: right;
-        }
-
-        .admin-input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
             box-sizing: border-box;
         }
 
-        .footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
-        .admin-trigger { position: absolute; top: 20px; left: 20px; opacity: 0.3; cursor: pointer; color: white; }
+        .side-menu.active { right: 0; }
+        .menu-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            color: var(--bg-dark);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* الإحصائيات */
+        .stat-box {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            text-align: center;
+            border: 1px solid #e0e4f5;
+        }
+        .stat-num { color: var(--accent-orange); font-size: 20px; font-weight: bold; }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        /* باقي تنسيقاتك الأصلية كما هي */
+        .visitor-counter { position: absolute; top: 25px; left: 60px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px; }
+        .profile-img { width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover; }
+        .container { max-width: 500px; margin: -35px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
+        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+        .search-input { width: 100%; padding: 15px 20px; border-radius: 18px; border: none; background: #f0f2f8; font-size: 16px; box-sizing: border-box; outline: none; }
+        .table-section { background: white; border-radius: 30px; padding: 15px; box-shadow: var(--card-shadow); }
+        .car-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f2f2f2; }
+        .car-details { flex-grow: 1; }
+        .car-name { font-weight: bold; font-size: 15px; }
+        .car-id { color: var(--accent-orange); font-family: monospace; font-weight: bold; }
+        #adminPanel { display: none; background: white; padding: 20px; border-radius: 25px; margin-bottom: 20px; border: 2px solid var(--bg-dark); }
+        .admin-trigger { position: absolute; top: 25px; left: 20px; opacity: 0.3; cursor: pointer; color: white; font-size: 20px; }
     </style>
 </head>
 <body>
 
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
 <div class="header">
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
     <div class="admin-trigger" onclick="openAdmin()">⚙️</div>
     
-    <div class="visitor-counter">
-        <span>👁️</span>
-        <span id="visitorCount">1,240</span>
-    </div>
+    <div class="visitor-counter">👁️ <span id="visitorCount">0</span></div>
 
-    <img src="1000026303.jpg" class="profile-img" alt="سفير القوافي">
+    <img src="1000026303.jpg" class="profile-img">
     <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
     <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
 </div>
 
+<div class="side-menu" id="sideMenu">
+    <h3 style="color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px;">القائمة</h3>
+    <div class="menu-item" onclick="location.reload()">🏠 الرئيسية</div>
+    
+    <div style="margin-top:20px;">
+        <h4 style="font-size:14px; color:#666;">📊 إحصائيات النظام</h4>
+        <div class="stat-box">إجمالي السيارات<br><span class="stat-num" id="totalCars">0</span></div>
+        <div class="stat-box">عمليات البحث<br><span class="stat-num" id="totalSearch">0</span></div>
+        <div class="stat-box">إجمالي المستلمين<br><span class="stat-num" id="totalClicks">0</span></div>
+    </div>
+
+    <div style="margin-top:20px;">
+        <h4 style="font-size:14px; color:#666;">📱 حسابي</h4>
+        <input type="text" id="userPhone" placeholder="سجل برقم هاتفك" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+        <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ الرقم</button>
+    </div>
+</div>
+
 <div class="container">
     <div id="adminPanel">
-        <h4 style="margin-top:0;">🔧 لوحة التحكم</h4>
-        <label style="font-size:12px;">رقم التواصل لهذه المجموعة (اختياري):</label>
-        <input type="text" id="customPhone" class="admin-input" placeholder="مثال: 249123456789">
-        
-        <label style="font-size:12px;">ألصق قائمة السيارات هنا:</label>
-        <textarea id="bulkInput" class="admin-input" style="height:100px;" placeholder="اكسنت 123456..."></textarea>
-        
-        <button class="btn-main" onclick="addBulkCars()">🚀 نشر المجموعة الجديدة</button>
+        <h4 style="margin-top:0;">🔧 إدارة المحتوى</h4>
+        <input type="text" id="customPhone" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px; border:1px solid #ddd;" placeholder="رقم التواصل لهذه المجموعة">
+        <textarea id="bulkInput" style="width:100%; height:100px; padding:10px; border-radius:10px; border:1px solid #ddd;" placeholder="اكسنت 123456..."></textarea>
+        <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; font-weight:bold;">🚀 نشر المجموعة</button>
     </div>
 
     <div class="search-card">
@@ -179,97 +147,101 @@
     </div>
 
     <div class="table-section">
-        <h3 style="margin-right: 10px; font-size: 16px; color: var(--bg-dark);">📊 آخر التحديثات</h3>
+        <h3 style="margin-right: 10px; font-size: 16px; color: var(--bg-dark);">📊 السيارات المتاحة</h3>
         <div id="carsList"></div>
-        <button id="moreBtn" onclick="toggleView()" style="background:none; border:none; color:var(--accent-orange); font-weight:bold; width:100%; padding:10px; cursor:pointer; font-size:13px;">عرض المزيد...</button>
     </div>
-</div>
-
-<div class="footer">
-    <b>2026 © جميع الحقوق محفوظة</b><br>تطوير: سفير القوافي
 </div>
 
 <script>
     let cars = JSON.parse(localStorage.getItem('cars')) || [];
-    let showFull = false;
+    let stats = JSON.parse(localStorage.getItem('siteStats')) || { search: 0, clicks: 0 };
     const defaultPhone = "249129642174";
 
-    // نظام عداد الزوار
-    function updateVisitors() {
-        let count = localStorage.getItem('visitorCount') || 1240;
-        count = parseInt(count) + 1;
-        localStorage.setItem('visitorCount', count);
-        document.getElementById('visitorCount').innerText = count.toLocaleString();
+    function toggleMenu() {
+        const menu = document.getElementById('sideMenu');
+        const overlay = document.getElementById('overlay');
+        menu.classList.toggle('active');
+        overlay.style.display = menu.classList.contains('active') ? 'block' : 'none';
+        updateStatDisplay();
+    }
+
+    function saveUserPhone() {
+        const ph = document.getElementById('userPhone').value;
+        if(ph) {
+            localStorage.setItem('registeredPhone', ph);
+            alert("تم حفظ رقمك بنجاح");
+        }
+    }
+
+    function checkContact(phone) {
+        const registered = localStorage.getItem('registeredPhone');
+        if(!registered) {
+            alert("⚠️ عذراً، يجب التسجيل برقم هاتفك أولاً في القائمة الجانبية لتتمكن من المراسلة.");
+            toggleMenu();
+        } else {
+            stats.clicks++;
+            localStorage.setItem('siteStats', JSON.stringify(stats));
+            window.open(`https://wa.me/${phone}`, '_blank');
+        }
     }
 
     function addBulkCars() {
         const input = document.getElementById('bulkInput').value;
         const groupPhone = document.getElementById('customPhone').value.trim() || defaultPhone;
-        
         if(!input.trim()) return;
 
         const lines = input.split('\n');
-        let count = 0;
         lines.forEach(line => {
             const matchId = line.match(/\d+/);
             if(matchId) {
                 const id = matchId[0];
-                let name = line.replace(id, '').replace(/[0-9]|/g, '').replace(/[،,-]/g, '').trim();
-                if(!name) name = "سيارة غير مسمى";
-                
-                if(!cars.some(c => c.id === id)) {
-                    cars.unshift({name, id, phone: groupPhone});
-                    count++;
-                }
+                let name = line.replace(id, '').replace(/[0-9]|/g, '').replace(/[،,-]/g, '').trim() || "سيارة";
+                if(!cars.some(c => c.id === id)) cars.unshift({name, id, phone: groupPhone});
             }
         });
         localStorage.setItem('cars', JSON.stringify(cars));
         render();
-        document.getElementById('bulkInput').value = "";
-        document.getElementById('customPhone').value = "";
-        alert("تمت إضافة " + count + " سيارة بنجاح.");
-    }
-
-    function render(data = cars) {
-        const list = document.getElementById('carsList');
-        list.innerHTML = "";
-        const displayData = (data === cars && !showFull) ? data.slice(0, 10) : data;
-
-        displayData.forEach(c => {
-            const contactPhone = c.phone || defaultPhone;
-            list.innerHTML += `
-                <div class="car-row">
-                    <div class="car-icon">🚗</div>
-                    <div class="car-details">
-                        <div class="car-name">${c.name}</div>
-                        <div class="car-id">ID: ${c.id}</div>
-                    </div>
-                    <a href="https://wa.me/${contactPhone}" target="_blank" style="text-decoration:none; font-size:22px;">💬</a>
-                </div>`;
-        });
+        alert("تم التحديث");
     }
 
     function doSearch() {
+        stats.search++;
+        localStorage.setItem('siteStats', JSON.stringify(stats));
         const q = document.getElementById('search').value.toLowerCase();
         const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
         render(filtered);
     }
 
-    function toggleView() {
-        showFull = !showFull;
-        render();
-        document.getElementById('moreBtn').innerText = showFull ? "إظهار أقل" : "عرض المزيد...";
+    function updateStatDisplay() {
+        document.getElementById('totalCars').innerText = cars.length;
+        document.getElementById('totalSearch').innerText = stats.search;
+        document.getElementById('totalClicks').innerText = stats.clicks;
     }
 
-    function openAdmin() {
-        if(prompt("كلمة سر الإدارة:") === "3344") {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-        }
+    function render(data = cars) {
+        const list = document.getElementById('carsList');
+        list.innerHTML = "";
+        data.slice(0, 20).forEach(c => {
+            list.innerHTML += `
+                <div class="car-row">
+                    <div class="car-details">
+                        <div class="car-name">${c.name}</div>
+                        <div class="car-id">ID: ${c.id}</div>
+                    </div>
+                    <div onclick="checkContact('${c.phone || defaultPhone}')" style="cursor:pointer; font-size:22px;">💬</div>
+                </div>`;
+        });
+        updateStatDisplay();
     }
 
-    // التشغيل
-    updateVisitors();
+    // عداد الزوار
+    let vCount = localStorage.getItem('visitorCount') || 1240;
+    vCount++;
+    localStorage.setItem('visitorCount', vCount);
+    document.getElementById('visitorCount').innerText = vCount;
+
+    function openAdmin() { if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block'; }
+
     render();
 </script>
 </body>
