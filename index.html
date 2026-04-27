@@ -370,6 +370,88 @@
 
     setTimeout(initAdminTools, 700);
 </script>
+<style class="smart-addon">
+    /* تحويل لوحة الإدارة لشاشة كاملة */
+    #adminPanel {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: white !important;
+        z-index: 3000 !important;
+        padding: 20px !important;
+        box-sizing: border-box !important;
+        overflow-y: auto !important;
+        display: none; /* تفتح فقط عند إدخال الباسورد */
+        border: none !important;
+        border-radius: 0 !important;
+    }
+
+    .admin-header-ui {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f2f8;
+        margin-bottom: 20px;
+    }
+
+    .btn-close-admin {
+        background: #ff4757;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 12px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .admin-title {
+        font-size: 18px;
+        color: var(--bg-dark);
+        font-weight: bold;
+    }
+</style>
+
+<script class="smart-addon">
+    function setupSeparateAdmin() {
+        const adminPanel = document.getElementById('adminPanel');
+        if (!adminPanel) return;
+
+        // إنشاء الهيدر الخاص بلوحة التحكم (العنوان + زر الإغلاق)
+        const adminHeader = document.createElement('div');
+        adminHeader.className = 'admin-header-ui';
+        adminHeader.innerHTML = `
+            <div class="admin-title">🛠️ لوحة تحكم المنصة</div>
+            <button class="btn-close-admin" onclick="closeAdminPanel()">إغلاق لوحة التحكم ✖</button>
+        `;
+
+        // إدراج الهيدر في بداية اللوحة
+        adminPanel.insertBefore(adminHeader, adminPanel.firstChild);
+    }
+
+    // وظيفة إغلاق اللوحة
+    window.closeAdminPanel = function() {
+        document.getElementById('adminPanel').style.display = 'none';
+        document.body.style.overflow = 'auto'; // إعادة التمرير للموقع
+    }
+
+    // تعديل وظيفة الفتح الأصلية لتعمل مع الشاشة الجديدة
+    const originalOpenAdmin = window.openAdmin;
+    window.openAdmin = function() {
+        const pass = prompt("كلمة السر الخاصة بالمدير:");
+        if (pass === "3344") {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // منع تمرير الموقع خلف اللوحة
+        } else if (pass !== null) {
+            alert("كلمة السر غير صحيحة");
+        }
+    }
+
+    setTimeout(setupSeparateAdmin, 800);
+</script>
 
 </body>
 </html>
