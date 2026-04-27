@@ -536,6 +536,56 @@
     // تشغيل الكود فوراً
     setTimeout(restoreAdminIconWithProtection, 500);
 </script>
+<script class="smart-security-addon">
+    function ultraSecurityShield() {
+        const searchInput = document.getElementById('search');
+        
+        // 1. فحص هل المستخدم محظور أصلاً؟
+        let securityStatus = JSON.parse(localStorage.getItem('security_blacklist')) || { attempts: 0, banned: false };
+
+        if (securityStatus.banned) {
+            document.body.innerHTML = `
+                <div style="text-align:center; padding:50px; font-family:sans-serif; direction:rtl;">
+                    <h1 style="color:red; font-size:50px;">🚫 تم حظرك نهائياً</h1>
+                    <p style="font-size:20px;">نظام حماية منصة السودان رصد محاولات تخريبية متكررة من جهازك.</p>
+                    <p style="color:gray;">تم تسجيل بياناتك ورفعها للإدارة. الوصول للمنصة غير مسموح لك.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const maliciousPatterns = [
+            /<script/i, /javascript:/i, /onerror/i, /onload/i, /alert\(/i, 
+            /eval\(/i, /<iframe/i, /document\.cookie/i, /union select/i
+        ];
+
+        const originalDoSearch = window.doSearch;
+        window.doSearch = function() {
+            const val = searchInput.value;
+            let isMalicious = maliciousPatterns.some(pattern => pattern.test(val));
+
+            if (isMalicious) {
+                securityStatus.attempts++;
+                
+                if (securityStatus.attempts >= 2) {
+                    securityStatus.banned = true;
+                    localStorage.setItem('security_blacklist', JSON.stringify(securityStatus));
+                    location.reload(); // لإظهار شاشة الحظر فوراً
+                } else {
+                    localStorage.setItem('security_blacklist', JSON.stringify(securityStatus));
+                    searchInput.value = "";
+                    alert(`⚠️ تحذير أمني (محاولة ${securityStatus.attempts}/2):\nتم رصد كود برمجي. المحاولة القادمة ستؤدي لحظر جهازك من المنصة نهائياً.`);
+                }
+                return;
+            }
+
+            if (originalDoSearch) originalDoSearch();
+        };
+    }
+
+    // تشغيل الدرع المطور
+    setTimeout(ultraSecurityShield, 1100);
+</script>
 
 </body>
 </html>
