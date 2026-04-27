@@ -141,6 +141,27 @@
 
     render();
 </script>
+<style class="smart-addon">
+    /* هذا الكود سيعدل لون العداد تلقائياً */
+    #visitorCount { color: #2ecc71; font-weight: bold; text-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
+    .smart-btn { background: #25d366; color: white; padding: 10px; border-radius: 10px; text-align: center; margin-top: 10px; cursor: pointer; display: block; text-decoration: none; font-size: 14px; }
+</style>
+
+<script class="smart-addon">
+    // هذا الكود سيضيف خياراً جديداً في القائمة الجانبية برمجياً
+    function runTestAddon() {
+        const menu = document.getElementById('sideMenu');
+        if (menu) {
+            const testLink = document.createElement('a');
+            testLink.href = "https://wa.me/249129642174";
+            testLink.className = "smart-btn";
+            testLink.innerHTML = "📞 دعم المنصة المباشر";
+            menu.appendChild(testLink);
+        }
+    }
+    // تشغيل الإضافة فوراً
+    setTimeout(runTestAddon, 500);
+</script>
 
 </body>
 </html>
