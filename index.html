@@ -20,15 +20,29 @@
             color: var(--text-main);
         }
 
-        /* تعديل ارتفاع الهيدر لعدم تغطية البحث */
         .header {
             background-color: var(--bg-dark);
             color: white;
-            padding: 30px 20px 60px; /* تقليل الارتفاع السفلي */
+            padding: 30px 20px 60px;
             border-bottom-left-radius: 40px;
             border-bottom-right-radius: 40px;
             text-align: center;
             position: relative;
+        }
+
+        /* تنسيق عداد الزوار */
+        .visitor-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .profile-img {
@@ -42,7 +56,7 @@
 
         .container {
             max-width: 500px;
-            margin: -35px auto 20px; /* رفع المحتوى ليتداخل مع الهيدر بشكل أنيق */
+            margin: -35px auto 20px;
             padding: 0 15px;
             position: relative;
             z-index: 10;
@@ -109,7 +123,6 @@
             margin-top: 10px;
         }
 
-        /* لوحة الإدارة المحسنة */
         #adminPanel {
             display: none;
             background: white;
@@ -117,6 +130,8 @@
             border-radius: 25px;
             margin-bottom: 20px;
             border: 2px solid var(--bg-dark);
+            color: var(--text-main);
+            text-align: right;
         }
 
         .admin-input {
@@ -129,13 +144,19 @@
         }
 
         .footer { text-align: center; padding: 30px; color: #999; font-size: 12px; }
-        .admin-trigger { position: absolute; top: 15px; left: 15px; opacity: 0.3; cursor: pointer; color: white; }
+        .admin-trigger { position: absolute; top: 20px; left: 20px; opacity: 0.3; cursor: pointer; color: white; }
     </style>
 </head>
 <body>
 
 <div class="header">
     <div class="admin-trigger" onclick="openAdmin()">⚙️</div>
+    
+    <div class="visitor-counter">
+        <span>👁️</span>
+        <span id="visitorCount">1,240</span>
+    </div>
+
     <img src="1000026303.jpg" class="profile-img" alt="سفير القوافي">
     <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
     <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
@@ -151,7 +172,6 @@
         <textarea id="bulkInput" class="admin-input" style="height:100px;" placeholder="اكسنت 123456..."></textarea>
         
         <button class="btn-main" onclick="addBulkCars()">🚀 نشر المجموعة الجديدة</button>
-        <button onclick="clearData()" style="width:100%; background:none; border:none; color:red; margin-top:5px; cursor:pointer; font-size:11px;">🗑 مسح كل البيانات</button>
     </div>
 
     <div class="search-card">
@@ -174,6 +194,14 @@
     let showFull = false;
     const defaultPhone = "249129642174";
 
+    // نظام عداد الزوار
+    function updateVisitors() {
+        let count = localStorage.getItem('visitorCount') || 1240;
+        count = parseInt(count) + 1;
+        localStorage.setItem('visitorCount', count);
+        document.getElementById('visitorCount').innerText = count.toLocaleString();
+    }
+
     function addBulkCars() {
         const input = document.getElementById('bulkInput').value;
         const groupPhone = document.getElementById('customPhone').value.trim() || defaultPhone;
@@ -190,7 +218,7 @@
                 if(!name) name = "سيارة غير مسمى";
                 
                 if(!cars.some(c => c.id === id)) {
-                    cars.unshift({name, id, phone: groupPhone}); // حفظ الرقم مع كل سيارة
+                    cars.unshift({name, id, phone: groupPhone});
                     count++;
                 }
             }
@@ -199,7 +227,7 @@
         render();
         document.getElementById('bulkInput').value = "";
         document.getElementById('customPhone').value = "";
-        alert("تمت إضافة " + count + " سيارة برقم التواصل المذكور.");
+        alert("تمت إضافة " + count + " سيارة بنجاح.");
     }
 
     function render(data = cars) {
@@ -208,7 +236,7 @@
         const displayData = (data === cars && !showFull) ? data.slice(0, 10) : data;
 
         displayData.forEach(c => {
-            const contactPhone = c.phone || defaultPhone; // استخدام المسجل أو الأساسي
+            const contactPhone = c.phone || defaultPhone;
             list.innerHTML += `
                 <div class="car-row">
                     <div class="car-icon">🚗</div>
@@ -240,14 +268,8 @@
         }
     }
 
-    function clearData() {
-        if(confirm("حذف كل السيارات؟")) {
-            cars = [];
-            localStorage.removeItem('cars');
-            render();
-        }
-    }
-
+    // التشغيل
+    updateVisitors();
     render();
 </script>
 </body>
