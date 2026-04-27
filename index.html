@@ -1,359 +1,140 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة مفقودات السيارات | سفير القوافي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>منصة السودان للاستعلام</title>
     <style>
-        :root { --primary: #1a3a5a; --secondary: #3498db; --accent: #f1c40f; --bg: #f8fafc; --white: #ffffff; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Cairo', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
-
-        /* الهيدر */
-        header { background: var(--primary); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
-        .logo-area { display: flex; align-items: center; }
-        .logo-img { width: 40px; height: 40px; border-radius: 8px; margin-left: 10px; border: 1px solid var(--secondary); }
-
-        .container { max-width: 500px; margin: auto; padding: 15px; }
-
-        /* شريط الإعلانات */
-        .ads-bar { background: var(--accent); color: #000; padding: 10px; text-align: center; font-size: 13px; font-weight: 700; border-radius: 10px; margin-bottom: 15px; border: 1px dashed #000; display: none; }
-
-        /* ميزة التنبيه */
-        .notify-section { background: #e3f2fd; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid var(--secondary); text-align: center; }
-        .notify-section h4 { margin: 0 0 10px 0; color: var(--primary); font-size: 14px; }
-
-        /* بروفايل المدير */
-        .profile-card { background: white; border-radius: 20px; padding: 15px; display: flex; align-items: center; margin-bottom: 20px; border: 1px solid #ddd; }
-        .profile-img { width: 65px; height: 65px; border-radius: 50%; border: 3px solid var(--secondary); margin-left: 12px; object-fit: cover; }
-
-        /* لوحة التحكم السرية */
-        #adminPanel { background: #fff; border: 2px solid var(--primary); border-radius: 20px; padding: 20px; margin-bottom: 20px; display: none; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: 'Cairo'; text-align: center; }
-        .btn-admin { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 10px; width: 100%; font-weight: 700; cursor: pointer; }
-
-        /* قائمة الشواصي */
-        .car-item { background: white; border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 10px; position: relative; }
-        .car-row-top { display: flex; justify-content: space-between; align-items: center; }
-        .car-name { font-weight: 700; color: var(--primary); }
+        :root { --main-color: #1a3a5f; --accent-color: #28a745; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; direction: rtl; margin: 0; padding: 0; }
+        .header { background: var(--main-color); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .container { max-width: 600px; margin: auto; padding: 20px; }
         
-        /* المستطيل دائري الحواف للشاسي */
-        .chassis-pill { background: #f0f9ff; color: var(--primary); padding: 5px 15px; border-radius: 25px; font-family: monospace; font-weight: 700; border: 1px solid var(--secondary); font-size: 14px; }
-
-        /* زر واتساب */
-        .btn-wa { background: #25d366; color: white; text-decoration: none; text-align: center; padding: 8px; border-radius: 10px; font-size: 12px; font-weight: 700; display: block; }
-
-        .footer { background: var(--primary); color: white; padding: 25px; text-align: center; border-radius: 25px 25px 0 0; font-size: 11px; margin-top: 20px; }
+        /* تصميم لوحة الإدارة */
+        #adminPanel { display: none; background: white; padding: 20px; border-radius: 15px; border: 2px solid var(--main-color); margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        #bulkInput { width: 100%; height: 150px; padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-size: 14px; box-sizing: border-box; resize: none; margin-bottom: 10px; }
+        .btn-add { width: 100%; background: var(--accent-color); color: white; padding: 15px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        
+        /* تصميم البحث والقائمة */
+        .search-box { width: 100%; padding: 15px; border-radius: 50px; border: 2px solid var(--main-color); margin-bottom: 20px; text-align: center; font-size: 16px; box-sizing: border-box; outline: none; }
+        .car-item { background: white; margin-bottom: 12px; padding: 15px; border-radius: 12px; border-right: 6px solid var(--main-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
+        .car-info { display: flex; justify-content: space-between; align-items: center; }
+        .car-name { font-weight: bold; color: var(--main-color); font-size: 17px; }
+        .chassis-no { background: #eef2f7; padding: 5px 12px; border-radius: 8px; font-family: monospace; font-weight: bold; color: #333; }
+        
+        .footer { text-align: center; padding: 30px; color: #666; font-size: 13px; }
+        .admin-trigger { position: fixed; bottom: 20px; left: 20px; width: 40px; height: 40px; background: var(--main-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: 0.3; }
     </style>
 </head>
 <body>
-<div style="text-align: center; background-color: #f8f9fa; padding: 15px; border-radius: 0 0 20px 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <img src="welcome.gif" alt="ترحيب" style="max-width: 100%; height: auto; border-radius: 10px;">
-    <h1 style="color: #1a3a5f; font-size: 1.5em; margin-top: 10px;">مرحباً بك في منصة المناقل</h1>
+
+<div class="header">
+    <h1>🔍 نظام الاستعلام الذكي</h1>
+    <p>أدخل رقم الشاسيه أو اسم السيارة للبحث</p>
 </div>
 
-<header>
-    <div class="logo-area">
-        <img src="1000026112.jpg" class="logo-img">
-        <span style="font-weight:700; font-size: 14px;">منصة مفقودات السيارات</span>
-    </div>
-    <div onclick="openAdmin()" style="cursor:pointer; font-size: 20px;">⚙️</div>
-</header>
-
 <div class="container">
-   
- <script src="https://pl29267992.profitablecpmratenetwork.com/6e/07/8c/6e078cbdb8836eed5a8f0aef473e0539.js"></script>
-
-
-    <div style="text-align: center; margin: 15px 0;">
-        <button onclick="showTable()" style="background: #1a3a5f; color: white; padding: 12px 20px; border: none; border-radius: 50px; cursor: pointer; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-weight: bold;">
-            📊 عرض سجل السيارات والشاسيهات المحدث
-        </button>
-    </div>
-
-    <div id="tableModal" style="display:none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); overflow: auto;">
-        <div style="background: #fff; margin: 5% auto; padding: 20px; border-radius: 15px; width: 95%; max-width: 700px; direction: rtl; font-family: sans-serif;">
-            <h3 style="text-align: center; color: #1a3a5f; border-bottom: 2px solid #eee; padding-bottom: 10px;">📋 سجل بيانات السيارات</h3>
-            
-            <div style="overflow-x:auto; max-height: 400px;">
-                <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px;">
-                    <thead>
-                        <tr style="background: #1a3a5f; color: white;">
-                            <th style="padding: 10px; border: 1px solid #ddd;">نوع السيارة / الموديل</th>
-                            <th style="padding: 10px; border: 1px solid #ddd;">رقم الشاسيه / اللوحة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>عربية صالون</td><td>546987</td></tr>
-                        <tr><td>عربية افانتي 2006</td><td>343591</td></tr>
-                        <tr><td>عربية بوكسي 2015</td><td>3406036</td></tr>
-                        <tr><td>عربية هونداي</td><td>067173</td></tr>
-                        <tr><td>عربية برادو 2014</td><td>4154929</td></tr>
-                        <tr><td>عربية كلك</td><td>070576</td></tr>
-                        <tr><td>عربية هونداي</td><td>172558</td></tr>
-                        <tr><td>عربية صالون (إستثمار)</td><td>966</td></tr>
-                        <tr><td>عربية هونداي</td><td>216881</td></tr>
-                        <tr><td>عربية سحليه</td><td>246932</td></tr>
-                        <tr><td>عربية برادو 2010</td><td>1047614</td></tr>
-                        <tr><td>عربية اكسنت 2015</td><td>008926</td></tr>
-                        <tr><td>عربية صالون (لوحة)</td><td>66745</td></tr>
-                        <tr><td>عربية صالون</td><td>421144</td></tr>
-                        <tr><td>عربية هونداي</td><td>393597</td></tr>
-                        <tr><td>كلك</td><td>346624</td></tr>
-                        <tr><td>صالون</td><td>049527</td></tr>
-                        <tr><td>استبوتاج</td><td>7465707</td></tr>
-                        <tr><td>كلك</td><td>406174</td></tr>
-                        <tr><td>كلك</td><td>127312</td></tr>
-                        <tr><td>كورلا</td><td>4623658</td></tr>
-                        <tr><td>بيكانتو</td><td>013678</td></tr>
-                        <tr><td>توسان</td><td>134658</td></tr>
-                        <tr><td>كلك</td><td>060812</td></tr>
-                        <tr><td>افانتي</td><td>981550</td></tr>
-                        <tr><td>اكسن</td><td>004612</td></tr>
-                        <tr><td>ايون</td><td>406550</td></tr>
-                        <tr><td>مضلع</td><td>283969</td></tr>
-                        <tr><td>اكسن</td><td>77247</td></tr>
-                        <tr><td>اكسن</td><td>064213</td></tr>
-                        <tr><td>صالون</td><td>000303</td></tr>
-                        <tr><td>مضلع</td><td>001304</td></tr>
-                        <tr><td>بوكسي</td><td>008937</td></tr>
-                        <tr><td>بي واي دي</td><td>003107</td></tr>
-                        <tr><td>بوكسي</td><td>02487</td></tr>
-                        <tr><td>اكسن</td><td>099957</td></tr>
-                        <tr><td>ايون</td><td>577523</td></tr>
-                        <tr><td>مستبيشو</td><td>000243</td></tr>
-                        <tr><td>كريز سيلفر</td><td>536459</td></tr>
-                        <tr><td>مارسدس</td><td>919287</td></tr>
-                        <tr><td>كورلا</td><td>856689</td></tr>
-                        <tr><td>اكسن</td><td>228546</td></tr>
-                        <tr><td>افانتي</td><td>687114</td></tr>
-                        <tr><td>اكسن</td><td>275068</td></tr>
-                        <tr><td>اكسن</td><td>504019</td></tr>
-                        <tr><td>صالون</td><td>5305486</td></tr>
-                        <tr><td>هايس</td><td>5036001</td></tr>
-                        <tr><td>اكسن</td><td>081420</td></tr>
-                        <tr><td>فتستو يااتوس</td><td>321363</td></tr>
-                        <tr><td>كورلا</td><td>53082755</td></tr>
-                        <tr><td>سوناتا</td><td>000880</td></tr>
-                        <tr><td>اكسن</td><td>230744</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-            <div style="text-align: center;">
-                <p style="font-weight: bold; color: #333; margin-bottom: 10px;">للتواصل والاستفسار عبر الواتساب:</p>
-                <a href="https://wa.me/249907539574" target="_blank" style="display: inline-flex; align-items: center; background: #25D366; color: white; padding: 12px 25px; border-radius: 30px; text-decoration: none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
-                    💬 مراسلة واتساب
-                </a>
-            </div>
-
-            <button onclick="document.getElementById('tableModal').style.display='none'" style="display: block; margin: 20px auto 0; padding: 10px 40px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">إغلاق</button>
-        </div>
-    </div>
-
-    <script>
-    function showTable() {
-        document.getElementById('tableModal').style.display = 'block';
-    }
-    </script>
-
-
-    <img src="1000026301.jpg" style="width:100%; border-radius:20px; margin-bottom:15px;">
-
-    <div class="notify-section">
-        <h4>🔔 سجل رقم شاسيك لنقوم بتنبيهك</h4>
-        <input type="text" id="notifyInput" placeholder="أدخل رقم الشاسي المفقود..." style="margin-bottom:5px; font-size:12px;">
-        <button class="btn-admin" style="padding:5px; font-size:12px;" onclick="alert('تم تسجيل طلبك، سنقوم بتنبيهك فور العثور عليه!')">تفعيل التنبيه</button>
-    </div>
-
-    <div class="profile-card">
-        <img src="1000026303.jpg" class="profile-img">
-        <div>
-            <h2 style="margin:0; font-size:16px;">سفير القوافي</h2>
-            <p style="margin:0; color:var(--secondary); font-size:11px;">إدارة المنصة - تحقق سيبراني</p>
-        </div>
-    </div>
-
     <div id="adminPanel">
-        <h4 style="text-align:center; margin-top:0;">🛠️ لوحة تحكم الإدارة</h4>
-        <label style="font-size:12px;">تحديث الإعلان:</label>
-        <textarea id="newAd" placeholder="اكتب إعلاناً جديداً هنا..."></textarea>
-        <hr>
-        <label style="font-size:12px;">إضافة سيارة جديدة:</label>
-        <input type="text" id="cName" placeholder="نوع السيارة">
-        <input type="text" id="cID" placeholder="رقم الشاسي">
-        <button class="btn-admin" onclick="saveAll()">حفظ ونشر التعديلات ✅</button>
+        <h3 style="text-align: center; margin-top: 0;">📥 إضافة قائمة سيارات جماعية</h3>
+        <p style="font-size: 12px; color: #666;">يمكنك لصق القائمة من الواتساب مباشرة (مثال: اكسنت 123456)</p>
+        <textarea id="bulkInput" placeholder="ألصق القائمة هنا..."></textarea>
+        <button class="btn-add" onclick="addBulkCars()">🚀 اعتماد وإضافة للموقع</button>
+        <button onclick="clearData()" style="width:100%; background:none; color:red; border:none; margin-top:10px; cursor:pointer; font-size:12px;">🗑 مسح كل البيانات</button>
     </div>
 
-    <input type="text" id="search" placeholder="ابحث برقم الشاسي هـنـا..." onkeyup="doSearch()" style="border:2px solid var(--secondary); font-weight:bold;">
+    <input type="text" id="search" class="search-box" oninput="doSearch()" placeholder="ابحث هنا عن السيارة أو الشاسيه...">
 
     <div id="mainList"></div>
 </div>
 
 <div class="footer">
-    <b>جميع الحقوق محفوظة لمنصة السودان © 2026</b><br>
+    <b>2026 © جميع الحقوق محفوظة لمنصة السودان</b><br>
     إشراف: سفير القوافي
 </div>
 
+<div class="admin-trigger" onclick="openAdmin()">⚙️</div>
+
 <script>
-    // بيانات أولية تظهر عند أول تشغيل
-    const starterCars = [
-    {name: "عربية صالون", id: "546987"},
-    {name: "عربية افانتي 2006", id: "343591"},
-    {name: "عربية بوكسي 2015", id: "3406036"},
-    {name: "عربية هونداي", id: "067173"},
-    {name: "عربية برادو 2014", id: "4154929"},
-    {name: "عربية كلك", id: "070576"},
-    {name: "عربية هونداي", id: "172558"},
-    {name: "عربية صالون إستثمار", id: "966"},
-    {name: "عربية هونداي", id: "216881"},
-    {name: "عربية سحليه", id: "246932"},
-    {name: "عربية برادو 2010", id: "1047614"},
-    {name: "عربية اكسنت 2015", id: "008926"},
-    {name: "عربية صالون لوحة", id: "66745"},
-    {name: "عربية صالون", id: "421144"},
-    {name: "عربية هونداي", id: "393597"},
-    {name: "كلك", id: "346624"},
-    {name: "صالون", id: "049527"},
-    {name: "استبوتاج", id: "7465707"},
-    {name: "كلك", id: "406174"},
-    {name: "كلك", id: "127312"},
-    {name: "كورلا", id: "4623658"},
-    {name: "بيكانتو", id: "013678"},
-    {name: "توسان", id: "134658"},
-    {name: "كلك", id: "060812"},
-    {name: "افانتي", id: "981550"},
-    {name: "اكسن", id: "004612"},
-    {name: "ايون", id: "406550"},
-    {name: "مضلع", id: "283969"},
-    {name: "اكسن", id: "77247"},
-    {name: "اكسن", id: "064213"},
-    {name: "صالون", id: "000303"},
-    {name: "مضلع", id: "001304"},
-    {name: "بوكسي", id: "008937"},
-    {name: "بي واي دي", id: "003107"},
-    {name: "بوكسي", id: "02487"},
-    {name: "اكسن", id: "099957"},
-    {name: "ايون", id: "577523"},
-    {name: "مستبيشو", id: "000243"},
-    {name: "كريز سيلفر", id: "536459"},
-    {name: "مارسدس", id: "919287"},
-    {name: "كورلا", id: "856689"},
-    {name: "اكسن", id: "228546"},
-    {name: "افانتي", id: "687114"},
-    {name: "اكسن", id: "275068"},
-    {name: "اكسن", id: "504019"},
-    {name: "صالون", id: "5305486"},
-    {name: "هايس", id: "5036001"},
-    {name: "اكسن", id: "081420"},
-    {name: "فتستو يااتوس", id: "321363"},
-    {name: "كورلا", id: "53082755"},
-    {name: "سوناتا", id: "000880"},
-    {name: "اكسن", id: "230744"}
-];
+    // 1. البيانات الأساسية
+    const starterCars = []; // الموقع يبدأ نظيفاً
+    let cars = JSON.parse(localStorage.getItem('cars')) || starterCars;
 
-
-    let cars = JSON.parse(localStorage.getItem('finalDataV4')) || starterCars;
-    let adText = localStorage.getItem('finalAdV4') || "مرحباً بكم في منصة مفقودات السيارات - بإدارة سفير القوافي";
-
-    function render() {
-        // تحديث الإعلان
-        const adBox = document.getElementById('adBox');
-        if(adText) {
-            adBox.innerText = "📢 " + adText;
-            adBox.style.display = 'block';
-        }
-
-        // تحديث القائمة
+    // 2. وظيفة عرض البيانات
+    function render(data = cars) {
         const list = document.getElementById('mainList');
         list.innerHTML = "";
-        cars.forEach(c => {
+        
+        if (data.length === 0) {
+            list.innerHTML = "<p style='text-align:center; color:#999;'>لا توجد بيانات مضافة حالياً</p>";
+            return;
+        }
+
+        data.forEach(c => {
             list.innerHTML += `
                 <div class="car-item">
-                    <div class="car-row-top">
+                    <div class="car-info">
                         <span class="car-name">✅ ${c.name}</span>
-                        <span class="chassis-pill">${c.id}</span>
+                        <span class="chassis-no">${c.id}</span>
                     </div>
-                    <a href="https://wa.me/249900000000?text=استفسار بخصوص السيارة: ${c.name} - شاسي: ${c.id}" class="btn-wa">
-                        تواصل عبر واتساب مباشر 💬
-                    </a>
                 </div>`;
         });
     }
 
-    function openAdmin() {
-        if(prompt("كلمة مرور المدير:") === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-        }
+    // 3. وظيفة الإضافة الجماعية (الذكية)
+    function addBulkCars() {
+        const input = document.getElementById('bulkInput').value;
+        if (!input.trim()) return alert("الخانة فارغة!");
+
+        const lines = input.split('\n');
+        let count = 0;
+        
+        lines.forEach(line => {
+            const matchId = line.match(/\d+/); // استخراج أول مجموعة أرقام كشاسيه
+            if (matchId) {
+                const id = matchId[0];
+                const name = line.replace(id, '').replace(/[،,-]/g, '').trim();
+                if (name) {
+                    cars.unshift({ name: name, id: id }); // إضافة السيارة في أول القائمة
+                    count++;
+                }
+            }
+        });
+
+        localStorage.setItem('cars', JSON.stringify(cars));
+        render();
+        document.getElementById('bulkInput').value = '';
+        alert("تمت إضافة " + count + " سيارة بنجاح!");
     }
 
-    function saveAll() {
-        const nAd = document.getElementById('newAd').value;
-        const nCar = document.getElementById('cName').value;
-        const nID = document.getElementById('cID').value;
-
-        if(nAd) {
-            adText = nAd;
-            localStorage.setItem('finalAdV4', adText);
-        }
-        if(nCar && nID) {
-            cars.unshift({name: nCar, id: nID});
-            localStorage.setItem('finalDataV4', JSON.stringify(cars));
-        }
-        alert("تم التحديث بنجاح!");
-        location.reload();
-    }
-
+    // 4. وظيفة البحث السريع
     function doSearch() {
         const q = document.getElementById('search').value.toLowerCase();
         const filtered = cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q));
-        const list = document.getElementById('mainList');
-        list.innerHTML = "";
-        filtered.forEach(c => {
-            list.innerHTML += `
-                <div class="car-item">
-                    <div class="car-row-top">
-                        <span class="car-name">✅ ${c.name}</span>
-                        <span class="chassis-pill">${c.id}</span>
-                    </div>
-                    <a href="https://wa.me/249900000000?text=استفسار عن شاسي: ${c.id}" class="btn-wa">تواصل واتساب 💬</a>
-                </div>`;
-        });
+        render(filtered);
     }
 
-    window.onload = render;
+    // 5. وظيفة فتح لوحة الإدارة
+    function openAdmin() {
+        if (prompt("أدخل كلمة مرور المدير:") === "3344") {
+            document.getElementById('adminPanel').style.display = 'block';
+            window.scrollTo(0, 0);
+        } else {
+            alert("كلمة المرور غير صحيحة!");
+        }
+    }
+
+    // 6. مسح البيانات (للمدير فقط)
+    function clearData() {
+        if (confirm("هل أنت متأكد من حذف جميع السيارات من الموقع؟")) {
+            cars = [];
+            localStorage.removeItem('cars');
+            render();
+        }
+    }
+
+    // تشغيل الموقع عند التحميل
+    render();
 </script>
-<div style="background-color: #ffffff; padding: 20px; border-radius: 15px; margin: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); direction: rtl; text-align: right; font-family: sans-serif;">
-    <h2 style="color: #1a3a5f; border-bottom: 2px solid #1a3a5f; padding-bottom: 10px;">الدليل الشامل: كيف تحمي سيارتك من السرقة؟</h2>
-    
-    <p style="color: #444; line-height: 1.6; font-size: 1.1em;">
-        في ظل انتشار سرقات السيارات، أصبح من الضروري لكل صاحب مركبة أن يتخذ خطوات استباقية لحماية استثماره. في منصة <strong>المناقل</strong>، نهتم بتوعيتك لمنع وقوع السرقة من الأساس.
-    </p>
-
-    <h3 style="color: #2c5282;">أولاً: إجراءات الأمان اليومية</h3>
-    <ul style="color: #444; line-height: 1.8;">
-        <li><strong>تأمين الأبواب:</strong> لا تترك سيارتك مفتوحة أبداً، حتى لو كنت تبتعد عنها لثوانٍ معدودة.</li>
-        <li><strong>إخفاء المقتنيات:</strong> الحقائب والهواتف تجذب اللصوص؛ ضعها دائماً في مكان غير مرئي.</li>
-        <li><strong>مكان الركن:</strong> احرص على الركن في أماكن مضاءة جيداً أو تحت مراقبة الكاميرات.</li>
-    </ul>
-
-    <h3 style="color: #2c5282;">ثانياً: الاستثمار في التكنولوجيا</h3>
-    <ul style="color: #444; line-height: 1.8;">
-        <li><strong>أنظمة التتبع (GPS):</strong> تركيب جهاز تتبع مخفي هو أفضل وسيلة لاستعادة سيارتك بسرعة.</li>
-        <li><strong>أجهزة الإنذار:</strong> تأكد من أن جهاز الإنذار يعمل بكفاءة ويصدر صوتاً قوياً.</li>
-        <li><strong>قفل المقود:</strong> استخدام القفل اليدوي التقليدي يعتبر رادعاً بصرياً قوياً للصوص.</li>
-    </ul>
-
-    <div style="background-color: #edf2f7; padding: 15px; border-right: 5px solid #2c5282; margin-top: 20px;">
-        <h3 style="margin-top: 0; color: #2c5282;">نصيحة منصة المناقل الذهبية</h3>
-        <p style="margin-bottom: 0;">
-            احتفظ دائماً بنسخة من <strong>رقم الشاسيه</strong> وصور واضحة لسيارتك. في حال وقوع مكروه، استخدم خدمة تفعيل التنبيه في منصتنا لنشر بياناتك فوراً ومساعدتنا في تتبعها.
-        </p>
-    </div>
-</div>
 
 </body>
 </html>
