@@ -461,6 +461,65 @@ function injectFeature(htmlContent) {
     font-family: monospace;
 }
 </style>
+<template id="script-editor-update">
+    <div class="admin-section">
+        <h4><i class="fab fa-js-square"></i> محرر السكريبت الذكي (JavaScript)</h4>
+        <p style="font-size:12px; color:#8892b0;">هنا يمكنك تغيير (كلمة السر) أو أي منطق برمجى آخر:</p>
+        <textarea id="jsEditor" placeholder="// اكتب كود الجافا سكريبت هنا... 
+example: var adminPass = '3344';" 
+        style="width:100%; height:120px; background:#0a0b10; color:#f1fa8c; font-family:monospace; padding:10px; border:1px solid #334155; border-radius:8px;"></textarea>
+        
+        <button onclick="saveAndApplyJS()" style="margin-top:10px; background:#f1fa8c; color:#000; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold;">
+            <i class="fas fa-save"></i> حفظ وتشغيل السكريبت
+        </button>
+    </div>
+</template>
+
+<script>
+(function addJSEditor() {
+    // 1. حقن واجهة المحرر داخل لوحة التحكم الموجودة
+    const adminContent = document.querySelector('.admin-content');
+    const scriptTemplate = document.getElementById('script-editor-update');
+    
+    if (adminContent && scriptTemplate) {
+        adminContent.appendChild(scriptTemplate.content.cloneNode(true));
+    }
+
+    // 2. تحميل الكود المحفوظ مسبقاً (إن وجد)
+    const savedJS = localStorage.getItem('custom_js');
+    if (savedJS) {
+        document.getElementById('jsEditor').value = savedJS;
+        eval(savedJS); // تشغيل الكود المحفوظ عند فتح الموقع
+    }
+})();
+
+// دالة حفظ وتشغيل الكود الجديد
+function saveAndApplyJS() {
+    const code = document.getElementById('jsEditor').value;
+    try {
+        localStorage.setItem('custom_js', code); // حفظ الكود في ذاكرة المتصفح
+        eval(code); // تنفيذ الكود فوراً
+        alert("تم حفظ السكريبت وتشغيله بنجاح!");
+    } catch (e) {
+        alert("خطأ في الكود: " + e.message);
+    }
+}
+
+// دالة فتح لوحة التحكم (الآن تعتمد على كلمة السر الديناميكية)
+var adminPass = localStorage.getItem('admin_password') || "3344"; // الافتراضية
+
+function openAdmin() {
+    let pass = prompt("أدخل كلمة السر:");
+    
+    // ملاحظة: يمكنك الآن تغيير قيمة adminPass من داخل محرر JS الجديد
+    if(pass === adminPass) { 
+        document.getElementById('admin-panel').style.display = 'block';
+        document.body.style.overflow = 'hidden'; 
+    } else {
+        alert("كلمة السر خاطئة!");
+    }
+}
+</script>
 
 </body>
 </html>
