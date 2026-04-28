@@ -1451,6 +1451,202 @@ function closeAdmin() {
     .glass-card { padding: 15px; }
 }
 </style>
+<script>
+// --- 1. إدارة البيانات ---
+let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+
+// --- 2. دالة فتح لوحة التحكم (تصميم إنفوجرافيك 720x1600) ---
+window.openAdmin = function() {
+    let pass = prompt("أدخل كلمة المرور لفتح اللوحة الملكية:");
+    if (pass !== "3344") return alert("كلمة المرور خاطئة!");
+
+    let panel = document.getElementById('admin-panel');
+    panel.style.cssText = `
+        display: block !important;
+        position: fixed !important;
+        top: 0 !important; left: 0 !important;
+        width: 100vw !important; height: 100vh !important;
+        background: #0a0b10 !important;
+        z-index: 99999999 !important;
+        overflow: hidden !important; /* الهيكل ثابت والتمرير بالداخل */
+        padding: 0 !important; margin: 0 !important;
+    `;
+    document.body.style.overflow = 'hidden';
+
+    panel.innerHTML = `
+    <div class="infographic-admin-wrapper">
+        <div class="admin-safe-header">
+            <span style="color:#00ffc3; font-weight:bold;"><i class="fas fa-microchip"></i> نظام سفير القوافي</span>
+            <button onclick="closeAdmin()" class="absolute-close-x">×</button>
+        </div>
+
+        <div class="admin-scrollable-infographic">
+            
+            <div class="chart-layout">
+                <div class="large-circle-container" onclick="openArchive()">
+                    <div class="circle-content">
+                        <i class="fas fa-folder-open large-icon"></i>
+                        <h3>الأرشيف</h3>
+                        <p>إدارة الملفات وحذف البيانات</p>
+                    </div>
+                </div>
+
+                <div class="banners-list-wrapper">
+                    
+                    <div class="banner-box blue-banner">
+                        <div class="banner-title"><i class="fas fa-boxes"></i> إضافة مجموعة</div>
+                        <input type="text" id="groupPhone" placeholder="رقم واتساب المجموعة">
+                        <textarea id="groupInput" placeholder="الصق النص هنا..."></textarea>
+                        <button onclick="saveGroup()" class="process-btn">حفظ وفرز المجموعة</button>
+                    </div>
+
+                    <div class="banner-box teal-banner">
+                        <div class="banner-title"><i class="fas fa-plus-circle"></i> إضافة سيارة واحدة</div>
+                        <div class="input-row-infographic">
+                            <input type="text" id="fCar" placeholder="اسم السيارة">
+                            <input type="text" id="fModel" placeholder="الموديل">
+                        </div>
+                        <div class="input-row-infographic">
+                            <input type="text" id="fChassis" placeholder="الشاسي">
+                            <input type="text" id="fPlate" placeholder="اللوحة">
+                        </div>
+                        <input type="text" id="fPhone" placeholder="رقم واتساب التواصل" style="margin-top:8px;">
+                        <button onclick="saveSingle()" class="process-btn teal-btn">حفظ السيارة</button>
+                    </div>
+
+                    <div class="banner-box purple-banner">
+                        <div class="banner-title"><i class="fas fa-paint-brush"></i> محرر CSS السريع</div>
+                        <textarea id="cssEditorInfographic" placeholder="p { color: red; }"></textarea>
+                        <button onclick="saveDynamicCSS()" class="process-btn purple-btn">تطبيق الألوان</button>
+                    </div>
+
+                    <div class="banner-box pink-banner">
+                        <div class="banner-title"><i class="fab fa-js-square"></i> محرر السكريبت (تغيير كلمة السر)</div>
+                        <textarea id="jsEditorInfographic" class="code-font" placeholder="adminPass = '3344';"></textarea>
+                        <button onclick="saveDynamicJS()" class="process-btn pink-btn">حفظ وتشغيل الكود</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+};
+
+function closeAdmin() {
+    document.getElementById('admin-panel').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+</script>
+
+<style>
+/* --- تصميم إنفوجرافيك مخصص للوحة التحكم (720x1600) --- */
+
+.infographic-admin-wrapper {
+    width: 100%; max-width: 720px;
+    margin: 0 auto; height: 100vh;
+    display: flex; flex-direction: column;
+    background: #0a0b10; font-family: sans-serif;
+}
+
+.admin-safe-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 15px 20px; background: #11141d; border-bottom: 2px solid #00ffc3;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.absolute-close-x {
+    background: #ef4444; border: none; color: white;
+    font-size: 24px; font-weight: bold; padding: 0 12px;
+    border-radius: 8px; cursor: pointer;
+}
+
+/* التمرير للأعلى والأسفل هنا */
+.admin-scrollable-infographic {
+    padding: 20px; flex-grow: 1; overflow-y: auto; box-sizing: border-box;
+}
+
+/* تخطيط الإنفوجرافيك (الدائرة + الأشرطة) */
+.chart-layout {
+    display: flex; flex-direction: row-reverse; gap: 15px; /* الدائرة على اليمين والأشرطة يسارها */
+}
+
+/* تصميم الدائرة الكبيرة (الأرشيف) */
+.large-circle-container {
+    flex: 0 0 150px; /* عرض ثابت للدائرة */
+    height: 150px; background: #fff;
+    border-radius: 50%; border: 4px solid #fff;
+    display: flex; justify-content: center; align-items: center;
+    text-align: center; cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(255,255,255,0.1);
+    position: sticky; top: 10px; /* تظل ثابتة أثناء التمرير */
+    margin-top: 50px; transition: 0.3s;
+}
+
+.large-circle-container:hover { transform: scale(1.05); }
+
+.circle-content { color: #11141d; padding: 10px; }
+.large-icon { font-size: 3rem; margin-bottom: 5px; color: #11141d; }
+.circle-content h3 { margin: 0; font-size: 0.9rem; }
+.circle-content p { margin: 2px 0 0 0; font-size: 0.65rem; opacity: 0.8; }
+
+/* تصميم قائمة الأشرطة (Banners) القابلة للتمرير */
+.banners-list-wrapper {
+    flex-grow: 1; display: flex; flex-direction: column; gap: 20px; /* مسافة بين المستطيلات */
+}
+
+/* التنسيق الأساسي لكل شريط */
+.banner-box {
+    background: #1e293b; color: white;
+    padding: 15px 15px 15px 25px; /* مسافة أوسع على اليسار */
+    border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);
+    position: relative; box-sizing: border-box;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+}
+
+/* شكل "السهم" على يسار الشريط لتماثل التصميم */
+.banner-box::before {
+    content: ''; position: absolute; left: 1px; top: 0; height: 100%; width: 20px;
+    background: inherit; clip-path: polygon(100% 0, 0 50%, 100% 100%);
+}
+
+.banner-title { font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+/* المدخلات داخل الأشرطة */
+.banner-box input, .banner-box textarea {
+    width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2);
+    color: white; padding: 10px; border-radius: 6px; margin-bottom: 8px; box-sizing: border-box;
+}
+
+.banner-box textarea { height: 90px; resize: none; font-size: 0.8rem; }
+.input-row-infographic { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* أزرار الإجراءات */
+.process-btn {
+    width: 100%; padding: 10px; border: none; border-radius: 6px;
+    font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.85rem;
+}
+
+/* الألوان الخاصة بكل شريط لتماثل الصورة */
+.blue-banner { border-right: 4px solid #113460; }
+.process-btn { background: #113460; color: white; }
+
+.teal-banner { border-right: 4px solid #009ead; }
+.teal-btn { background: #009ead; }
+
+.purple-banner { border-right: 4px solid #6b3a8a; }
+.purple-btn { background: #6b3a8a; }
+
+.pink-banner { border-right: 4px solid #b72b6c; }
+.pink-btn { background: #b72b6c; }
+
+.code-font { font-family: monospace; background: #000 !important; color: #f1fa8c !important; }
+
+/* تعديلات متجاوبة للهواتف */
+@media (max-width: 600px) {
+    .chart-layout { flex-direction: column; align-items: center; }
+    .large-circle-container { flex: 0 0 130px; height: 130px; position: relative; margin-top: 10px; margin-bottom: 15px; }
+    .large-icon { font-size: 2.5rem; }
+}
+</style>
 
 </body>
 </html>
