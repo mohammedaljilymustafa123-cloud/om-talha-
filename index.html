@@ -1065,6 +1065,178 @@ document.head.appendChild(styleFix);
 // التشغيل المبدئي
 renderMainUI();
 </script>
+<script>
+// --- 1. إعدادات وقاعدة البيانات ---
+let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+let isExpanded = false; // حالة الجدول (موسع أم لا)
+
+// --- 2. تحديث الواجهة الرئيسية (ترتيب الخانات الرباعي + أيقونة الشخص) ---
+function renderMainUI() {
+    const tableBody = document.getElementById('tableBody');
+    const container = document.querySelector('.main-container'); // تأكد أن محتوى الصفحة داخل container
+    if (!tableBody) return;
+
+    // تحديد عدد العناصر المعروضة بناءً على الحالة
+    let displayData = isExpanded ? db : db.slice(0, 5);
+
+    tableBody.innerHTML = displayData.map(item => `
+        <tr>
+            <td class="col-car">${item.car}</td>
+            <td class="col-model">${item.model}</td>
+            <td class="col-chassis">${item.chassis}</td>
+            <td class="col-plate">${item.plate}</td>
+            <td class="col-wa">
+                <a href="https://wa.me/${item.phone}" target="_blank">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            </td>
+        </tr>
+    `).join('');
+
+    updateShowMoreButton();
+}
+
+// --- 3. نظام "التحول الذكي" عند الضغط على عرض المزيد ---
+function toggleShowMore() {
+    isExpanded = !isExpanded;
+    const headerSection = document.querySelector('.profile-section'); // البروفايل
+    const searchSection = document.querySelector('.search-section');   // مربع البحث
+    
+    if (isExpanded) {
+        // تصغير العناصر العلوية ورفع الجدول للأعلى
+        if(headerSection) headerSection.style.transform = "scale(0.8) translateY(-20px)";
+        if(searchSection) searchSection.style.transform = "scale(0.9) translateY(-10px)";
+        document.querySelector('.table-section').style.marginTop = "-30px";
+    } else {
+        // إعادة العناصر لوضعها الطبيعي
+        if(headerSection) headerSection.style.transform = "scale(1) translateY(0)";
+        if(searchSection) searchSection.style.transform = "scale(1) translateY(0)";
+        document.querySelector('.table-section').style.marginTop = "10px";
+    }
+    
+    renderMainUI();
+}
+
+function updateShowMoreButton() {
+    let btn = document.getElementById('btn-show-more');
+    if (!btn) {
+        btn = document.createElement('button');
+        btn.id = 'btn-show-more';
+        btn.className = 'show-more-btn';
+        document.querySelector('.table-section').appendChild(btn);
+    }
+    
+    if (db.length > 5) {
+        btn.style.display = "block";
+        btn.innerHTML = isExpanded ? "عرض أقل ↑" : "عرض المزيد ↓";
+        btn.onclick = toggleShowMore;
+    } else {
+        btn.style.display = "none";
+    }
+}
+
+// --- 4. تحديث لوحة الإدارة (مقاس 720x1600 والشاشة الكاملة) ---
+window.openAdmin = function() {
+    let pass = prompt("أدخل كلمة المرور:");
+    if(pass !== "3344") return alert("خطأ!");
+
+    let panel = document.getElementById('admin-panel');
+    panel.style.cssText = `
+        display: block !important; position: fixed !important; top: 0 !important; left: 0 !important;
+        width: 100vw !important; height: 100vh !important; background: #0a0b10 !important;
+        z-index: 2000000 !important; overflow-y: auto !important;
+    `;
+    
+    panel.innerHTML = `
+    <div class="admin-wrapper-720">
+        <div class="admin-nav">
+            <div class="nav-left">
+                <button onclick="openArchive()" class="nav-icon-btn"><i class="fas fa-file-invoice"></i> الملف</button>
+            </div>
+            <div class="nav-center">لوحة التحكم</div>
+            <div class="nav-right">
+                <button onclick="closeAdmin()" class="nav-close-btn">×</button>
+            </div>
+        </div>
+
+        <div class="admin-content-scroll">
+            <div class="admin-card-modern">
+                <h3><i class="fas fa-boxes"></i> إضافة مجموعة</h3>
+                <input type="text" id="groupPhone" placeholder="رقم واتساب المجموعة">
+                <textarea id="groupInput" placeholder="الصق النص هنا... سيتم التوزيع تلقائياً"></textarea>
+                <button onclick="saveGroup()" class="btn-save-group">فرز وحفظ المجموعة</button>
+            </div>
+
+            <div class="admin-card-modern">
+                <h3><i class="fas fa-plus-circle"></i> إضافة فردية</h3>
+                <div class="input-grid-4">
+                    <input type="text" id="fCar" placeholder="اسم السيارة">
+                    <input type="text" id="fModel" placeholder="الموديل">
+                    <input type="text" id="fChassis" placeholder="الشاسي">
+                    <input type="text" id="fPlate" placeholder="اللوحة">
+                </div>
+                <input type="text" id="fPhone" placeholder="رقم التواصل (واتساب)" style="margin-top:10px; width:100%;">
+                <button onclick="saveSingle()" class="btn-save-single">حفظ السيارة</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.style.overflow = 'hidden';
+};
+</script>
+
+<style>
+/* --- التنسيق العالمي لمقاس 720x1600 --- */
+:root { --accent: #00ffc3; --bg: #0a0b10; }
+
+/* تحويلات الواجهة */
+.profile-section, .search-section { transition: all 0.4s ease; }
+
+/* الجدول المتناسق */
+table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+th, td { padding: 12px 2px; text-align: center; border-bottom: 1px solid #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+th { color: var(--accent); font-size: 0.8rem; }
+td { color: #fff; font-size: 0.75rem; }
+
+.col-chassis { font-weight: bold; color: var(--accent) !important; font-size: 0.85rem !important; }
+.col-wa i { color: #25d366; font-size: 1.2rem; }
+
+/* زر عرض المزيد */
+.show-more-btn {
+    display: block; width: fit-content; margin: 15px auto;
+    background: none; border: 1px solid var(--accent);
+    color: var(--accent); padding: 6px 25px; border-radius: 20px;
+    font-size: 0.85rem; cursor: pointer;
+}
+
+/* تصميم لوحة التحكم (720x1600) */
+.admin-wrapper-720 {
+    width: 100%; max-width: 720px; margin: 0 auto;
+    height: 100%; display: flex; flex-direction: column;
+}
+.admin-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px; background: #11141d; border-bottom: 2px solid var(--accent);
+}
+.admin-content-scroll { padding: 20px; flex-grow: 1; }
+.admin-card-modern {
+    background: #1e293b; border-radius: 15px; padding: 20px;
+    margin-bottom: 20px; border: 1px solid #334155;
+}
+.input-grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.admin-card-modern input, .admin-card-modern textarea {
+    width: 100%; background: #0a0b10; border: 1px solid #334155;
+    color: #fff; padding: 12px; border-radius: 8px; box-sizing: border-box;
+}
+.btn-save-group, .btn-save-single {
+    width: 100%; padding: 15px; border: none; border-radius: 10px;
+    font-weight: bold; margin-top: 15px; cursor: pointer;
+}
+.btn-save-group { background: var(--accent); color: #000; }
+.btn-save-single { background: #3b82f6; color: #fff; }
+
+.nav-close-btn { background: #ef4444; border: none; color: #fff; font-size: 24px; border-radius: 5px; padding: 0 10px; }
+.nav-icon-btn { background: #f59e0b; border: none; color: #fff; padding: 5px 12px; border-radius: 5px; }
+</style>
 
 </body>
 </html>
