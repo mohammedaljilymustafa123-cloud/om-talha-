@@ -150,5 +150,328 @@
 
     render();
 </script>
+<style class="smart-addon">
+    .group-manager { background: #f1f3f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed #cbd5e0; text-align: center; }
+    .add-group-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
+    
+    .car-group-box { background: white; border: 1px solid #ddd; border-radius: 15px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .group-header { background: var(--bg-dark); color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .group-content { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media (max-width: 600px) { .group-content { grid-template-columns: 1fr; } }
+    
+    .section-box { background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
+    .section-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: var(--accent-orange); border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+    
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+    .admin-table th, .admin-table td { border: 1px solid #eee; padding: 5px; text-align: center; }
+    .admin-table th { background: #f8f9fa; }
+    
+    .btn-del-group { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+</style>
+
+<script class="smart-addon">
+    // مصفوفة المجموعات (كل مجموعة تحتوي على اسم وسيارات)
+    let carGroups = JSON.parse(localStorage.getItem('carGroups')) || [];
+
+    function setupMultiGroupAdmin() {
+        const adminPanel = document.getElementById('adminPanel');
+        if (!adminPanel) return;
+
+        // تنظيف لوحة التحكم الحالية ووضع نظام المجموعات
+        adminPanel.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0; font-size:18px;">🛠️ مدير المجموعات الذكي</h2>
+                <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px;">إغلاق اللوحة ✖</button>
+            </div>
+            
+            <div class="group-manager">
+                <p style="margin:0 0 10px 0; font-size:13px; color:#666;">إضافة كشف جديد (جداول منفصلة)</p>
+                <button class="add-group-btn" onclick="createNewGroup()">➕ إضافة جدول جديد</button>
+            </div>
+            
+            <div id="groupsListContainer"></div>
+        `;
+        renderAdminGroups();
+    }
+
+    // إنشاء مجموعة جديدة
+    window.createNewGroup = function() {
+        const groupName = prompt("أدخل اسم الكشف أو الجدول الجديد (مثلاً: كشف بوكسي تويوتا):");
+        if (groupName) {
+            const newGroup = {
+                id: Date.now(),
+                name: groupName,
+                cars: []
+            };
+            carGroups.push(newGroup);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    // حفظ البيانات
+    function saveGroups() {
+        localStorage.setItem('carGroups', JSON.stringify(carGroups));
+        // تحديث مصفوفة السيارات الأصلية للعرض في الموقع
+        let allCars = [];
+        carGroups.forEach(g => allCars = allCars.concat(g.cars));
+        window.cars = allCars;
+        localStorage.setItem('cars', JSON.stringify(allCars));
+        if(typeof render === 'function') render(); 
+    }
+
+    // عرض المجموعات داخل لوحة الإدارة
+    function renderAdminGroups() {
+        const container = document.getElementById('groupsListContainer');
+        container.innerHTML = carGroups.map((group, gIndex) => `
+            <div class="car-group-box">
+                <div class="group-header">
+                    <span>📋 ${group.name} (${group.cars.length} سيارة)</span>
+                    <button class="btn-del-group" onclick="deleteGroup(${gIndex})">حذف الجدول بالكامل 🗑️</button>
+                </div>
+                <div class="group-content">
+                    <div class="section-box">
+                        <div class="section-title">⚙️ إضافة وتنظيم (اسم شاسيه لوحة)</div>
+                        <textarea id="input-${group.id}" style="width:100%; height:80px; font-size:12px; border-radius:8px; border:1px solid #ddd; padding:5px;" placeholder="ألصق البيانات هنا..."></textarea>
+                        <button onclick="processGroupInput(${gIndex})" style="width:100%; margin-top:10px; background:var(--accent-orange); color:white; border:none; padding:8px; border-radius:8px; cursor:pointer; font-weight:bold;">نشر وتفريز تلقائي 🚀</button>
+                    </div>
+                    
+                    <div class="section-box">
+                        <div class="section-title">🔍 إدارة البيانات والملاك</div>
+                        <div style="max-height:150px; overflow-y:auto;">
+                            <table class="admin-table">
+                                <thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>🗑️</th></tr></thead>
+                                <tbody>
+                                    ${group.cars.map((c, cIndex) => `
+                                        <tr>
+                                            <td>${c.name}</td>
+                                            <td>${c.id}</td>
+                                            <td>${c.plate || '-'}</td>
+                                            <td onclick="deleteCarFromGroup(${gIndex}, ${cIndex})" style="color:red; cursor:pointer;">✖</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // تفريز تلقائي للبيانات داخل المجموعة
+    window.processGroupInput = function(gIndex) {
+        const inputArea = document.getElementById(`input-${carGroups[gIndex].id}`);
+        const data = inputArea.value.trim();
+        if(!data) return;
+
+        const lines = data.split('\n');
+        lines.forEach(line => {
+            const parts = line.trim().split(/\s+/);
+            if(parts.length >= 1) {
+                carGroups[gIndex].cars.unshift({
+                    name: parts[0] || "غير معروف",
+                    id: parts[1] || "لا يوجد",
+                    plate: parts[2] || "لا يوجد",
+                    phone: "249129642174"
+                });
+            }
+        });
+        inputArea.value = "";
+        saveGroups();
+        renderAdminGroups();
+        alert("تم التنظيم والتحديث تلقائياً ✅");
+    }
+
+    window.deleteCarFromGroup = function(gIndex, cIndex) {
+        if(confirm("حذف هذه السيارة؟")) {
+            carGroups[gIndex].cars.splice(cIndex, 1);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    window.deleteGroup = function(index) {
+        if(confirm("هل أنت متأكد من حذف هذا الجدول بالكامل؟ لا يمكن التراجع.")) {
+            carGroups.splice(index, 1);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    // تشغيل النظام عند فتح لوحة الإدارة
+    const originalOpenAdmin = window.openAdmin;
+    window.openAdmin = function() {
+        const pass = prompt("كلمة السر:");
+        if(pass === "3344") {
+            document.getElementById('adminPanel').style.display = 'block';
+            setupMultiGroupAdmin();
+        } else if(pass !== null) {
+            alert("خطأ في كلمة السر");
+        }
+    }
+</script>
+    <style class="smart-addon">
+    .group-manager { background: #f1f3f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed #cbd5e0; text-align: center; }
+    .add-group-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
+    
+    .car-group-box { background: white; border: 1px solid #ddd; border-radius: 15px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+    .group-header { background: var(--bg-dark); color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .group-content { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    @media (max-width: 600px) { .group-content { grid-template-columns: 1fr; } }
+    
+    .section-box { background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
+    .section-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: var(--accent-orange); border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+    
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
+    .admin-table th, .admin-table td { border: 1px solid #eee; padding: 5px; text-align: center; }
+    .admin-table th { background: #f8f9fa; }
+    
+    .btn-del-group { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+</style>
+
+<script class="smart-addon">
+    // مصفوفة المجموعات (كل مجموعة تحتوي على اسم وسيارات)
+    let carGroups = JSON.parse(localStorage.getItem('carGroups')) || [];
+
+    function setupMultiGroupAdmin() {
+        const adminPanel = document.getElementById('adminPanel');
+        if (!adminPanel) return;
+
+        // تنظيف لوحة التحكم الحالية ووضع نظام المجموعات
+        adminPanel.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2 style="margin:0; font-size:18px;">🛠️ مدير المجموعات الذكي</h2>
+                <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px;">إغلاق اللوحة ✖</button>
+            </div>
+            
+            <div class="group-manager">
+                <p style="margin:0 0 10px 0; font-size:13px; color:#666;">إضافة كشف جديد (جداول منفصلة)</p>
+                <button class="add-group-btn" onclick="createNewGroup()">➕ إضافة جدول جديد</button>
+            </div>
+            
+            <div id="groupsListContainer"></div>
+        `;
+        renderAdminGroups();
+    }
+
+    // إنشاء مجموعة جديدة
+    window.createNewGroup = function() {
+        const groupName = prompt("أدخل اسم الكشف أو الجدول الجديد (مثلاً: كشف بوكسي تويوتا):");
+        if (groupName) {
+            const newGroup = {
+                id: Date.now(),
+                name: groupName,
+                cars: []
+            };
+            carGroups.push(newGroup);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    // حفظ البيانات
+    function saveGroups() {
+        localStorage.setItem('carGroups', JSON.stringify(carGroups));
+        // تحديث مصفوفة السيارات الأصلية للعرض في الموقع
+        let allCars = [];
+        carGroups.forEach(g => allCars = allCars.concat(g.cars));
+        window.cars = allCars;
+        localStorage.setItem('cars', JSON.stringify(allCars));
+        if(typeof render === 'function') render(); 
+    }
+
+    // عرض المجموعات داخل لوحة الإدارة
+    function renderAdminGroups() {
+        const container = document.getElementById('groupsListContainer');
+        container.innerHTML = carGroups.map((group, gIndex) => `
+            <div class="car-group-box">
+                <div class="group-header">
+                    <span>📋 ${group.name} (${group.cars.length} سيارة)</span>
+                    <button class="btn-del-group" onclick="deleteGroup(${gIndex})">حذف الجدول بالكامل 🗑️</button>
+                </div>
+                <div class="group-content">
+                    <div class="section-box">
+                        <div class="section-title">⚙️ إضافة وتنظيم (اسم شاسيه لوحة)</div>
+                        <textarea id="input-${group.id}" style="width:100%; height:80px; font-size:12px; border-radius:8px; border:1px solid #ddd; padding:5px;" placeholder="ألصق البيانات هنا..."></textarea>
+                        <button onclick="processGroupInput(${gIndex})" style="width:100%; margin-top:10px; background:var(--accent-orange); color:white; border:none; padding:8px; border-radius:8px; cursor:pointer; font-weight:bold;">نشر وتفريز تلقائي 🚀</button>
+                    </div>
+                    
+                    <div class="section-box">
+                        <div class="section-title">🔍 إدارة البيانات والملاك</div>
+                        <div style="max-height:150px; overflow-y:auto;">
+                            <table class="admin-table">
+                                <thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>🗑️</th></tr></thead>
+                                <tbody>
+                                    ${group.cars.map((c, cIndex) => `
+                                        <tr>
+                                            <td>${c.name}</td>
+                                            <td>${c.id}</td>
+                                            <td>${c.plate || '-'}</td>
+                                            <td onclick="deleteCarFromGroup(${gIndex}, ${cIndex})" style="color:red; cursor:pointer;">✖</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // تفريز تلقائي للبيانات داخل المجموعة
+    window.processGroupInput = function(gIndex) {
+        const inputArea = document.getElementById(`input-${carGroups[gIndex].id}`);
+        const data = inputArea.value.trim();
+        if(!data) return;
+
+        const lines = data.split('\n');
+        lines.forEach(line => {
+            const parts = line.trim().split(/\s+/);
+            if(parts.length >= 1) {
+                carGroups[gIndex].cars.unshift({
+                    name: parts[0] || "غير معروف",
+                    id: parts[1] || "لا يوجد",
+                    plate: parts[2] || "لا يوجد",
+                    phone: "249129642174"
+                });
+            }
+        });
+        inputArea.value = "";
+        saveGroups();
+        renderAdminGroups();
+        alert("تم التنظيم والتحديث تلقائياً ✅");
+    }
+
+    window.deleteCarFromGroup = function(gIndex, cIndex) {
+        if(confirm("حذف هذه السيارة؟")) {
+            carGroups[gIndex].cars.splice(cIndex, 1);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    window.deleteGroup = function(index) {
+        if(confirm("هل أنت متأكد من حذف هذا الجدول بالكامل؟ لا يمكن التراجع.")) {
+            carGroups.splice(index, 1);
+            saveGroups();
+            renderAdminGroups();
+        }
+    }
+
+    // تشغيل النظام عند فتح لوحة الإدارة
+    const originalOpenAdmin = window.openAdmin;
+    window.openAdmin = function() {
+        const pass = prompt("كلمة السر:");
+        if(pass === "3344") {
+            document.getElementById('adminPanel').style.display = 'block';
+            setupMultiGroupAdmin();
+        } else if(pass !== null) {
+            alert("خطأ في كلمة السر");
+        }
+    }
+</script>
+
 </body>
 </html>
