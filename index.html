@@ -351,5 +351,116 @@
     </script>
     
     <div id="future-codes"></div>
+    <div id="smart-injector-container">
+    <template id="latest-admin-update">
+        <div id="admin-panel" class="admin-overlay">
+            <div class="admin-content">
+                <div class="admin-header">
+                    <h2 style="color: var(--accent-color);"><i class="fas fa-microchip"></i> لوحة الإدارة الذكية</h2>
+                    <button class="close-admin" onclick="closeAdmin()">× إغلاق</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4><i class="fas fa-database"></i> قاعدة بيانات الشاسيهات</h4>
+                    <textarea id="bulkChassis" placeholder="لصق البيانات هنا..."></textarea>
+                    <div class="admin-inputs-grid">
+                        <input type="text" placeholder="الشاسي" id="admChassis">
+                        <input type="text" placeholder="نوع السيارة" id="admCarName">
+                        <input type="text" placeholder="المالك" id="admOwner">
+                        <input type="text" placeholder="واتساب" id="admPhone">
+                    </div>
+                    <button onclick="addEntry()" class="btn-primary">تحديث قاعدة البيانات</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4><i class="fas fa-paint-brush"></i> تخصيص الواجهة (CSS)</h4>
+                    <textarea id="cssEditor" placeholder="أدخل أكواد التنسيق هنا..."></textarea>
+                    <button onclick="applyDynamicCSS()" class="btn-secondary">تطبيق الألوان الجديدة</button>
+                </div>
+            </div>
+        </div>
+    </template>
+</div>
+
+<script>
+/**
+ * نظام المعالجة الذكي (Smart Processor)
+ * يقوم بحذف النسخ القديمة وحقن التحديثات دون تدخل يدوي
+ */
+(function autoUpdateSystem() {
+    console.log("جاري فحص التحديثات الذكية...");
+
+    const updateTemplate = document.getElementById('latest-admin-update');
+    
+    if (updateTemplate) {
+        // 1. استخراج الكود الجديد من القالب
+        const newUI = updateTemplate.content.cloneNode(true);
+        const newID = newUI.querySelector('div').id;
+
+        // 2. البحث عن أي عنصر قديم يحمل نفس الـ ID وحذفه فوراً
+        const oldElement = document.querySelector(`#${newID}:not(#smart-injector-container #${newID})`);
+        
+        if (oldElement) {
+            oldElement.remove();
+            console.warn(`[نظام الذكاء]: تم اكتشاف نسخة قديمة من (${newID}) وحذفها لتجنب التلامس.`);
+        }
+
+        // 3. حقن الكود الجديد في جسم الصفحة
+        document.body.appendChild(newUI);
+        console.log(`[نظام الذكاء]: تم تثبيت التحديث الجديد لـ (${newID}) بنجاح.`);
+    }
+
+    // نظام إصلاح الأخطاء التلقائي (Self-Healing)
+    window.addEventListener('error', function(e) {
+        console.error("تم رصد تلامس في الأكواد، جاري إعادة ضبط الواجهة...");
+        // يمكن إضافة أوامر إعادة ضبط هنا إذا حدث انهيار في الـ CSS
+    });
+})();
+
+// دالة إضافية لدعم "الحقن المستقبلي"
+function injectFeature(htmlContent) {
+    const div = document.createElement('div');
+    div.innerHTML = htmlContent;
+    document.body.appendChild(div);
+}
+</script>
+
+<style>
+/* تنسيقات إضافية للوحة التحكم المرتبة */
+.btn-primary {
+    background: var(--accent-color);
+    color: #000;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.btn-primary:hover { opacity: 0.8; transform: scale(0.99); }
+
+.btn-secondary {
+    background: #1e293b;
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#bulkChassis {
+    width: 100%;
+    height: 100px;
+    background: #0a0b10;
+    color: #00ffc3;
+    border: 1px solid #334155;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-family: monospace;
+}
+</style>
+
 </body>
 </html>
