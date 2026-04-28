@@ -3,616 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة السودان الذكية</title>
+    <title>منصة سفير القوافي الذكية</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #1a1f3c; --bg-light: #f4f7fd; --accent-orange: #ff5f40; --text-main: #2d3436;
-            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            --dark-navy: #0a192f;
+            --orange-main: #f39c12;
+            --light-bg: #f4f7f6;
+            --white: #ffffff;
         }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-light); margin: 0; overflow-x: hidden; }
-        .header { background-color: var(--bg-dark); color: white; padding: 30px 20px 60px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
-        .menu-btn { position: absolute; top: 25px; right: 20px; font-size: 24px; cursor: pointer; color: white; }
-        .side-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box; }
-        .side-menu.active { right: 0; }
-        .stat-box { background: #f8f9ff; padding: 10px; border-radius: 12px; margin-bottom: 8px; text-align: center; border: 1px solid #e0e4f5; }
-        .stat-num { color: var(--accent-orange); font-size: 18px; font-weight: bold; }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
-        .visitor-counter { position: absolute; top: 25px; left: 20px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px; }
-        .profile-img { width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover; cursor: pointer; }
-        .container { max-width: 500px; margin: -35px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
-        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
-        .search-input { width: 100%; padding: 15px; border-radius: 18px; border: none; background: #f0f2f8; outline: none; }
-        
-        /* تنسيق الجدول الجديد */
-        .styled-table { width: 100%; border-collapse: collapse; background: white; border-radius: 20px; overflow: hidden; font-size: 12px; table-layout: fixed; }
-        .styled-table th { background: var(--bg-dark); color: white; padding: 12px 5px; }
-        .styled-table td { padding: 12px 5px; border-bottom: 1px solid #eee; text-align: center; word-wrap: break-word; }
-        .missing { color: #ff4757; font-weight: bold; font-size: 10px; }
-        
-        #adminPanel { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; padding:20px; box-sizing:border-box; overflow-y:auto; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            color: #333;
+        }
+
+        /* 1. الهوية البصرية */
+        header {
+            background: var(--dark-navy);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--orange-main);
+            position: relative;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--orange-main);
+            margin-bottom: 10px;
+        }
+
+        .visitor-counter {
+            font-size: 0.9em;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* 2. محرك البحث */
+        .search-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #smartSearch {
+            width: 90%;
+            max-width: 600px;
+            padding: 15px;
+            border: 2px solid var(--dark-navy);
+            border-radius: 30px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        /* 3. القائمة الجانبية والإحصائيات */
+        .main-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .sidebar {
+            flex: 1;
+            min-width: 250px;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stat-card {
+            background: var(--dark-navy);
+            color: var(--orange-main);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        /* 4. نظام الجدول المطور */
+        .content-area {
+            flex: 3;
+            min-width: 300px;
+        }
+
+        table {
+            width: 100%;
+            background: var(--white);
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        th { background: var(--dark-navy); color: white; padding: 15px; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
+
+        .no-data { color: red; font-weight: bold; }
+        .whatsapp-btn { color: #25D366; font-size: 1.5em; text-decoration: none; }
+
+        /* 5. لوحة الإدارة والأزرار الزرقary */
+        .group-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding: 10px 0;
+        }
+
+        .filter-btn {
+            background: #2980b9;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .admin-trigger {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--dark-navy);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* لوحة التحكم المخفية */
+        #adminPanel {
+            display: none;
+            background: #fff;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-radius: 15px;
+            z-index: 1000;
+        }
+
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<header>
+    <img src="https://via.placeholder.com/80" alt="سفير القوافي" class="profile-img">
+    <h1>سفير القوافي</h1>
+    <div class="visitor-counter">
+        <i class="fas fa-eye"></i> عدد الزوار: <span id="vCount">1,452</span>
+    </div>
+</header>
 
-<div class="header">
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
-    <div class="visitor-counter">👁️ <span id="visitorCount">0</span></div>
-    <img src="1000026303.jpg" class="profile-img" onclick="handleAdminAccess()">
-    <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
-    <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
+<div class="search-container">
+    <input type="text" id="smartSearch" placeholder="ابحث بالاسم، الشاسيه، أو رقم اللوحة..." onkeyup="runSmartSearch()">
 </div>
 
-<div class="side-menu" id="sideMenu">
-    <h3>📊 الإحصائيات</h3>
-    <div class="stat-box">السيارات: <span class="stat-num" id="totalCars">0</span></div>
-    <div class="stat-box">البحث: <span class="stat-num" id="totalSearch">0</span></div>
-    <hr>
-    <input type="text" id="userPhone" placeholder="سجل رقمك للمراسلة" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
-    <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ</button>
-</div>
-
-<div class="container">
-    <div id="adminPanel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <b>🛠️ لوحة التحكم</b>
-            <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:red; color:white; border:none; padding:5px 10px; border-radius:8px;">إغلاق</button>
+<div class="main-layout">
+    <div class="sidebar">
+        <h3><i class="fas fa-chart-line"></i> إحصائيات</h3>
+        <div class="stat-card">
+            <small>إجمالي المركبات</small>
+            <h2 id="totalCars">0</h2>
         </div>
-        <textarea id="bulkInput" style="width:100%; height:120px; padding:10px; border-radius:10px;" placeholder="اكسنت 123456 خ789"></textarea>
-        <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; margin-top:10px;">🚀 نشر</button>
-        <button onclick="if(confirm('حذف الكل؟')){cars=[]; localStorage.setItem('cars', JSON.stringify(cars)); render();}" style="width:100%; background:#333; color:white; border:none; padding:10px; border-radius:15px; margin-top:10px;">🗑️ مسح جميع البيانات</button>
+        <hr>
+        <label>سجل رقمك للاستفسار:</label>
+        <input type="tel" id="userPhone" placeholder="09xxxxxxx" style="width:100%; padding:8px; margin-top:5px;">
     </div>
 
-    <div class="search-card">
-        <input type="text" id="search" class="search-input" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه، سيارة، أو لوحة...">
+    <div class="content-area">
+        <div class="group-filters" id="groupButtons">
+            <button class="filter-btn" onclick="filterByGroup('all')">الكل</button>
+        </div>
+        
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>الماركة/النوع</th>
+                    <th>الشاسيه</th>
+                    <th>اللوحة</th>
+                    <th>تواصل</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+        <div id="showMore" style="text-align:center; margin-top:15px; display:none;">
+            <button onclick="expandTable()" style="padding:10px 20px;">عرض المزيد</button>
+        </div>
     </div>
+</div>
 
-    <div id="carsList"></div>
+<div class="admin-trigger" onclick="openAdmin()">
+    <i class="fas fa-cog"></i>
+</div>
+
+<div id="adminPanel">
+    <h3><i class="fas fa-lock"></i> لوحة الإدارة الذكية</h3>
+    <input type="text" id="groupName" placeholder="اسم الكشف (مثلاً: كشف بوكسي)" style="width:100%; margin-bottom:10px; padding:8px;">
+    <textarea id="bulkInput" placeholder="الصق النص هنا (توسان 123456 خ789)" style="width:100%; height:100px; margin-bottom:10px;"></textarea>
+    <button onclick="processData()" style="background:var(--orange-main); border:none; padding:10px; width:100%; cursor:pointer;">توزيع وتفريز البيانات ➕</button>
+    <button onclick="closeAdmin()" style="margin-top:10px; width:100%;">إغلاق</button>
 </div>
 
 <script>
-    let cars = JSON.parse(localStorage.getItem('cars')) || [];
-    let stats = JSON.parse(localStorage.getItem('siteStats')) || { search: 0, clicks: 0 };
-    let clickCount = 0;
-    let currentLimit = 10;
+    // نظام البيانات
+    let database = JSON.parse(localStorage.getItem('smartDB')) || [];
+    let groups = JSON.parse(localStorage.getItem('groups')) || [];
+    let limit = 10;
 
-    function handleAdminAccess() {
-        clickCount++;
-        if(clickCount === 3) {
-            if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block';
-            clickCount = 0;
+    // 1. محرك الزوار الوهمي
+    setInterval(() => {
+        let count = parseInt(document.getElementById('vCount').innerText.replace(',',''));
+        document.getElementById('vCount').innerText = (count + Math.floor(Math.random() * 3)).toLocaleString();
+    }, 5000);
+
+    // 2. لوحة الإدارة (الحماية)
+    function openAdmin() {
+        let pass = prompt("أدخل كلمة السر للدخول للنظام:");
+        if(pass === "3344") {
+            document.getElementById('adminPanel').style.display = 'block';
+        } else {
+            alert("⚠️ خطأ! تم تسجيل محاولة وصول غير مصرح بها.");
         }
-        setTimeout(() => clickCount = 0, 1500);
     }
 
-    function render(data = cars) {
-        const list = document.getElementById('carsList');
-        if(data.length === 0) {
-            list.innerHTML = `<div style="text-align:center; padding:30px; background:white; border-radius:20px;">🔍 لا توجد نتائج</div>`;
+    function closeAdmin() {
+        document.getElementById('adminPanel').style.display = 'none';
+    }
+
+    // 3. التوزيع التلقائي (التفريز الذكي)
+    function processData() {
+        const input = document.getElementById('bulkInput').value;
+        const gName = document.getElementById('groupName').value || "عام";
+        const lines = input.split('\n');
+
+        lines.forEach(line => {
+            if(line.trim() !== "") {
+                const parts = line.split(' '); // تفكيك النص عبر المسافات
+                const entry = {
+                    type: parts[0] || "نقص",
+                    chassis: parts[1] || "نقص",
+                    plate: parts[2] || "نقص",
+                    group: gName
+                };
+                database.push(entry);
+            }
+        });
+
+        if(!groups.includes(gName)) groups.push(gName);
+        
+        saveAndRefresh();
+        closeAdmin();
+    }
+
+    function saveAndRefresh() {
+        localStorage.setItem('smartDB', JSON.stringify(database));
+        localStorage.setItem('groups', JSON.stringify(groups));
+        renderTable(database);
+        renderGroups();
+        document.getElementById('totalCars').innerText = database.length;
+    }
+
+    // 4. نظام عرض البيانات والبحث
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = "";
+        
+        const displayData = data.slice(0, limit);
+        
+        displayData.forEach(item => {
+            let row = `<tr>
+                <td>${item.type}</td>
+                <td class="${item.chassis === 'نقص' ? 'no-data' : ''}">${item.chassis === 'نقص' ? 'لا يوجد' : item.chassis}</td>
+                <td class="${item.plate === 'نقص' ? 'no-data' : ''}">${item.plate === 'نقص' ? 'لا يوجد' : item.plate}</td>
+                <td><a href="#" onclick="contactAdmin('${item.type}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a></td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+
+        document.getElementById('showMore').style.display = data.length > limit ? 'block' : 'none';
+    }
+
+    function renderGroups() {
+        const container = document.getElementById('groupButtons');
+        container.innerHTML = '<button class="filter-btn" onclick="filterByGroup(\'all\')">الكل</button>';
+        groups.forEach(g => {
+            container.innerHTML += `<button class="filter-btn" onclick="filterByGroup('${g}')">${g}</button>`;
+        });
+    }
+
+    function filterByGroup(g) {
+        if(g === 'all') renderTable(database);
+        else renderTable(database.filter(i => i.group === g));
+    }
+
+    function runSmartSearch() {
+        let val = document.getElementById('smartSearch').value.toLowerCase();
+        let filtered = database.filter(i => 
+            i.type.toLowerCase().includes(val) || 
+            i.chassis.toLowerCase().includes(val) || 
+            i.plate.toLowerCase().includes(val)
+        );
+        renderTable(filtered);
+    }
+
+    function contactAdmin(car) {
+        const phone = document.getElementById('userPhone').value;
+        if(!phone) {
+            alert("❌ عذراً! يجب تسجيل رقم هاتفك في القائمة الجانبية أولاً لتتمكن من المراسلة.");
             return;
         }
-
-        const displayData = data.slice(0, currentLimit);
-        let html = `<table class="styled-table"><thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>💬</th></tr></thead><tbody>`;
-        
-        html += displayData.map(c => `
-            <tr>
-                <td>${c.name || '<span class="missing">لا يوجد</span>'}</td>
-                <td>${c.id || '<span class="missing">لا يوجد</span>'}</td>
-                <td>${c.plate || '<span class="missing">لا يوجد</span>'}</td>
-                <td onclick="window.open('https://wa.me/${c.phone || '249129642174'}')" style="cursor:pointer; font-size:18px;">💬</td>
-            </tr>
-        `).join('');
-
-        html += `</tbody></table>`;
-        if(data.length > currentLimit) {
-            html += `<button onclick="currentLimit+=10; render()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:none; background:#ff5f40; color:white;">عرض المزيد (${data.length - currentLimit})</button>`;
-        }
-        list.innerHTML = html;
-        document.getElementById('totalCars').innerText = cars.length;
+        window.open(`https://wa.me/249xxxxxxx?text=استفسار عن: ${car} من العميل: ${phone}`);
     }
 
-    function addBulkCars() {
-        const input = document.getElementById('bulkInput').value.trim();
-        if(!input) return;
-        input.split('\n').forEach(line => {
-            const p = line.split(/\s+/);
-            if(p.length > 0) cars.unshift({name: p[0], id: p[1] || "", plate: p[2] || "", phone: "249129642174"});
-        });
-        localStorage.setItem('cars', JSON.stringify(cars));
-        document.getElementById('bulkInput').value = "";
-        render();
-        alert("تم النشر بنجاح");
+    function expandTable() {
+        limit += 10;
+        renderTable(database);
     }
 
-    function doSearch() {
-        const q = document.getElementById('search').value.toLowerCase();
-        const filtered = cars.filter(c => (c.id+c.name+c.plate).toLowerCase().includes(q));
-        currentLimit = 10;
-        render(filtered);
-    }
-
-    function toggleMenu() {
-        document.getElementById('sideMenu').classList.toggle('active');
-        document.getElementById('overlay').style.display = document.getElementById('sideMenu').classList.contains('active') ? 'block' : 'none';
-    }
-
-    function saveUserPhone() {
-        localStorage.setItem('registeredPhone', document.getElementById('userPhone').value);
-        alert("تم الحفظ");
-    }
-
-    // عداد زوار بسيط
-    let v = parseInt(localStorage.getItem('visitorCount') || 1240) + 1;
-    localStorage.setItem('visitorCount', v);
-    document.getElementById('visitorCount').innerText = v;
-
-    render();
-</script>
-<style class="smart-addon">
-    .group-manager { background: #f1f3f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed #cbd5e0; text-align: center; }
-    .add-group-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
-    
-    .car-group-box { background: white; border: 1px solid #ddd; border-radius: 15px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .group-header { background: var(--bg-dark); color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .group-content { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    @media (max-width: 600px) { .group-content { grid-template-columns: 1fr; } }
-    
-    .section-box { background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
-    .section-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: var(--accent-orange); border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-    
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
-    .admin-table th, .admin-table td { border: 1px solid #eee; padding: 5px; text-align: center; }
-    .admin-table th { background: #f8f9fa; }
-    
-    .btn-del-group { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-</style>
-
-<script class="smart-addon">
-    // مصفوفة المجموعات (كل مجموعة تحتوي على اسم وسيارات)
-    let carGroups = JSON.parse(localStorage.getItem('carGroups')) || [];
-
-    function setupMultiGroupAdmin() {
-        const adminPanel = document.getElementById('adminPanel');
-        if (!adminPanel) return;
-
-        // تنظيف لوحة التحكم الحالية ووضع نظام المجموعات
-        adminPanel.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="margin:0; font-size:18px;">🛠️ مدير المجموعات الذكي</h2>
-                <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px;">إغلاق اللوحة ✖</button>
-            </div>
-            
-            <div class="group-manager">
-                <p style="margin:0 0 10px 0; font-size:13px; color:#666;">إضافة كشف جديد (جداول منفصلة)</p>
-                <button class="add-group-btn" onclick="createNewGroup()">➕ إضافة جدول جديد</button>
-            </div>
-            
-            <div id="groupsListContainer"></div>
-        `;
-        renderAdminGroups();
-    }
-
-    // إنشاء مجموعة جديدة
-    window.createNewGroup = function() {
-        const groupName = prompt("أدخل اسم الكشف أو الجدول الجديد (مثلاً: كشف بوكسي تويوتا):");
-        if (groupName) {
-            const newGroup = {
-                id: Date.now(),
-                name: groupName,
-                cars: []
-            };
-            carGroups.push(newGroup);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    // حفظ البيانات
-    function saveGroups() {
-        localStorage.setItem('carGroups', JSON.stringify(carGroups));
-        // تحديث مصفوفة السيارات الأصلية للعرض في الموقع
-        let allCars = [];
-        carGroups.forEach(g => allCars = allCars.concat(g.cars));
-        window.cars = allCars;
-        localStorage.setItem('cars', JSON.stringify(allCars));
-        if(typeof render === 'function') render(); 
-    }
-
-    // عرض المجموعات داخل لوحة الإدارة
-    function renderAdminGroups() {
-        const container = document.getElementById('groupsListContainer');
-        container.innerHTML = carGroups.map((group, gIndex) => `
-            <div class="car-group-box">
-                <div class="group-header">
-                    <span>📋 ${group.name} (${group.cars.length} سيارة)</span>
-                    <button class="btn-del-group" onclick="deleteGroup(${gIndex})">حذف الجدول بالكامل 🗑️</button>
-                </div>
-                <div class="group-content">
-                    <div class="section-box">
-                        <div class="section-title">⚙️ إضافة وتنظيم (اسم شاسيه لوحة)</div>
-                        <textarea id="input-${group.id}" style="width:100%; height:80px; font-size:12px; border-radius:8px; border:1px solid #ddd; padding:5px;" placeholder="ألصق البيانات هنا..."></textarea>
-                        <button onclick="processGroupInput(${gIndex})" style="width:100%; margin-top:10px; background:var(--accent-orange); color:white; border:none; padding:8px; border-radius:8px; cursor:pointer; font-weight:bold;">نشر وتفريز تلقائي 🚀</button>
-                    </div>
-                    
-                    <div class="section-box">
-                        <div class="section-title">🔍 إدارة البيانات والملاك</div>
-                        <div style="max-height:150px; overflow-y:auto;">
-                            <table class="admin-table">
-                                <thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>🗑️</th></tr></thead>
-                                <tbody>
-                                    ${group.cars.map((c, cIndex) => `
-                                        <tr>
-                                            <td>${c.name}</td>
-                                            <td>${c.id}</td>
-                                            <td>${c.plate || '-'}</td>
-                                            <td onclick="deleteCarFromGroup(${gIndex}, ${cIndex})" style="color:red; cursor:pointer;">✖</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // تفريز تلقائي للبيانات داخل المجموعة
-    window.processGroupInput = function(gIndex) {
-        const inputArea = document.getElementById(`input-${carGroups[gIndex].id}`);
-        const data = inputArea.value.trim();
-        if(!data) return;
-
-        const lines = data.split('\n');
-        lines.forEach(line => {
-            const parts = line.trim().split(/\s+/);
-            if(parts.length >= 1) {
-                carGroups[gIndex].cars.unshift({
-                    name: parts[0] || "غير معروف",
-                    id: parts[1] || "لا يوجد",
-                    plate: parts[2] || "لا يوجد",
-                    phone: "249129642174"
-                });
-            }
-        });
-        inputArea.value = "";
-        saveGroups();
-        renderAdminGroups();
-        alert("تم التنظيم والتحديث تلقائياً ✅");
-    }
-
-    window.deleteCarFromGroup = function(gIndex, cIndex) {
-        if(confirm("حذف هذه السيارة؟")) {
-            carGroups[gIndex].cars.splice(cIndex, 1);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    window.deleteGroup = function(index) {
-        if(confirm("هل أنت متأكد من حذف هذا الجدول بالكامل؟ لا يمكن التراجع.")) {
-            carGroups.splice(index, 1);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    // تشغيل النظام عند فتح لوحة الإدارة
-    const originalOpenAdmin = window.openAdmin;
-    window.openAdmin = function() {
-        const pass = prompt("كلمة السر:");
-        if(pass === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-            setupMultiGroupAdmin();
-        } else if(pass !== null) {
-            alert("خطأ في كلمة السر");
-        }
-    }
-</script>
-    <style class="smart-addon">
-    .group-manager { background: #f1f3f9; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed #cbd5e0; text-align: center; }
-    .add-group-btn { background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
-    
-    .car-group-box { background: white; border: 1px solid #ddd; border-radius: 15px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    .group-header { background: var(--bg-dark); color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center; }
-    .group-content { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    @media (max-width: 600px) { .group-content { grid-template-columns: 1fr; } }
-    
-    .section-box { background: #fafafa; padding: 10px; border-radius: 10px; border: 1px solid #eee; }
-    .section-title { font-size: 13px; font-weight: bold; margin-bottom: 10px; color: var(--accent-orange); border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-    
-    .admin-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 10px; }
-    .admin-table th, .admin-table td { border: 1px solid #eee; padding: 5px; text-align: center; }
-    .admin-table th { background: #f8f9fa; }
-    
-    .btn-del-group { background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 12px; }
-</style>
-
-<script class="smart-addon">
-    // مصفوفة المجموعات (كل مجموعة تحتوي على اسم وسيارات)
-    let carGroups = JSON.parse(localStorage.getItem('carGroups')) || [];
-
-    function setupMultiGroupAdmin() {
-        const adminPanel = document.getElementById('adminPanel');
-        if (!adminPanel) return;
-
-        // تنظيف لوحة التحكم الحالية ووضع نظام المجموعات
-        adminPanel.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2 style="margin:0; font-size:18px;">🛠️ مدير المجموعات الذكي</h2>
-                <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:#333; color:white; border:none; padding:8px 15px; border-radius:10px;">إغلاق اللوحة ✖</button>
-            </div>
-            
-            <div class="group-manager">
-                <p style="margin:0 0 10px 0; font-size:13px; color:#666;">إضافة كشف جديد (جداول منفصلة)</p>
-                <button class="add-group-btn" onclick="createNewGroup()">➕ إضافة جدول جديد</button>
-            </div>
-            
-            <div id="groupsListContainer"></div>
-        `;
-        renderAdminGroups();
-    }
-
-    // إنشاء مجموعة جديدة
-    window.createNewGroup = function() {
-        const groupName = prompt("أدخل اسم الكشف أو الجدول الجديد (مثلاً: كشف بوكسي تويوتا):");
-        if (groupName) {
-            const newGroup = {
-                id: Date.now(),
-                name: groupName,
-                cars: []
-            };
-            carGroups.push(newGroup);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    // حفظ البيانات
-    function saveGroups() {
-        localStorage.setItem('carGroups', JSON.stringify(carGroups));
-        // تحديث مصفوفة السيارات الأصلية للعرض في الموقع
-        let allCars = [];
-        carGroups.forEach(g => allCars = allCars.concat(g.cars));
-        window.cars = allCars;
-        localStorage.setItem('cars', JSON.stringify(allCars));
-        if(typeof render === 'function') render(); 
-    }
-
-    // عرض المجموعات داخل لوحة الإدارة
-    function renderAdminGroups() {
-        const container = document.getElementById('groupsListContainer');
-        container.innerHTML = carGroups.map((group, gIndex) => `
-            <div class="car-group-box">
-                <div class="group-header">
-                    <span>📋 ${group.name} (${group.cars.length} سيارة)</span>
-                    <button class="btn-del-group" onclick="deleteGroup(${gIndex})">حذف الجدول بالكامل 🗑️</button>
-                </div>
-                <div class="group-content">
-                    <div class="section-box">
-                        <div class="section-title">⚙️ إضافة وتنظيم (اسم شاسيه لوحة)</div>
-                        <textarea id="input-${group.id}" style="width:100%; height:80px; font-size:12px; border-radius:8px; border:1px solid #ddd; padding:5px;" placeholder="ألصق البيانات هنا..."></textarea>
-                        <button onclick="processGroupInput(${gIndex})" style="width:100%; margin-top:10px; background:var(--accent-orange); color:white; border:none; padding:8px; border-radius:8px; cursor:pointer; font-weight:bold;">نشر وتفريز تلقائي 🚀</button>
-                    </div>
-                    
-                    <div class="section-box">
-                        <div class="section-title">🔍 إدارة البيانات والملاك</div>
-                        <div style="max-height:150px; overflow-y:auto;">
-                            <table class="admin-table">
-                                <thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>🗑️</th></tr></thead>
-                                <tbody>
-                                    ${group.cars.map((c, cIndex) => `
-                                        <tr>
-                                            <td>${c.name}</td>
-                                            <td>${c.id}</td>
-                                            <td>${c.plate || '-'}</td>
-                                            <td onclick="deleteCarFromGroup(${gIndex}, ${cIndex})" style="color:red; cursor:pointer;">✖</td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    // تفريز تلقائي للبيانات داخل المجموعة
-    window.processGroupInput = function(gIndex) {
-        const inputArea = document.getElementById(`input-${carGroups[gIndex].id}`);
-        const data = inputArea.value.trim();
-        if(!data) return;
-
-        const lines = data.split('\n');
-        lines.forEach(line => {
-            const parts = line.trim().split(/\s+/);
-            if(parts.length >= 1) {
-                carGroups[gIndex].cars.unshift({
-                    name: parts[0] || "غير معروف",
-                    id: parts[1] || "لا يوجد",
-                    plate: parts[2] || "لا يوجد",
-                    phone: "249129642174"
-                });
-            }
-        });
-        inputArea.value = "";
-        saveGroups();
-        renderAdminGroups();
-        alert("تم التنظيم والتحديث تلقائياً ✅");
-    }
-
-    window.deleteCarFromGroup = function(gIndex, cIndex) {
-        if(confirm("حذف هذه السيارة؟")) {
-            carGroups[gIndex].cars.splice(cIndex, 1);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    window.deleteGroup = function(index) {
-        if(confirm("هل أنت متأكد من حذف هذا الجدول بالكامل؟ لا يمكن التراجع.")) {
-            carGroups.splice(index, 1);
-            saveGroups();
-            renderAdminGroups();
-        }
-    }
-
-    // تشغيل النظام عند فتح لوحة الإدارة
-    const originalOpenAdmin = window.openAdmin;
-    window.openAdmin = function() {
-        const pass = prompt("كلمة السر:");
-        if(pass === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-            setupMultiGroupAdmin();
-        } else if(pass !== null) {
-            alert("خطأ في كلمة السر");
-        }
-    }
-    /* --- كود إدارة المجموعات والجداول المتعددة --- */
-
-// 1. تعريف مصفوفة المجموعات
-let carGroups = JSON.parse(localStorage.getItem('carGroups')) || [];
-
-// 2. تحديث وظيفة فتح لوحة الإدارة لتشمل نظام المجموعات
-const oldOpenAdmin = window.openAdmin;
-window.openAdmin = function() {
-    const pass = prompt("كلمة السر:");
-    if (pass === "3344") {
-        document.getElementById('adminPanel').style.display = 'block';
-        setupGroupAdminUI();
-    } else if (pass !== null) {
-        alert("كلمة السر خاطئة!");
-    }
-};
-
-// 3. بناء واجهة لوحة الإدارة (أيقونة البلس والأقسام)
-function setupGroupAdminUI() {
-    const panel = document.getElementById('adminPanel');
-    panel.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #eee; padding-bottom:10px; margin-bottom:15px;">
-            <h3 style="margin:0;">🛠️ إدارة الجداول والمجموعات</h3>
-            <button onclick="this.parentElement.parentElement.style.display='none'" style="background:#ff4757; color:white; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">إغلاق ✖</button>
-        </div>
-        
-        <div style="text-align:center; margin-bottom:20px;">
-            <button onclick="addNewGroup()" style="background:#2ecc71; color:white; border:none; width:50px; height:50px; border-radius:50%; font-size:24px; cursor:pointer; box-shadow:0 4px 10px rgba(46,204,113,0.3);">＋</button>
-            <p style="font-size:12px; color:#666; margin-top:5px;">إضافة جدول جديد</p>
-        </div>
-
-        <div id="adminGroupsContainer"></div>
-    `;
-    renderAdminGroups();
-}
-
-// 4. إضافة مجموعة جديدة
-window.addNewGroup = function() {
-    const name = prompt("أدخل اسم الجدول (مثلاً: كشف سيارات بوكسي):");
-    if (name) {
-        carGroups.push({ id: 'group_' + Date.now(), name: name, cars: [] });
-        saveAndSync();
-        renderAdminGroups();
-    }
-};
-
-// 5. عرض الجداول داخل لوحة الإدارة (تقسيم الإضافة والتحكم)
-function renderAdminGroups() {
-    const container = document.getElementById('adminGroupsContainer');
-    container.innerHTML = carGroups.map((group, gIdx) => `
-        <div style="background:#f9f9f9; border:1px solid #ddd; border-radius:15px; margin-bottom:20px; overflow:hidden;">
-            <div style="background:#1a1f3c; color:white; padding:10px; display:flex; justify-content:space-between;">
-                <span>📋 ${group.name}</span>
-                <button onclick="deleteGroup(${gIdx})" style="background:none; border:none; color:#ff7675; cursor:pointer;">حذف الجدول 🗑️</button>
-            </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; padding:10px;">
-                <div style="background:white; padding:8px; border-radius:10px; border:1px solid #eee;">
-                    <small style="display:block; color:blue; margin-bottom:5px;">➕ إضافة (اسم شاسيه لوحة)</small>
-                    <textarea id="raw_${group.id}" style="width:100%; height:60px; border:1px solid #ddd; border-radius:5px; font-size:11px;" placeholder="ألصق البيانات هنا..."></textarea>
-                    <button onclick="processInput('${group.id}', ${gIdx})" style="width:100%; margin-top:5px; background:#ff5f40; color:white; border:none; padding:5px; border-radius:5px; font-size:12px;">تفريز تلقائي 🚀</button>
-                </div>
-                <div style="background:white; padding:8px; border-radius:10px; border:1px solid #eee;">
-                    <small style="display:block; color:green; margin-bottom:5px;">⚙️ التحكم بالبيانات</small>
-                    <div style="max-height:80px; overflow-y:auto; font-size:10px;">
-                        ${group.cars.map((c, cIdx) => `
-                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid #f0f0f0; padding:2px 0;">
-                                <span>${c.name}</span>
-                                <span onclick="deleteCar(${gIdx}, ${cIdx})" style="color:red; cursor:pointer;">✖</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    renderFrontEndButtons(); // تحديث الأزرار الزرقاء في الموقع
-}
-
-// 6. معالجة النصوص الملحقة وتوزيعها تلقائياً
-window.processInput = function(id, gIdx) {
-    const area = document.getElementById('raw_' + id);
-    const lines = area.value.trim().split('\n');
-    lines.forEach(line => {
-        const p = line.trim().split(/\s+/);
-        if (p.length > 0) {
-            carGroups[gIdx].cars.unshift({
-                name: p[0] || "بدون اسم",
-                id: p[1] || "",
-                plate: p[2] || "",
-                phone: "249129642174"
-            });
-        }
-    });
-    area.value = "";
-    saveAndSync();
-    renderAdminGroups();
-};
-
-// 7. وظيفة الأزرار الزرقاء أسفل الموقع
-function renderFrontEndButtons() {
-    let btnContainer = document.getElementById('groupButtons');
-    if (!btnContainer) {
-        btnContainer = document.createElement('div');
-        btnContainer.id = 'groupButtons';
-        btnContainer.style = "margin-top:20px; padding:10px;";
-        document.querySelector('.container').appendChild(btnContainer);
-    }
-    
-    btnContainer.innerHTML = carGroups.map(g => `
-        <div onclick="showGroupData('${g.id}')" style="background:#1e90ff; color:white; padding:15px; border-radius:15px; margin-bottom:10px; text-align:center; font-weight:bold; cursor:pointer; box-shadow:0 4px 10px rgba(30,144,255,0.2);">
-            📂 عرض محتويات: ${g.name}
-        </div>
-    `).join('');
-}
-
-// 8. عرض محتويات الجدول عند الضغط على الزر الأزرق
-window.showGroupData = function(id) {
-    const group = carGroups.find(g => g.id === id);
-    if (group) {
-        // نستخدم وظيفة الـ render الموجودة مسبقاً في ملفك لعرض البيانات في الجدول الأساسي
-        if (typeof render === "function") {
-            window.currentLimit = 10; // إعادة ضبط الحد
-            render(group.cars);
-            window.scrollTo({ top: document.getElementById('carsList').offsetTop - 100, behavior: 'smooth' });
-        }
-    }
-};
-
-window.deleteCar = function(gi, ci) { carGroups[gi].cars.splice(ci, 1); saveAndSync(); renderAdminGroups(); };
-window.deleteGroup = function(i) { if(confirm("حذف الجدول بالكامل؟")) { carGroups.splice(i, 1); saveAndSync(); renderAdminGroups(); } };
-
-function saveAndSync() {
-    localStorage.setItem('carGroups', JSON.stringify(carGroups));
-    let all = [];
-    carGroups.forEach(g => all = all.concat(g.cars));
-    localStorage.setItem('cars', JSON.stringify(all));
-    window.cars = all;
-}
-
-// تشغيل عرض الأزرار عند التحميل
-setTimeout(renderFrontEndButtons, 1000);
-
+    // تشغيل أولي
+    window.onload = saveAndRefresh;
 </script>
 
 </body>
