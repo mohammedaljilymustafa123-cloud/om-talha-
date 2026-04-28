@@ -3,147 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سفير القوافي - فتش سيارتك</title>
+    <title>فتش سيارتك - سفير القوافي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* --- التنسيق الأساسي (720x1600) --- */
-        :root { --accent: #00ffc3; --bg: #0a0b10; --blue: #113460; --teal: #009ead; --purple: #6b3a8a; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+        :root { --accent: #00ffc3; --bg: #0a0b10; --card: #11141d; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 0; }
+        .wrapper { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; }
         
-        .main-wrapper { max-width: 720px; margin: 0 auto; padding: 20px; transition: 0.4s; }
-        .header-box { text-align: center; margin-bottom: 30px; }
-        .logo-glow { width: 130px; height: 130px; border-radius: 50%; border: 3px solid var(--accent); box-shadow: 0 0 25px var(--accent); }
+        /* الهوية البصرية */
+        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
         
-        /* --- محرك البحث والجدول --- */
-        .search-area { position: relative; margin-bottom: 20px; }
-        .search-bar { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; }
-        
-        .table-container { background: #11141d; border-radius: 15px; border: 1px dashed var(--accent); padding: 10px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        th, td { padding: 12px 5px; text-align: center; border-bottom: 1px solid #1e293b; font-size: 0.75rem; }
+        /* البحث والجدول */
+        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; margin-bottom: 15px; outline: none; }
+        .table-area { background: var(--card); border-radius: 10px; padding: 5px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1e293b; font-size: 0.8rem; }
         th { color: var(--accent); }
-        .ch-num { color: var(--accent); font-weight: bold; }
-        .wa-btn { color: #25d366; font-size: 1.3rem; text-decoration: none; }
 
-        /* --- لوحة الإدارة (إنفوجرافيك) --- */
-        #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg); z-index: 999999; overflow-y: auto; }
-        .info-ui { width: 100%; max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; height: 100%; }
-        .info-nav { display: flex; justify-content: space-between; padding: 20px; background: #11141d; border-bottom: 2px solid var(--accent); }
+        /* لوحة التحكم الكلاسيكية */
+        #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; padding: 20px; box-sizing: border-box; }
+        .admin-box { background: var(--card); border-radius: 10px; padding: 20px; max-width: 400px; margin: 20px auto; }
+        input, textarea { width: 100%; background: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
-        .info-body { display: flex; flex-direction: row-reverse; padding: 20px; gap: 15px; }
-        .circle-arch { flex: 0 0 140px; height: 140px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; cursor: pointer; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: sticky; top: 20px; transition: 0.3s; }
-        .circle-arch:hover { transform: scale(1.05); }
-
-        .banners-col { flex-grow: 1; display: flex; flex-direction: column; gap: 20px; }
-        .banner-item { padding: 15px; border-radius: 10px; position: relative; border-left: 5px solid rgba(255,255,255,0.3); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .banner-item input, .banner-item textarea { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; margin-top: 8px; border-radius: 6px; box-sizing: border-box; }
-        
-        .b-blue { background: var(--blue); } .b-teal { background: var(--teal); } .b-purple { background: var(--purple); }
-        .action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        /* زر فتح اللوحة */
+        .admin-btn { position: fixed; top: 15px; left: 15px; color: var(--accent); font-size: 22px; cursor: pointer; z-index: 100; }
     </style>
 </head>
-<body oncontextmenu="return false;"> <div class="main-wrapper" id="mainUI">
-    <div class="header-box">
-        <img src="your-logo.jpg" class="logo-glow">
+<body>
+
+    <div class="admin-btn" onclick="openAdmin()"><i class="fas fa-bars"></i></div>
+
+    <div class="wrapper">
+        <img src="https://i.ibb.co/VWVvX9Y/1000027027.jpg" class="profile-img">
         <h2>فتش سيارتك</h2>
         <p>بإشراف: سفير القوافي</p>
+        
+        <input type="text" class="search-box" id="sInp" placeholder="ابحث برقم الشاسي..." onkeyup="search()">
+
+        <div class="table-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th>السيارة</th>
+                        <th>الشاسي</th>
+                        <th>تواصل</th>
+                    </tr>
+                </thead>
+                <tbody id="tBody"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="search-area">
-        <input type="text" class="search-bar" id="searchInput" placeholder="ابحث برقم الشاسي...">
+    <div id="admin-panel">
+        <div class="admin-box">
+            <h3 style="display:flex; justify-content:space-between;">لوحة الإدارة <span onclick="closeAdmin()" style="cursor:pointer; color:red;">×</span></h3>
+            <textarea id="bulk" rows="4" placeholder="أدخل البيانات هنا..."></textarea>
+            <input type="text" id="phone" placeholder="رقم التواصل">
+            <button class="btn" onclick="save()">حفظ البيانات</button>
+        </div>
     </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>السيارة</th>
-                    <th>الموديل</th>
-                    <th>الشاسي</th>
-                    <th>اللوحة</th>
-                    <th>تواصل</th>
-                </tr>
-            </thead>
-            <tbody id="tableData"></tbody>
-        </table>
-    </div>
-</div>
-
-<div id="admin-panel"></div>
 
 <script>
-    // --- 1. نظام الحماية والأمان (VPN & Anti-Spy) ---
-    (function checkSecurity() {
-        // إذا كان المستخدم هو أنت (عن طريق بارامتر سري في الرابط مثلاً) لا تفعل شيئاً
-        if (window.location.href.includes("admin_mode=true")) return;
+    let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
 
-        // فحص الـ VPN البسيط عبر المنطقة الزمنية
-        const userTimezone = IntV.DateTimeFormat().resolvedOptions().timeZone;
-        if (userTimezone.includes("America") || userTimezone.includes("Europe")) {
-            document.body.innerHTML = "<div style='color:white; text-align:center; margin-top:100px;'><h1>⚠️ تنبيه أمني</h1><p>هاتفك معرض للخطر بسبب استخدام شبكة غير آمنة (VPN). تم إغلاق الجلسة لحمايتك.</p></div>";
-            setTimeout(() => { window.location.href = "about:blank"; }, 3000);
-        }
-    })();
-
-    // منع اختصارات المطورين
-    document.onkeydown = function(e) {
-        if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0)))) return false;
-    };
-
-    // --- 2. إدارة البيانات والواجهة ---
-    let chassisDB = JSON.parse(localStorage.getItem('chassisDB')) || [];
-
-    function renderMain() {
-        const table = document.getElementById('tableData');
-        table.innerHTML = chassisDB.map(item => `
+    function render() {
+        document.getElementById('tBody').innerHTML = db.map(item => `
             <tr>
                 <td>${item.car}</td>
-                <td>${item.model}</td>
-                <td class="ch-num">${item.chassis}</td>
-                <td>${item.plate}</td>
-                <td><a href="https://wa.me/${item.phone}" class="wa-btn"><i class="fab fa-whatsapp"></i></a></td>
+                <td style="color:#00ffc3;">${item.chassis}</td>
+                <td><a href="https://wa.me/${item.phone}" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a></td>
             </tr>
         `).join('');
     }
 
-    // --- 3. لوحة الإدارة المتقدمة (تصميم الإنفوجرافيك) ---
     window.openAdmin = function() {
-        let pass = prompt("كلمة السر المطلوبة:");
-        if (pass !== "3344") return alert("دخول غير مصرح!");
-
-        const panel = document.getElementById('admin-panel');
-        panel.style.display = 'block';
-        panel.innerHTML = `
-            <div class="info-ui">
-                <div class="info-nav">
-                    <span>نظام إدارة سفير القوافي</span>
-                    <button onclick="closeAdmin()" style="background:#ef4444; border:none; color:white; padding:5px 10px; border-radius:5px;">إغلاق</button>
-                </div>
-                <div class="info-body">
-                    <div class="circle-arch" onclick="alert('فتح الملفات...')">
-                        <div style="text-align:center;"><i class="fas fa-folder-open" style="font-size:2rem;"></i><br><b>الأرشيف</b></div>
-                    </div>
-                    <div class="banners-col">
-                        <div class="banner-item b-blue">
-                            <strong><i class="fas fa-users"></i> إضافة مجموعة</strong>
-                            <textarea id="bulkInput" placeholder="الصق البيانات هنا..."></textarea>
-                            <button class="action-btn" onclick="saveBulk()">فرز وحفظ</button>
-                        </div>
-                        <div class="banner-item b-teal">
-                            <strong><i class="fas fa-car"></i> إضافة فردية</strong>
-                            <input type="text" id="inCar" placeholder="اسم السيارة">
-                            <input type="text" id="inCh" placeholder="رقم الشاسي">
-                            <button class="action-btn" style="background:#fff;" onclick="saveOne()">حفظ الآن</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+        if(prompt("كلمة السر:") === "3344") document.getElementById('admin-panel').style.display='block';
     };
-
-    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
     
-    renderMain();
+    window.closeAdmin = function() { document.getElementById('admin-panel').style.display='none'; };
+
+    function search() {
+        let v = document.getElementById('sInp').value.toLowerCase();
+        let rs = document.querySelectorAll('#tBody tr');
+        rs.forEach(r => r.style.display = r.innerText.toLowerCase().includes(v) ? '' : 'none');
+    }
+
+    render();
 </script>
 </body>
 </html>
