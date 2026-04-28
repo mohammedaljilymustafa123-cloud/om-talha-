@@ -586,6 +586,106 @@
     // تشغيل الدرع المطور
     setTimeout(ultraSecurityShield, 1100);
 </script>
+<style class="smart-addon">
+    .data-table-container { width: 100%; overflow-x: auto; margin-top: 10px; }
+    .main-data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 15px; overflow: hidden; font-size: 13px; }
+    .main-data-table th { background: var(--bg-dark); color: white; padding: 12px; text-align: center; }
+    .main-data-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; color: #333; }
+    .missing-data { color: #ff4757; font-weight: bold; font-size: 11px; }
+    .whatsapp-icon { font-size: 18px; cursor: pointer; color: #25d366; }
+</style>
+
+<script class="smart-addon">
+    // تحديث وظيفة العرض (Render) لتشمل الجدول الجديد
+    window.render = function(data = cars) {
+        const list = document.getElementById('carsList');
+        if (!list) return;
+
+        if (data.length === 0) {
+            list.innerHTML = "<p style='text-align:center; padding:20px; color:gray;'>لا توجد نتائج مطابقة</p>";
+            return;
+        }
+
+        let tableHTML = `
+            <div class="data-table-container">
+                <table class="main-data-table">
+                    <thead>
+                        <tr>
+                            <th>المركبة</th>
+                            <th>الشاسيه</th>
+                            <th>اللوحة</th>
+                            <th>تواصل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        tableHTML += data.slice(0, 30).map(c => {
+            // التحقق من وجود البيانات أو وضع "لا يوجد" باللون الأحمر
+            const nameDisp = c.name && c.name.trim() !== "" ? c.name : '<span class="missing-data">لا يوجد</span>';
+            const idDisp = c.id && c.id.trim() !== "" ? c.id : '<span class="missing-data">لا يوجد</span>';
+            const plateDisp = c.plate && c.plate.trim() !== "" ? c.plate : '<span class="missing-data">لا يوجد</span>';
+
+            return `
+                <tr>
+                    <td><b>${nameDisp}</b></td>
+                    <td>${idDisp}</td>
+                    <td>${plateDisp}</td>
+                    <td onclick="startChat('${c.phone || '249129642174'}')" class="whatsapp-icon">💬</td>
+                </tr>
+            `;
+        }).join('');
+
+        tableHTML += `</tbody></table></div>`;
+        list.innerHTML = tableHTML;
+
+        // تحديث الإحصائيات في القائمة الجانبية
+        if(document.getElementById('totalCars')) document.getElementById('totalCars').innerText = cars.length;
+    };
+
+    // تحديث وظيفة الإضافة (Bulk Add) لدعم "رقم اللوحة"
+    // الصيغة المتوقعة: اسم_السيارة رقم_الشاسيه رقم_اللوحة
+    window.addBulkCars = function() {
+        const input = document.getElementById('bulkInput').value;
+        if (!input.trim()) return;
+
+        const lines = input.split('\n');
+        lines.forEach(line => {
+            if (line.trim() === "") return;
+            
+            // تقسيم السطر بناءً على المسافات
+            const parts = line.split(/\s+/); 
+            
+            // محاولة استخراج البيانات (نفترض أول كلمة اسم، ثاني كلمة شاسيه، ثالث كلمة لوحة)
+            let name = parts[0] || "";
+            let chassis = parts[1] || "";
+            let plate = parts[2] || "";
+
+            // إذا لم يكن هناك شاسيه (أرقام)، نحاول البحث عنه في السطر
+            if (!chassis.match(/\d+/)) {
+                const matchId = line.match(/\d+/);
+                if (matchId) chassis = matchId[0];
+            }
+
+            if (chassis && !cars.some(c => c.id === chassis)) {
+                cars.unshift({
+                    name: name,
+                    id: chassis,
+                    plate: plate,
+                    phone: document.getElementById('customPhone')?.value || "249129642174"
+                });
+            }
+        });
+
+        localStorage.setItem('cars', JSON.stringify(cars));
+        alert("تم تحديث الجدول بنجاح");
+        render();
+        if(typeof closeAdmin === "function") closeAdmin();
+    };
+
+    // إعادة تشغيل العرض بالنمط الجديد
+    setTimeout(render, 600);
+</script>
 
 </body>
 </html>
