@@ -610,6 +610,122 @@ window.closeAdmin = function() {
     color: white !important;
 }
 </style>
+<script>
+(function injectArchiveFeature() {
+    // 1. إضافة أيقونة الملف داخل لوحة التحكم
+    const adminHeader = document.querySelector('.admin-header');
+    if (adminHeader && !document.getElementById('archive-btn')) {
+        const archiveBtn = document.createElement('button');
+        archiveBtn.id = 'archive-btn';
+        archiveBtn.innerHTML = '<i class="fas fa-file-invoice"></i> الأرشيف';
+        archiveBtn.style.cssText = "background:#f59e0b; color:white; border:none; padding:10px 15px; border-radius:8px; cursor:pointer; margin-right:10px; font-weight:bold;";
+        archiveBtn.onclick = openArchive;
+        adminHeader.appendChild(archiveBtn);
+    }
+
+    // 2. إنشاء شاشة الأرشيف المستقلة (إضافتها للجسم لمرة واحدة)
+    if (!document.getElementById('archive-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'archive-overlay';
+        overlay.style.cssText = `
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a; z-index: 100000; overflow-y: auto; padding: 20px; box-sizing: border-box;
+        `;
+        overlay.innerHTML = `
+            <div style="max-width: 1000px; margin: 0 auto; background: #1e293b; border-radius: 15px; padding: 20px; border: 2px solid #f59e0b;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f59e0b; padding-bottom: 15px; margin-bottom: 20px;">
+                    <h2 style="color: #f59e0b; margin: 0;"><i class="fas fa-folder-open"></i> إدارة أرشيف السيارات</h2>
+                    <span onclick="closeArchive()" style="font-size: 30px; color: white; cursor: pointer;">&times;</span>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <button onclick="deleteSelected()" style="background: #ef4444; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">حذف المحدد</button>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; color: white; text-align: center;">
+                    <thead style="background: #334155; color: #f59e0b;">
+                        <tr>
+                            <th><input type="checkbox" id="selectAll" onclick="toggleSelectAll(this)"></th>
+                            <th>اسم السيارة</th>
+                            <th>رقم الشاسي</th>
+                            <th>رقم اللوحة</th>
+                            <th>الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="archiveTableBody"></tbody>
+                </table>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+})();
+
+// دالة فتح الأرشيف
+function openArchive() {
+    document.getElementById('archive-overlay').style.display = 'block';
+    renderArchiveData();
+}
+
+// دالة إغلاق الأرشيف
+function closeArchive() {
+    document.getElementById('archive-overlay').style.display = 'none';
+}
+
+// عرض البيانات في الجدول
+function renderArchiveData() {
+    const tbody = document.getElementById('archiveTableBody');
+    const data = JSON.parse(localStorage.getItem('chassisDB')) || [];
+    tbody.innerHTML = '';
+
+    data.forEach((item, index) => {
+        tbody.innerHTML += `
+            <tr style="border-bottom: 1px solid #334155;">
+                <td><input type="checkbox" class="row-check" data-index="${index}"></td>
+                <td style="padding: 12px;">${item.car || 'غير متوفر'}</td>
+                <td>${item.chassis}</td>
+                <td>${item.plate || 'لا يوجد'}</td>
+                <td><button onclick="deleteSingle(${index})" style="color: #ef4444; background: none; border: none; cursor: pointer;"><i class="fas fa-trash"></i></button></td>
+            </tr>
+        `;
+    });
+}
+
+// ميزة تحديد الكل
+function toggleSelectAll(source) {
+    const checkboxes = document.querySelectorAll('.row-check');
+    checkboxes.forEach(cb => cb.checked = source.checked);
+}
+
+// حذف عنصر واحد
+function deleteSingle(index) {
+    if(confirm('هل أنت متأكد من حذف هذه السيارة؟')) {
+        let data = JSON.parse(localStorage.getItem('chassisDB')) || [];
+        data.splice(index, 1);
+        localStorage.setItem('chassisDB', JSON.stringify(data));
+        renderArchiveData();
+        if(window.renderTable) renderTable(); // تحديث الجدول الرئيسي
+    }
+}
+
+// حذف المحدد
+function deleteSelected() {
+    const checks = document.querySelectorAll('.row-check:checked');
+    if(checks.length === 0) return alert('يرجى تحديد سيارة واحدة على الأقل');
+    
+    if(confirm(`سيتم حذف ${checks.length} سيارة، هل أنت متأكد؟`)) {
+        let data = JSON.parse(localStorage.getItem('chassisDB')) || [];
+        const indicesToDelete = Array.from(checks).map(cb => parseInt(cb.dataset.index));
+        
+        // الحذف من النهاية للبداية لتجنب تضارب الاندكس
+        indicesToDelete.sort((a, b) => b - a).forEach(idx => data.splice(idx, 1));
+        
+        localStorage.setItem('chassisDB', JSON.stringify(data));
+        renderArchiveData();
+        if(window.renderTable) renderTable();
+        document.getElementById('selectAll').checked = false;
+    }
+}
+</script>
 
 </body>
 </html>
