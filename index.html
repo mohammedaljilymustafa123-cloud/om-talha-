@@ -3,345 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سفير القوافي الذكية</title>
+    <title>منصة سفير القوافي - الإصدار الذكي</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
+    <style id="dynamicStyles">
         :root {
             --dark-navy: #0a192f;
             --orange-main: #f39c12;
-            --light-bg: #f4f7f6;
+            --light-bg: #050505; /* خلفية داكنة لتبرز الإضاءة */
             --white: #ffffff;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
+        /* تأثير إضاءة الحواف (Edge Lighting) */
+        html, body {
             margin: 0;
-            color: #333;
+            padding: 0;
+            min-height: 100vh;
+            background-color: var(--light-bg);
+            /* إطار الحواف المضيء */
+            border: 4px solid var(--orange-main);
+            box-sizing: border-box;
+            box-shadow: 
+                inset 0 0 20px #ff4500,
+                0 0 30px #ff8c00;
+            animation: edgePulse 3s infinite alternate;
+            border-radius: 20px;
         }
 
-        /* 1. الهوية البصرية */
+        @keyframes edgePulse {
+            from { box-shadow: inset 0 0 15px #ff4500, 0 0 25px #ff8c00; }
+            to { box-shadow: inset 0 0 30px #ff4500, 0 0 50px #ff8c00; }
+        }
+
+        /* الهوية البصرية */
         header {
             background: var(--dark-navy);
             color: var(--white);
             padding: 20px;
             text-align: center;
-            border-bottom: 5px solid var(--orange-main);
-            position: relative;
+            border-bottom: 3px solid var(--orange-main);
+            margin: 10px;
+            border-radius: 15px;
         }
 
         .profile-img {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            border: 3px solid var(--orange-main);
-            margin-bottom: 10px;
+            border: 2px solid var(--orange-main);
         }
 
-        .visitor-counter {
-            font-size: 0.9em;
-            background: rgba(255,255,255,0.1);
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-
-        /* 2. محرك البحث */
-        .search-container {
-            padding: 20px;
-            text-align: center;
-        }
-
+        /* محرك البحث */
+        .search-area { padding: 20px; text-align: center; }
         #smartSearch {
-            width: 90%;
-            max-width: 600px;
-            padding: 15px;
-            border: 2px solid var(--dark-navy);
-            border-radius: 30px;
-            outline: none;
-            font-size: 16px;
-        }
-
-        /* 3. القائمة الجانبية والإحصائيات */
-        .main-layout {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .sidebar {
-            flex: 1;
-            min-width: 250px;
-            background: var(--white);
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .stat-card {
-            background: var(--dark-navy);
-            color: var(--orange-main);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
+            width: 85%;
+            padding: 12px;
+            border-radius: 25px;
+            border: 2px solid var(--orange-main);
+            background: #111;
+            color: white;
             text-align: center;
         }
 
-        /* 4. نظام الجدول المطور */
-        .content-area {
-            flex: 3;
-            min-width: 300px;
-        }
-
+        /* الجدول المطور */
+        .main-container { padding: 15px; }
         table {
             width: 100%;
-            background: var(--white);
+            background: #1a1a1a;
+            color: white;
             border-collapse: collapse;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        th { background: var(--dark-navy); color: var(--orange-main); padding: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #333; text-align: center; }
+        .no-data { color: #ff4d4d; font-weight: bold; }
 
-        th { background: var(--dark-navy); color: white; padding: 15px; }
-        td { padding: 12px; border-bottom: 1px solid #ddd; text-align: center; }
-
-        .no-data { color: red; font-weight: bold; }
-        .whatsapp-btn { color: #25D366; font-size: 1.5em; text-decoration: none; }
-
-        /* 5. لوحة الإدارة والأزرار الزرقary */
-        .group-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            overflow-x: auto;
-            padding: 10px 0;
-        }
-
-        .filter-btn {
-            background: #2980b9;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: none;
-            white-space: nowrap;
+        /* لوحة الإدارة الذكية */
+        #adminPanel {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%; max-width: 500px;
+            background: white; padding: 20px;
+            border-radius: 15px; z-index: 9999;
+            color: #333;
+            max-height: 80vh; overflow-y: auto;
         }
 
         .admin-trigger {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--dark-navy);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            position: fixed; bottom: 25px; left: 25px;
+            background: var(--orange-main); color: white;
+            width: 45px; height: 45px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 0 10px var(--orange-main);
         }
 
-        /* لوحة التحكم المخفية */
-        #adminPanel {
-            display: none;
-            background: #fff;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            border-radius: 15px;
-            z-index: 1000;
+        .code-box {
+            background: #222; color: #0f0;
+            font-family: monospace; padding: 10px;
+            width: 100%; margin-top: 10px; border-radius: 5px;
         }
-
-        .hidden { display: none; }
     </style>
 </head>
 <body>
 
 <header>
-    <img src="https://via.placeholder.com/80" alt="سفير القوافي" class="profile-img">
-    <h1>سفير القوافي</h1>
-    <div class="visitor-counter">
-        <i class="fas fa-eye"></i> عدد الزوار: <span id="vCount">1,452</span>
-    </div>
+    <img src="https://via.placeholder.com/70" alt="سفير القوافي" class="profile-img">
+    <h2>سفير القوافي</h2>
+    <small id="vCount">زوار اليوم: 1,200</small>
 </header>
 
-<div class="search-container">
-    <input type="text" id="smartSearch" placeholder="ابحث بالاسم، الشاسيه، أو رقم اللوحة..." onkeyup="runSmartSearch()">
+<div class="search-area">
+    <input type="text" id="smartSearch" placeholder="بحث ذكي (اسم، شاسيه، لوحة)..." onkeyup="runSearch()">
 </div>
 
-<div class="main-layout">
-    <div class="sidebar">
-        <h3><i class="fas fa-chart-line"></i> إحصائيات</h3>
-        <div class="stat-card">
-            <small>إجمالي المركبات</small>
-            <h2 id="totalCars">0</h2>
-        </div>
-        <hr>
-        <label>سجل رقمك للاستفسار:</label>
-        <input type="tel" id="userPhone" placeholder="09xxxxxxx" style="width:100%; padding:8px; margin-top:5px;">
-    </div>
-
-    <div class="content-area">
-        <div class="group-filters" id="groupButtons">
-            <button class="filter-btn" onclick="filterByGroup('all')">الكل</button>
-        </div>
-        
-        <table id="mainTable">
-            <thead>
-                <tr>
-                    <th>الماركة/النوع</th>
-                    <th>الشاسيه</th>
-                    <th>اللوحة</th>
-                    <th>تواصل</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
-        <div id="showMore" style="text-align:center; margin-top:15px; display:none;">
-            <button onclick="expandTable()" style="padding:10px 20px;">عرض المزيد</button>
-        </div>
-    </div>
+<div class="main-container">
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>المركبة</th>
+                <th>الشاسيه</th>
+                <th>اللوحة</th>
+                <th>💬</th>
+            </tr>
+        </thead>
+        <tbody id="resBody"></tbody>
+    </table>
 </div>
 
-<div class="admin-trigger" onclick="openAdmin()">
-    <i class="fas fa-cog"></i>
+<div class="admin-trigger" onclick="checkAdmin()">
+    <i class="fas fa-microchip"></i>
 </div>
 
 <div id="adminPanel">
-    <h3><i class="fas fa-lock"></i> لوحة الإدارة الذكية</h3>
-    <input type="text" id="groupName" placeholder="اسم الكشف (مثلاً: كشف بوكسي)" style="width:100%; margin-bottom:10px; padding:8px;">
-    <textarea id="bulkInput" placeholder="الصق النص هنا (توسان 123456 خ789)" style="width:100%; height:100px; margin-bottom:10px;"></textarea>
-    <button onclick="processData()" style="background:var(--orange-main); border:none; padding:10px; width:100%; cursor:pointer;">توزيع وتفريز البيانات ➕</button>
-    <button onclick="closeAdmin()" style="margin-top:10px; width:100%;">إغلاق</button>
+    <h3>⚙️ المحرك الذكي والإدارة</h3>
+    <hr>
+    
+    <label><b>إضافة كود CSS مخصص (المحرك الذكي):</b></label>
+    <textarea id="customCSS" class="code-box" rows="4" placeholder="أدخل كود ستايل هنا..."></textarea>
+    <button onclick="applySmartCode()" style="background: #27ae60; color: white; width: 100%; padding: 10px; margin: 10px 0; border: none; border-radius: 5px;">تحديث تصميم الموقع فوراً</button>
+
+    <hr>
+    <label><b>إضافة بيانات جديدة:</b></label>
+    <textarea id="dataInput" class="code-box" rows="3" placeholder="توسان 123456 خ789"></textarea>
+    <button onclick="addData()" style="background: var(--dark-navy); color: white; width: 100%; padding: 10px; border: none; border-radius: 5px;">توزيع البيانات</button>
+    
+    <button onclick="closeAdmin()" style="background: #e74c3c; color: white; width: 100%; margin-top: 20px; border: none; padding: 5px;">إغلاق</button>
 </div>
 
 <script>
-    // نظام البيانات
-    let database = JSON.parse(localStorage.getItem('smartDB')) || [];
-    let groups = JSON.parse(localStorage.getItem('groups')) || [];
-    let limit = 10;
+    let db = JSON.parse(localStorage.getItem('myDB')) || [];
 
-    // 1. محرك الزوار الوهمي
-    setInterval(() => {
-        let count = parseInt(document.getElementById('vCount').innerText.replace(',',''));
-        document.getElementById('vCount').innerText = (count + Math.floor(Math.random() * 3)).toLocaleString();
-    }, 5000);
-
-    // 2. لوحة الإدارة (الحماية)
-    function openAdmin() {
-        let pass = prompt("أدخل كلمة السر للدخول للنظام:");
-        if(pass === "3344") {
-            document.getElementById('adminPanel').style.display = 'block';
-        } else {
-            alert("⚠️ خطأ! تم تسجيل محاولة وصول غير مصرح بها.");
-        }
+    // 1. تشغيل المحرك الذكي (Inject)
+    function applySmartCode() {
+        const css = document.getElementById('customCSS').value;
+        const styleTag = document.getElementById('dynamicStyles');
+        styleTag.innerHTML += css; // يضيف الكود الجديد للأكواد الحالية
+        localStorage.setItem('userCustomCSS', css); // حفظ الكود ليعمل عند التحديث
+        alert("تم تطبيق الكود بنجاح عبر المحرك الذكي!");
     }
 
-    function closeAdmin() {
-        document.getElementById('adminPanel').style.display = 'none';
+    // استعادة الأكواد المخصصة عند فتح الصفحة
+    window.onload = function() {
+        const savedCSS = localStorage.getItem('userCustomCSS');
+        if(savedCSS) document.getElementById('dynamicStyles').innerHTML += savedCSS;
+        render();
+    };
+
+    function checkAdmin() {
+        if(prompt("كلمة السر:") === "3344") document.getElementById('adminPanel').style.display = 'block';
     }
 
-    // 3. التوزيع التلقائي (التفريز الذكي)
-    function processData() {
-        const input = document.getElementById('bulkInput').value;
-        const gName = document.getElementById('groupName').value || "عام";
-        const lines = input.split('\n');
-
+    function addData() {
+        const lines = document.getElementById('dataInput').value.split('\n');
         lines.forEach(line => {
-            if(line.trim() !== "") {
-                const parts = line.split(' '); // تفكيك النص عبر المسافات
-                const entry = {
-                    type: parts[0] || "نقص",
-                    chassis: parts[1] || "نقص",
-                    plate: parts[2] || "نقص",
-                    group: gName
-                };
-                database.push(entry);
+            if(line.trim()) {
+                const p = line.split(' ');
+                db.push({ type: p[0]||'نقص', chassis: p[1]||'نقص', plate: p[2]||'نقص' });
             }
         });
-
-        if(!groups.includes(gName)) groups.push(gName);
-        
-        saveAndRefresh();
-        closeAdmin();
+        localStorage.setItem('myDB', JSON.stringify(db));
+        render();
+        alert("تمت الإضافة!");
     }
 
-    function saveAndRefresh() {
-        localStorage.setItem('smartDB', JSON.stringify(database));
-        localStorage.setItem('groups', JSON.stringify(groups));
-        renderTable(database);
-        renderGroups();
-        document.getElementById('totalCars').innerText = database.length;
+    function render() {
+        const body = document.getElementById('resBody');
+        body.innerHTML = db.map(i => `
+            <tr>
+                <td>${i.type}</td>
+                <td class="${i.chassis === 'نقص' ? 'no-data' : ''}">${i.chassis === 'نقص' ? 'لا يوجد' : i.chassis}</td>
+                <td class="${i.plate === 'نقص' ? 'no-data' : ''}">${i.plate === 'نقص' ? 'لا يوجد' : i.plate}</td>
+                <td><a href="https://wa.me/249xxxxxxx" style="color:#25d366"><i class="fab fa-whatsapp"></i></a></td>
+            </tr>
+        `).join('');
     }
 
-    // 4. نظام عرض البيانات والبحث
-    function renderTable(data) {
-        const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = "";
-        
-        const displayData = data.slice(0, limit);
-        
-        displayData.forEach(item => {
-            let row = `<tr>
-                <td>${item.type}</td>
-                <td class="${item.chassis === 'نقص' ? 'no-data' : ''}">${item.chassis === 'نقص' ? 'لا يوجد' : item.chassis}</td>
-                <td class="${item.plate === 'نقص' ? 'no-data' : ''}">${item.plate === 'نقص' ? 'لا يوجد' : item.plate}</td>
-                <td><a href="#" onclick="contactAdmin('${item.type}')" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a></td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
-
-        document.getElementById('showMore').style.display = data.length > limit ? 'block' : 'none';
+    function runSearch() {
+        const val = document.getElementById('smartSearch').value.toLowerCase();
+        const filtered = db.filter(i => i.type.includes(val) || i.chassis.includes(val) || i.plate.includes(val));
+        // عرض النتائج المفلترة فقط (تعديل بسيط على render)
+        const body = document.getElementById('resBody');
+        body.innerHTML = filtered.map(i => `
+            <tr><td>${i.type}</td><td>${i.chassis}</td><td>${i.plate}</td><td>...</td></tr>
+        `).join('');
     }
 
-    function renderGroups() {
-        const container = document.getElementById('groupButtons');
-        container.innerHTML = '<button class="filter-btn" onclick="filterByGroup(\'all\')">الكل</button>';
-        groups.forEach(g => {
-            container.innerHTML += `<button class="filter-btn" onclick="filterByGroup('${g}')">${g}</button>`;
-        });
-    }
-
-    function filterByGroup(g) {
-        if(g === 'all') renderTable(database);
-        else renderTable(database.filter(i => i.group === g));
-    }
-
-    function runSmartSearch() {
-        let val = document.getElementById('smartSearch').value.toLowerCase();
-        let filtered = database.filter(i => 
-            i.type.toLowerCase().includes(val) || 
-            i.chassis.toLowerCase().includes(val) || 
-            i.plate.toLowerCase().includes(val)
-        );
-        renderTable(filtered);
-    }
-
-    function contactAdmin(car) {
-        const phone = document.getElementById('userPhone').value;
-        if(!phone) {
-            alert("❌ عذراً! يجب تسجيل رقم هاتفك في القائمة الجانبية أولاً لتتمكن من المراسلة.");
-            return;
-        }
-        window.open(`https://wa.me/249xxxxxxx?text=استفسار عن: ${car} من العميل: ${phone}`);
-    }
-
-    function expandTable() {
-        limit += 10;
-        renderTable(database);
-    }
-
-    // تشغيل أولي
-    window.onload = saveAndRefresh;
+    function closeAdmin() { document.getElementById('adminPanel').style.display = 'none'; }
 </script>
 
 </body>
