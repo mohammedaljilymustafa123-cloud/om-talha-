@@ -213,6 +213,104 @@ document.addEventListener('DOMContentLoaded', render);
 </script>
 
 <button id="viewMoreBtn" onclick="toggleView()" style="display:none; margin: 10px auto; background:none; border:1px solid #00ffc3; color:#00ffc3; padding:5px 15px; border-radius:20px; cursor:pointer;">رؤية المزيد</button>
+<script>
+// --- 1. محرك الفرز الذكي (Smart Parser) ---
+function smartParse(text, contactPhone) {
+    const blocks = text.split(/\n\s*\n/); // تقسيم النص عند كل فراغ بين سيارة وأخرى
+    const parsedData = [];
+
+    blocks.forEach(block => {
+        if (block.trim() === "") return;
+
+        const lines = block.split('\n');
+        let item = {
+            car: "غير معروف",
+            model: "<span style='color:red;'>لا يوجد رقم موديل</span>",
+            chassis: "---",
+            plate: "<span style='color:red;'>لا يوجد لوحة</span>",
+            phone: contactPhone || ""
+        };
+
+        block.split(/\s+/).forEach(word => {
+            // فرز اسم السيارة (كلمات عربية ليست "موديل" أو "شاسي")
+            if (/^[\u0600-\u06FF]+$/.test(word) && !["موديل", "شاسي", "رقم", "لوحة", "عربية"].includes(word)) {
+                item.car = (item.car === "غير معروف") ? word : item.car + " " + word;
+            }
+            // فرز الموديل (4 أرقام تبدأ بـ 20 أو 19)
+            if (/^(19|20)\d{2}$/.test(word)) {
+                item.model = word;
+            }
+            // فرز رقم الشاسي (رقم طويل أكثر من 5 خانات ولا يطابق الموديل)
+            if (/^\d{5,20}$/.test(word) && word !== item.model) {
+                item.chassis = word;
+            }
+            // فرز اللوحة (إذا جاءت بعد كلمة لوحة أو كانت رقم قصير)
+            if (block.includes("لوحة " + word)) {
+                item.plate = word;
+            }
+        });
+
+        if (item.chassis !== "---") parsedData.push(item);
+    });
+    return parsedData;
+}
+
+// --- 2. دالة الحفظ الجماعي المطورة ---
+window.saveGroup = function() {
+    const input = document.getElementById('groupInput').value;
+    const phone = document.getElementById('groupPhone').value;
+    
+    if (!input.trim()) return alert("الرجاء لصق القائمة أولاً");
+
+    const newCars = smartParse(input, phone);
+    db = [...newCars, ...db]; // إضافة الجديد في البداية
+    localStorage.setItem('chassisDB', JSON.stringify(db));
+    alert("تم فرز وحفظ " + newCars.length + " سيارة بنجاح");
+    renderUI();
+};
+
+// --- 3. تحديث الجدول في الواجهة (آخر 8 سيارات + رؤية المزيد) ---
+let showAll = false;
+function renderUI() {
+    const tableBody = document.getElementById('tableBody');
+    const displayData = showAll ? db : db.slice(0, 8); // عرض 8 فقط أو الكل
+
+    tableBody.innerHTML = displayData.map(item => `
+        <tr>
+            <td>${item.car}</td>
+            <td>${item.model}</td>
+            <td style="font-weight:bold; color:var(--accent);">${item.chassis}</td>
+            <td>${item.plate}</td>
+            <td><a href="https://wa.me/${item.phone}" style="color:#25d366; font-size:1.2rem;"><i class="fab fa-whatsapp"></i></a></td>
+        </tr>
+    `).join('');
+
+    // إضافة زر رؤية المزيد تحت الجدول
+    const existingBtn = document.getElementById('more-btn');
+    if (db.length > 8) {
+        if (!existingBtn) {
+            const btn = document.createElement('button');
+            btn.id = 'more-btn';
+            btn.style.cssText = "display:block; margin:10px auto; background:none; border:1px solid var(--accent); color:var(--accent); padding:8px 20px; border-radius:20px; cursor:pointer;";
+            btn.innerText = "رؤية المزيد";
+            btn.onclick = () => { showAll = !showAll; renderUI(); };
+            tableBody.parentElement.after(btn);
+        } else {
+            existingBtn.innerText = showAll ? "رؤية أقل" : "رؤية المزيد";
+        }
+    }
+}
+
+// --- 4. تغيير صورة البروفايل ---
+document.querySelector('.profile-img').src = "1000026112.jpg";
+</script>
+
+<style>
+/* تحسين شكل الجدول الخماسي */
+table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1e293b; font-size: 0.75rem; word-wrap: break-word; }
+th { color: var(--accent); background: rgba(255,255,255,0.05); }
+</style>
 
 </body>
 </html>
