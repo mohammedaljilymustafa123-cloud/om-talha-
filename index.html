@@ -554,6 +554,62 @@ window.closeAdmin = function() {
 
 console.log("نظام الإصلاح الذكي اشتغل.. كلمة السر الآن هي 3344");
 </script>
+<script>
+window.openAdmin = function() {
+    let pass = prompt("أدخل كلمة المرور للدخول المباشر:");
+    
+    if (pass === "3344") {
+        // إنشاء الشاشة المستقلة برمجياً لضمان ظهورها مهما كان الكود القديم خربان
+        let adminOverlay = document.getElementById('admin-panel');
+        
+        if (adminOverlay) {
+            // تطبيق تنسيق "الشاشة الكاملة" بقوة 
+            adminOverlay.style.cssText = `
+                display: block !important;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-color: #0a0b10 !important;
+                z-index: 99999 !important;
+                overflow-y: auto !important;
+                padding: 20px !important;
+                box-sizing: border-box !important;
+                border: 4px solid #00ffc3 !important;
+            `;
+            document.body.style.overflow = 'hidden'; // منع حركة الموقع في الخلفية
+            console.log("تم النقل المباشر إلى لوحة الإدارة");
+        } else {
+            alert("خطأ: لوحة التحكم غير موجودة في الكود، تأكد من وجود id='admin-panel'");
+        }
+    } else if (pass !== null) {
+        alert("كلمة المرور خاطئة!");
+    }
+};
+
+// دالة الإغلاق لضمان العودة للموقع بسلاسة
+window.closeAdmin = function() {
+    let adminOverlay = document.getElementById('admin-panel');
+    if (adminOverlay) {
+        adminOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
+</script>
+
+<style>
+/* تأكيد تنسيق محتوى اللوحة ليكون مرتباً وقائماً بذاته */
+.admin-content {
+    max-width: 800px !important;
+    margin: 50px auto !important;
+    background: #11141d !important;
+    padding: 30px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 0 40px rgba(0, 255, 195, 0.3) !important;
+    color: white !important;
+}
+</style>
 
 </body>
 </html>
