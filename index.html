@@ -115,6 +115,104 @@
     });
 })();
 </script>
+<script>
+// 1. قاعدة البيانات والبيانات الأولية
+let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+
+// 2. المحرك الذكي لفرز النصوص العشوائية
+function smartParse(text, commonPhone) {
+    const lines = text.split(/\n\s*\n/); // تقسيم النص بناءً على الفراغات بين السيارات
+    const results = [];
+
+    lines.forEach(line => {
+        if (line.trim() === "") return;
+
+        // استخراج الموديل (رقم مكون من 4 خانات يبدأ بـ 20 أو 19)
+        const modelMatch = line.match(/\b(20\d{2}|19\d{2})\b/);
+        const model = modelMatch ? modelMatch[0] : '<span style="color:red;">لا يوجد رقم موديل</span>';
+
+        // استخراج رقم الشاسي (الرقم الأطول في النص عادة)
+        const allNumbers = line.match(/\d+/g) || [];
+        let chassis = "غير معروف";
+        if (allNumbers.length > 0) {
+            chassis = allNumbers.reduce((a, b) => a.length >= b.length ? a : b);
+        }
+
+        // استخراج رقم اللوحة (رقم مكون من 3 إلى 6 خانات بشرط ألا يكون هو الموديل أو الشاسي)
+        let plate = '<span style="color:red;">لا يوجد لوحة</span>';
+        const plateMatch = line.match(/(?:لوحة|رقم)\s*(\d+)/);
+        if (plateMatch) {
+            plate = plateMatch[1];
+        } else {
+            // محاولة إيجاد رقم آخر غير الشاسي والموديل
+            const otherNums = allNumbers.filter(n => n !== chassis && n !== modelMatch?.[0]);
+            if (otherNums.length > 0) plate = otherNums[0];
+        }
+
+        // استخراج اسم السيارة (أول كلمات تظهر قبل الأرقام)
+        let carName = line.split(/\d/)[0].replace(/عربية|رقم|الشاسي|موديل|لوحة/g, "").trim();
+        if (!carName) carName = "سيارة غير مسمى";
+
+        results.push({
+            car: carName,
+            model: model,
+            chassis: chassis,
+            plate: plate,
+            phone: commonPhone || "000000"
+        });
+    });
+    return results;
+}
+
+// 3. دالة الحفظ الجماعي
+window.saveData = function() {
+    const text = document.getElementById('bulkData').value;
+    const phone = document.getElementById('commonPhone').value;
+    if (!text) return alert("الرجاء لصق القائمة أولاً");
+    
+    const newItems = smartParse(text, phone);
+    db = [...newItems, ...db]; // إضافة الجديد في البداية
+    localStorage.setItem('chassisDB', JSON.stringify(db));
+    alert("تم فرز وحفظ " + newItems.length + " سيارة بنجاح");
+    render();
+};
+
+// 4. دالة العرض (آخر 8 سيارات مع ميزة رؤية المزيد)
+let showAll = false;
+function render() {
+    const tableBody = document.getElementById('resTable');
+    const displayData = showAll ? db : db.slice(0, 8);
+    
+    tableBody.innerHTML = displayData.map(item => `
+        <tr>
+            <td>${item.car}</td>
+            <td>${item.model}</td>
+            <td style="color:#00ffc3; font-weight:bold;">${item.chassis}</td>
+            <td>${item.plate}</td>
+            <td><a href="https://wa.me/${item.phone}" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a></td>
+        </tr>
+    `).join('');
+
+    // إظهار زر رؤية المزيد إذا كان هناك أكثر من 8 سيارات
+    const moreBtn = document.getElementById('viewMoreBtn');
+    if (db.length > 8) {
+        moreBtn.style.display = "block";
+        moreBtn.innerText = showAll ? "رؤية أقل" : "رؤية المزيد";
+    } else {
+        moreBtn.style.display = "none";
+    }
+}
+
+window.toggleView = function() {
+    showAll = !showAll;
+    render();
+};
+
+// تشغيل العرض عند التحميل
+document.addEventListener('DOMContentLoaded', render);
+</script>
+
+<button id="viewMoreBtn" onclick="toggleView()" style="display:none; margin: 10px auto; background:none; border:1px solid #00ffc3; color:#00ffc3; padding:5px 15px; border-radius:20px; cursor:pointer;">رؤية المزيد</button>
 
 </body>
 </html>
