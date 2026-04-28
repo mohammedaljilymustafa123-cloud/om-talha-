@@ -726,6 +726,151 @@ function deleteSelected() {
     }
 }
 </script>
+<script>
+// دالة المعالجة الذكية للنصوص العشوائية
+function smartParse(text, contactPhone) {
+    let lines = text.split('\n');
+    let tempCar = {};
+    let results = [];
+
+    lines.forEach(line => {
+        line = line.trim();
+        if (!line) return;
+
+        // استخراج اسم السيارة (غالباً يبدأ بكلمة عربية أو ماركة)
+        if (line.includes('عربية') || line.includes('كيا') || line.includes('تيوتا') || line.includes('اكسنت')) {
+            // إذا كان هناك سيارة سابقة لم تكتمل، نحفظها ونبدأ جديدة
+            if (tempCar.car) results.push(finalizeCar(tempCar, contactPhone));
+            tempCar = { car: line, phone: contactPhone };
+            
+            // محاولة استخراج الموديل واللوحة من نفس السطر
+            let modelMatch = line.match(/موديل\s*(\d+)/);
+            if (modelMatch) tempCar.model = modelMatch[1];
+            
+            let plateMatch = line.match(/لوحة\s*(\d+)/);
+            if (plateMatch) tempCar.plate = plateMatch[1];
+            
+            // تنظيف اسم السيارة من الموديل واللوحة ليبقى الاسم فقط
+            tempCar.car = line.split('موديل')[0].split('لوحة')[0].trim();
+        } 
+        
+        // استخراج رقم الشاسي (الذي يحتوي عادة على أرقام طويلة)
+        if (line.toLowerCase().includes('شاسي') || line.match(/\d{5,}/)) {
+            let chMatch = line.match(/\d+/);
+            if (chMatch) tempCar.chassis = chMatch[0];
+        }
+    });
+    
+    if (tempCar.car) results.push(finalizeCar(tempCar, contactPhone));
+    return results;
+}
+
+function finalizeCar(carObj, phone) {
+    return {
+        car: carObj.car || "غير معروف",
+        model: carObj.model || "<span style='color:#ff4d4d'>لا يوجد موديل</span>",
+        chassis: carObj.chassis || "000000",
+        plate: carObj.plate || "<span style='color:#ff4d4d'>لا توجد لوحة</span>",
+        phone: phone || ""
+    };
+}
+
+// تحديث واجهة لوحة التحكم (الإضافة الجماعية والفردية)
+window.addEventListener('DOMContentLoaded', () => {
+    const adminPanel = document.querySelector('.admin-content');
+    if (adminPanel) {
+        adminPanel.innerHTML = `
+            <div class="admin-header">
+                <h2><i class="fas fa-tools"></i> لوحة الإدارة المتطورة</h2>
+                <button class="close-admin" onclick="closeAdmin()">×</button>
+            </div>
+            
+            <div class="admin-section">
+                <h4><i class="fas fa-layer-group"></i> إضافة جماعية ذكية</h4>
+                <textarea id="bulkInput" placeholder="أدخل القائمة العشوائية هنا..." style="width:100%; height:150px; background:#0a0b10; color:#00ffc3; border-radius:10px; padding:10px;"></textarea>
+                <input type="text" id="bulkPhone" placeholder="رقم واتساب التواصل لهذه المجموعة" style="width:100%; margin-top:10px; padding:10px;">
+                <button onclick="processBulk()" style="width:100%; margin-top:10px; background:#00ffc3; color:black; font-weight:bold; padding:12px; border:none; border-radius:8px;">إضافة وفرز القائمة</button>
+            </div>
+
+            <div class="admin-section">
+                <h4><i class="fas fa-car-side"></i> إضافة فردية</h4>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <input type="text" id="indCar" placeholder="اسم السيارة">
+                    <input type="text" id="indModel" placeholder="الموديل">
+                    <input type="text" id="indChassis" placeholder="رقم الشاسي">
+                    <input type="text" id="indPlate" placeholder="رقم اللوحة">
+                </div>
+                <input type="text" id="indPhone" placeholder="رقم واتساب التواصل" style="width:100%; margin-top:10px;">
+                <button onclick="processIndividual()" style="width:100%; margin-top:10px; background:#3b82f6; color:white; padding:10px; border:none; border-radius:8px;">حفظ السيارة</button>
+            </div>
+        `;
+    }
+});
+
+function processBulk() {
+    let text = document.getElementById('bulkInput').value;
+    let phone = document.getElementById('bulkPhone').value;
+    let newCars = smartParse(text, phone);
+    let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+    localStorage.setItem('chassisDB', JSON.stringify([...newCars, ...db]));
+    renderMainTable();
+    alert("تم فرز وإضافة " + newCars.length + " سيارة بنجاح!");
+}
+
+function processIndividual() {
+    let car = {
+        car: document.getElementById('indCar').value,
+        model: document.getElementById('indModel').value || "<span style='color:#ff4d4d'>لا يوجد موديل</span>",
+        chassis: document.getElementById('indChassis').value,
+        plate: document.getElementById('indPlate').value || "<span style='color:#ff4d4d'>لا توجد لوحة</span>",
+        phone: document.getElementById('indPhone').value
+    };
+    let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+    db.unshift(car);
+    localStorage.setItem('chassisDB', JSON.stringify(db));
+    renderMainTable();
+    alert("تم الحفظ!");
+}
+
+// تحديث الجدول الرئيسي في الواجهة ليكون متناسقاً
+function renderMainTable() {
+    const tableBody = document.getElementById('tableBody');
+    if (!tableBody) return;
+    const db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+    
+    tableBody.innerHTML = db.map(item => `
+        <tr style="font-size: 0.85rem;">
+            <td style="padding:8px;">${item.car}</td>
+            <td>${item.model}</td>
+            <td style="font-weight:bold; color:#00ffc3;">${item.chassis}</td>
+            <td>${item.plate}</td>
+            <td>
+                <a href="https://wa.me/${item.phone}" target="_blank" style="color:#25d366; font-size:1.2rem;">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </td>
+        </tr>
+    `).join('');
+    
+    if(document.getElementById('chassis-count')) 
+        document.getElementById('chassis-count').innerText = db.length;
+}
+
+// تعديل CSS لضمان تناسق الجدول مع الشاشة
+const style = document.createElement('style');
+style.innerHTML = `
+    table { width: 100% !important; table-layout: fixed !important; border-collapse: collapse; }
+    th, td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border: 1px solid #1e293b; text-align: center; }
+    th { background: #1e293b; color: #00ffc3; font-size: 0.9rem; padding: 10px 2px; }
+    @media (max-width: 600px) {
+        tr { font-size: 0.75rem !important; }
+        th { font-size: 0.7rem !important; }
+    }
+`;
+document.head.appendChild(style);
+
+renderMainTable();
+</script>
 
 </body>
 </html>
