@@ -686,6 +686,115 @@
     // إعادة تشغيل العرض بالنمط الجديد
     setTimeout(render, 600);
 </script>
+<style class="smart-addon">
+    .table-wrapper { 
+        width: 100%; 
+        margin-top: 15px; 
+        background: white; 
+        border-radius: 20px; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+        overflow: hidden; /* يمنع التمرير الجانبي */
+    }
+    .styled-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
+    .styled-table th { background: #1a1f3c; color: white; padding: 12px 5px; text-align: center; }
+    .styled-table td { 
+        padding: 12px 5px; 
+        border-bottom: 1px solid #f2f2f2; 
+        text-align: center; 
+        word-wrap: break-word; /* لضمان عدم خروج النص الطويل عن الإطار */
+    }
+    .load-more-container { 
+        padding: 15px; 
+        text-align: center; 
+        background: #fdfdfd; 
+        border-top: 1px solid #eee; 
+    }
+    .load-more-btn { 
+        background: var(--accent-orange); 
+        color: white; 
+        border: none; 
+        padding: 8px 25px; 
+        border-radius: 12px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        font-size: 13px; 
+    }
+    .no-data { color: #ff4757; font-weight: bold; font-size: 10px; }
+</style>
+
+<script class="smart-addon">
+    let currentLimit = 10; // العدد الابتدائي للعرض
+
+    window.render = function(data = window.cars || []) {
+        const list = document.getElementById('carsList');
+        if (!list) return;
+
+        if (data.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:30px; color:gray; background:white; border-radius:20px;">🔍 لا توجد نتائج</div>`;
+            return;
+        }
+
+        // تحديد البيانات التي سيتم عرضها بناءً على الليميت
+        const displayData = data.slice(0, currentLimit);
+
+        let html = `
+            <div class="table-wrapper">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">المركبة</th>
+                            <th style="width: 30%;">الشاسيه</th>
+                            <th style="width: 25%;">اللوحة</th>
+                            <th style="width: 15%;">💬</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        html += displayData.map(c => {
+            const nameVal = (c.name && c.name.trim() !== "") ? `<b>${c.name}</b>` : `<span class="no-data">لا يوجد</span>`;
+            const idVal = (c.id && c.id.trim() !== "") ? c.id : `<span class="no-data">لا يوجد</span>`;
+            const plateVal = (c.plate && c.plate.trim() !== "") ? c.plate : `<span class="no-data">لا يوجد</span>`;
+            
+            return `
+                <tr>
+                    <td>${nameVal}</td>
+                    <td>${idVal}</td>
+                    <td>${plateVal}</td>
+                    <td><span style="cursor:pointer; font-size:18px;" onclick="window.startChat('${c.phone || '249129642174'}')">💬</span></td>
+                </tr>
+            `;
+        }).join('');
+
+        html += `</tbody></table>`;
+
+        // إضافة زر "عرض المزيد" إذا كان هناك بيانات متبقية
+        if (data.length > currentLimit) {
+            html += `
+                <div class="load-more-container">
+                    <button class="load-more-btn" onclick="window.loadMoreData()">عرض المزيد (${data.length - currentLimit})</button>
+                </div>
+            `;
+        }
+        
+        html += `</div>`;
+        list.innerHTML = html;
+    };
+
+    window.loadMoreData = function() {
+        currentLimit += 10; // زيادة العرض 10 سيارات إضافية في كل ضغطة
+        window.render(window.cars);
+    };
+
+    // إعادة تصفير العداد عند البحث لضمان ظهور النتائج الجديدة أولاً
+    const originalSearch = window.doSearch;
+    window.doSearch = function() {
+        currentLimit = 10; 
+        if(originalSearch) originalSearch();
+    };
+
+    setTimeout(() => { window.render(window.cars); }, 400);
+</script>
 
 </body>
 </html>
