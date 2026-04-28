@@ -520,6 +520,40 @@ function openAdmin() {
     }
 }
 </script>
+<script>
+// 1. تنظيف أي نسخ قديمة من كلمة السر
+var adminPass = "3344"; // هذه هي الكلمة الرسمية الآن
+
+// 2. إعادة تعريف دالة الفتح بقوة (Override)
+window.openAdmin = function() {
+    let pass = prompt("أدخل كلمة السر للدخول (3344):");
+    
+    if(pass === adminPass) { 
+        // التأكد من أن لوحة التحكم موجودة ومرئية
+        let panel = document.getElementById('admin-panel');
+        if(panel) {
+            panel.style.display = 'block';
+            document.body.style.overflow = 'hidden'; 
+            console.log("تم فتح اللوحة بنجاح");
+        } else {
+            alert("خطأ: لم يتم العثور على عنصر admin-panel في الكود!");
+        }
+    } else {
+        alert("كلمة السر خاطئة! حاول مرة أخرى.");
+    }
+};
+
+// 3. دالة إغلاق اللوحة (للتأكد من أنها تعمل)
+window.closeAdmin = function() {
+    let panel = document.getElementById('admin-panel');
+    if(panel) {
+        panel.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
+
+console.log("نظام الإصلاح الذكي اشتغل.. كلمة السر الآن هي 3344");
+</script>
 
 </body>
 </html>
