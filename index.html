@@ -91,5 +91,30 @@
 
     render();
 </script>
+    <div id="new-code-payload" style="display:none;">
+    </div>
+
+<script>
+(function() {
+    const payload = document.getElementById('new-code-payload');
+    
+    // فحص إذا كان هناك كود جديد بداخل الـ Payload
+    if (payload && payload.innerHTML.trim() !== "") {
+        // تخزين النسخة الجديدة في ذاكرة المتصفح
+        localStorage.setItem('site_core_update', payload.innerHTML);
+        // إعادة تحميل الصفحة لتفعيل التحديث
+        location.reload();
+    }
+
+    // استرجاع النسخة المحدثة وتطبيقها عند فتح الموقع
+    window.addEventListener('load', function() {
+        const savedUpdate = localStorage.getItem('site_core_update');
+        if (savedUpdate) {
+            document.body.innerHTML = savedUpdate;
+        }
+    });
+})();
+</script>
+
 </body>
 </html>
