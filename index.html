@@ -3,798 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة السودان - النظام الذكي</title>
-    <style id="dynamic-styles">
-        :root { --bg-dark: #1a1f3c; --bg-light: #f4f7fd; --accent-orange: #ff5f40; --text-main: #2d3436; }
+    <title>منصة السودان الذكية</title>
+    <style>
+        :root {
+            --bg-dark: #1a1f3c; --bg-light: #f4f7fd; --accent-orange: #ff5f40; --text-main: #2d3436;
+            --card-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-light); margin: 0; overflow-x: hidden; }
         .header { background-color: var(--bg-dark); color: white; padding: 30px 20px 60px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; text-align: center; position: relative; }
-        .side-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
+        .menu-btn { position: absolute; top: 25px; right: 20px; font-size: 24px; cursor: pointer; color: white; }
+        .side-menu { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 1000; transition: 0.3s; padding: 20px; box-sizing: border-box; }
         .side-menu.active { right: 0; }
-        .container { max-width: 500px; margin: -35px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
-        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-bottom: 20px; }
-        .car-row { display: flex; align-items: center; padding: 12px; border-bottom: 1px solid #f2f2f2; background: white; border-radius: 10px; margin-bottom: 5px; }
-        .stat-box { background: #f8f9ff; padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: center; border: 1px solid #e0e4f5; }
-        .stat-num { color: var(--accent-orange); font-size: 20px; font-weight: bold; }
+        .stat-box { background: #f8f9ff; padding: 10px; border-radius: 12px; margin-bottom: 8px; text-align: center; border: 1px solid #e0e4f5; }
+        .stat-num { color: var(--accent-orange); font-size: 18px; font-weight: bold; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
+        .visitor-counter { position: absolute; top: 25px; left: 20px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px; }
+        .profile-img { width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover; cursor: pointer; }
+        .container { max-width: 500px; margin: -35px auto 20px; padding: 0 15px; position: relative; z-index: 10; }
+        .search-card { background: white; padding: 20px; border-radius: 30px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+        .search-input { width: 100%; padding: 15px; border-radius: 18px; border: none; background: #f0f2f8; outline: none; }
+        
+        /* تنسيق الجدول الجديد */
+        .styled-table { width: 100%; border-collapse: collapse; background: white; border-radius: 20px; overflow: hidden; font-size: 12px; table-layout: fixed; }
+        .styled-table th { background: var(--bg-dark); color: white; padding: 12px 5px; }
+        .styled-table td { padding: 12px 5px; border-bottom: 1px solid #eee; text-align: center; word-wrap: break-word; }
+        .missing { color: #ff4757; font-weight: bold; font-size: 10px; }
+        
+        #adminPanel { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; padding:20px; box-sizing:border-box; overflow-y:auto; }
     </style>
 </head>
 <body>
 
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
-<div id="app-structure">
-    <div class="header">
-        <div style="position: absolute; top: 25px; right: 20px; font-size: 24px; cursor: pointer;" onclick="toggleMenu()">☰</div>
-        <div style="position: absolute; top: 25px; left: 20px; opacity: 0.3; cursor: pointer;" onclick="openAdmin()">⚙️</div>
-        <div style="position: absolute; top: 25px; left: 60px; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 13px;">👁️ <span id="visitorCount">0</span></div>
-        
-        <img src="1000026303.jpg" style="width: 85px; height: 85px; border-radius: 25px; border: 3px solid rgba(255,255,255,0.2); object-fit: cover;">
-        <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
-        <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
-    </div>
-
-    <div class="side-menu" id="sideMenu">
-        <h3 style="color: var(--bg-dark); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px;">القائمة</h3>
-        <div style="margin-top:20px;">
-            <h4 style="font-size:14px; color:#666;">📊 إحصائيات النظام</h4>
-            <div class="stat-box">إجمالي السيارات<br><span class="stat-num" id="totalCars">0</span></div>
-            <div class="stat-box">عمليات البحث<br><span class="stat-num" id="totalSearch">0</span></div>
-            <div class="stat-box">إجمالي المستلمين<br><span class="stat-num" id="totalClicks">0</span></div>
-        </div>
-        <div style="margin-top:20px;">
-            <h4 style="font-size:14px; color:#666;">📱 حسابي</h4>
-            <input type="text" id="userPhone" placeholder="سجل برقمك للمراسلة" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
-            <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ الرقم</button>
-        </div>
-    </div>
-
-    <div class="container">
-        <div id="adminPanel" style="display:none; background:white; padding:20px; border-radius:25px; margin-bottom:20px; border:2px solid var(--bg-dark);">
-            <input type="text" id="customPhone" style="width:100%; padding:10px; margin-bottom:10px; border-radius:10px;" placeholder="رقم التواصل لهذه المجموعة">
-            <textarea id="bulkInput" style="width:100%; height:100px; padding:10px; border-radius:10px;" placeholder="اكسنت 123456..."></textarea>
-            <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; font-weight:bold;">🚀 نشر المجموعة</button>
-        </div>
-
-        <div class="search-card">
-            <input type="text" id="search" style="width:100%; padding:15px; border-radius:18px; border:none; background:#f0f2f8; outline:none;" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه أو سيارة...">
-        </div>
-
-        <div id="carsList"></div>
-    </div>
+<div class="header">
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
+    <div class="visitor-counter">👁️ <span id="visitorCount">0</span></div>
+    <img src="1000026303.jpg" class="profile-img" onclick="handleAdminAccess()">
+    <h2 style="margin: 10px 0 5px; font-size: 20px;">سفير القوافي</h2>
+    <p style="margin: 0; font-size: 13px; opacity: 0.8;">منصة الاستعلام الذكية - السودان</p>
 </div>
 
-<script id="main-logic">
+<div class="side-menu" id="sideMenu">
+    <h3>📊 الإحصائيات</h3>
+    <div class="stat-box">السيارات: <span class="stat-num" id="totalCars">0</span></div>
+    <div class="stat-box">البحث: <span class="stat-num" id="totalSearch">0</span></div>
+    <hr>
+    <input type="text" id="userPhone" placeholder="سجل رقمك للمراسلة" style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+    <button onclick="saveUserPhone()" style="width:100%; margin-top:5px; background:var(--bg-dark); color:white; border:none; padding:10px; border-radius:10px;">حفظ</button>
+</div>
+
+<div class="container">
+    <div id="adminPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <b>🛠️ لوحة التحكم</b>
+            <button onclick="document.getElementById('adminPanel').style.display='none'" style="background:red; color:white; border:none; padding:5px 10px; border-radius:8px;">إغلاق</button>
+        </div>
+        <textarea id="bulkInput" style="width:100%; height:120px; padding:10px; border-radius:10px;" placeholder="اكسنت 123456 خ789"></textarea>
+        <button onclick="addBulkCars()" style="width:100%; background:var(--accent-orange); color:white; border:none; padding:12px; border-radius:15px; margin-top:10px;">🚀 نشر</button>
+        <button onclick="if(confirm('حذف الكل؟')){cars=[]; localStorage.setItem('cars', JSON.stringify(cars)); render();}" style="width:100%; background:#333; color:white; border:none; padding:10px; border-radius:15px; margin-top:10px;">🗑️ مسح جميع البيانات</button>
+    </div>
+
+    <div class="search-card">
+        <input type="text" id="search" class="search-input" oninput="doSearch()" placeholder="🔍 ابحث عن شاسيه، سيارة، أو لوحة...">
+    </div>
+
+    <div id="carsList"></div>
+</div>
+
+<script>
     let cars = JSON.parse(localStorage.getItem('cars')) || [];
     let stats = JSON.parse(localStorage.getItem('siteStats')) || { search: 0, clicks: 0 };
-    const defaultPhone = "249129642174";
+    let clickCount = 0;
+    let currentLimit = 10;
 
-    function toggleMenu() {
-        const menu = document.getElementById('sideMenu');
-        const overlay = document.getElementById('overlay');
-        menu.classList.toggle('active');
-        overlay.style.display = menu.classList.contains('active') ? 'block' : 'none';
-        updateStatDisplay();
+    function handleAdminAccess() {
+        clickCount++;
+        if(clickCount === 3) {
+            if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block';
+            clickCount = 0;
+        }
+        setTimeout(() => clickCount = 0, 1500);
     }
 
     function render(data = cars) {
         const list = document.getElementById('carsList');
-        list.innerHTML = data.slice(0, 20).map(c => `
-            <div class="car-row">
-                <div style="flex-grow:1"><b>${c.name}</b><br><small style="color:var(--accent-orange)">ID: ${c.id}</small></div>
-                <div onclick="checkContact('${c.phone || defaultPhone}')" style="cursor:pointer; font-size:22px;">💬</div>
-            </div>
-        `).join('');
-        updateStatDisplay();
-    }
-
-    function checkContact(phone) {
-        if(!localStorage.getItem('registeredPhone')) {
-            alert("⚠️ سجل رقمك أولاً في القائمة الجانبية لتتمكن من المراسلة.");
-            toggleMenu();
-        } else {
-            stats.clicks++;
-            saveStats();
-            window.open(`https://wa.me/${phone}`, '_blank');
+        if(data.length === 0) {
+            list.innerHTML = `<div style="text-align:center; padding:30px; background:white; border-radius:20px;">🔍 لا توجد نتائج</div>`;
+            return;
         }
-    }
 
-    function doSearch() {
-        stats.search++;
-        saveStats();
-        const q = document.getElementById('search').value.toLowerCase();
-        render(cars.filter(c => c.id.includes(q) || c.name.toLowerCase().includes(q)));
+        const displayData = data.slice(0, currentLimit);
+        let html = `<table class="styled-table"><thead><tr><th>المركبة</th><th>الشاسيه</th><th>اللوحة</th><th>💬</th></tr></thead><tbody>`;
+        
+        html += displayData.map(c => `
+            <tr>
+                <td>${c.name || '<span class="missing">لا يوجد</span>'}</td>
+                <td>${c.id || '<span class="missing">لا يوجد</span>'}</td>
+                <td>${c.plate || '<span class="missing">لا يوجد</span>'}</td>
+                <td onclick="window.open('https://wa.me/${c.phone || '249129642174'}')" style="cursor:pointer; font-size:18px;">💬</td>
+            </tr>
+        `).join('');
+
+        html += `</tbody></table>`;
+        if(data.length > currentLimit) {
+            html += `<button onclick="currentLimit+=10; render()" style="width:100%; margin-top:10px; padding:10px; border-radius:10px; border:none; background:#ff5f40; color:white;">عرض المزيد (${data.length - currentLimit})</button>`;
+        }
+        list.innerHTML = html;
+        document.getElementById('totalCars').innerText = cars.length;
     }
 
     function addBulkCars() {
-        const input = document.getElementById('bulkInput').value;
-        const groupPhone = document.getElementById('customPhone').value.trim() || defaultPhone;
+        const input = document.getElementById('bulkInput').value.trim();
+        if(!input) return;
         input.split('\n').forEach(line => {
-            const matchId = line.match(/\d+/);
-            if(matchId) {
-                const id = matchId[0];
-                let name = line.replace(id, '').replace(/[0-9]|/g, '').replace(/[،,-]/g, '').trim() || "سيارة";
-                if(!cars.some(c => c.id === id)) cars.unshift({name, id, phone: groupPhone});
-            }
+            const p = line.split(/\s+/);
+            if(p.length > 0) cars.unshift({name: p[0], id: p[1] || "", plate: p[2] || "", phone: "249129642174"});
         });
         localStorage.setItem('cars', JSON.stringify(cars));
+        document.getElementById('bulkInput').value = "";
         render();
-        alert("تمت الإضافة بنجاح");
+        alert("تم النشر بنجاح");
     }
 
-    function updateStatDisplay() {
-        document.getElementById('totalCars').innerText = cars.length;
-        document.getElementById('totalSearch').innerText = stats.search;
-        document.getElementById('totalClicks').innerText = stats.clicks;
+    function doSearch() {
+        const q = document.getElementById('search').value.toLowerCase();
+        const filtered = cars.filter(c => (c.id+c.name+c.plate).toLowerCase().includes(q));
+        currentLimit = 10;
+        render(filtered);
     }
 
-    function saveStats() { localStorage.setItem('siteStats', JSON.stringify(stats)); }
+    function toggleMenu() {
+        document.getElementById('sideMenu').classList.toggle('active');
+        document.getElementById('overlay').style.display = document.getElementById('sideMenu').classList.contains('active') ? 'block' : 'none';
+    }
+
     function saveUserPhone() {
-        const p = document.getElementById('userPhone').value;
-        if(p) { localStorage.setItem('registeredPhone', p); alert("تم الحفظ"); }
+        localStorage.setItem('registeredPhone', document.getElementById('userPhone').value);
+        alert("تم الحفظ");
     }
-    function openAdmin() { if(prompt("كلمة السر") === "3344") document.getElementById('adminPanel').style.display = 'block'; }
 
-    // عداد الزوار
+    // عداد زوار بسيط
     let v = parseInt(localStorage.getItem('visitorCount') || 1240) + 1;
     localStorage.setItem('visitorCount', v);
     document.getElementById('visitorCount').innerText = v;
 
     render();
 </script>
-<style class="smart-addon">
-    /* هذا الكود سيعدل لون العداد تلقائياً */
-    #visitorCount { color: #2ecc71; font-weight: bold; text-shadow: 0 0 5px rgba(46, 204, 113, 0.5); }
-    .smart-btn { background: #25d366; color: white; padding: 10px; border-radius: 10px; text-align: center; margin-top: 10px; cursor: pointer; display: block; text-decoration: none; font-size: 14px; }
-</style>
-
-<script class="smart-addon">
-    // هذا الكود سيضيف خياراً جديداً في القائمة الجانبية برمجياً
-    function runTestAddon() {
-        const menu = document.getElementById('sideMenu');
-        if (menu) {
-            const testLink = document.createElement('a');
-            testLink.href = "https://wa.me/249129642174";
-            testLink.className = "smart-btn";
-            testLink.innerHTML = "📞 دعم المنصة المباشر";
-            menu.appendChild(testLink);
-        }
-    }
-    // تشغيل الإضافة فوراً
-    setTimeout(runTestAddon, 500);
-</script>
-<style class="smart-addon">
-    /* تنسيق مستطيل النتيجة الذكي */
-    #searchStatusBox {
-        display: none; /* مخفي افتراضياً */
-        margin-top: 15px;
-        padding: 15px;
-        border-radius: 20px;
-        font-size: 14px;
-        text-align: center;
-        animation: fadeIn 0.4s ease;
-        line-height: 1.6;
-    }
-    .status-found {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-    .status-not-found {
-        background-color: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeeba;
-    }
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-</style>
-
-<script class="smart-addon">
-    function initSmartSearch() {
-        const searchInput = document.getElementById('search');
-        const searchCard = document.querySelector('.search-card');
-        
-        // إضافة مستطيل النتيجة تحت مستطيل البحث برمجياً
-        if (searchCard && !document.getElementById('searchStatusBox')) {
-            const statusBox = document.createElement('div');
-            statusBox.id = 'searchStatusBox';
-            searchCard.appendChild(statusBox);
-        }
-
-        // تعديل وظيفة البحث الأصلية لإظهار الرسائل
-        const originalDoSearch = window.doSearch;
-        window.doSearch = function() {
-            // تشغيل البحث الأصلي أولاً
-            if (originalDoSearch) originalDoSearch();
-            
-            const q = searchInput.value.trim();
-            const statusBox = document.getElementById('searchStatusBox');
-            
-            if (q.length < 3) {
-                statusBox.style.display = 'none';
-                return;
-            }
-
-            // البحث في مصفوفة السيارات
-            const found = cars.some(c => c.id.includes(q));
-            statusBox.style.display = 'block';
-
-            if (found) {
-                statusBox.className = 'status-found';
-                statusBox.innerHTML = `🎉 <b>مبروك!</b> تم العثور على الشاسيه ضمن قوائمنا.`;
-            } else {
-                statusBox.className = 'status-not-found';
-                statusBox.innerHTML = `
-                    ⚠️ <b>عذراً، الشاسيه غير موجود حالياً.</b><br>
-                    سجل رقمك في القائمة الجانبية، وعند توفره سنرسل لك رسالة تلقائية عبر واتساب تنبهك بنزوله في <b>منصة السودان</b>.
-                `;
-            }
-        };
-    }
-
-    // تشغيل المحرك الذكي
-    setTimeout(initSmartSearch, 600);
-</script>
-<style class="smart-addon">
-    .admin-tools-box { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn-tool { flex: 1; min-width: 120px; padding: 10px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; font-size: 13px; color: white; }
-    .btn-cars { background: #34495e; }
-    .btn-users { background: #e67e22; }
-    
-    .data-table-container { 
-        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: white; z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box;
-    }
-    .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
-    .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-    .data-table th { background: #f8f9fa; }
-    .btn-delete { background: #ff4757; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-    .close-panel { position: sticky; top: 0; background: var(--bg-dark); color: white; padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; margin-bottom: 15px; }
-</style>
-
-<script class="smart-addon">
-    function initAdminTools() {
-        const adminPanel = document.getElementById('adminPanel');
-        if (!adminPanel) return;
-
-        // إضافة أزرار الأدوات داخل لوحة الإدارة
-        const toolsDiv = document.createElement('div');
-        toolsDiv.className = 'admin-tools-box';
-        toolsDiv.innerHTML = `
-            <button class="btn-tool btn-cars" onclick="showCarsTable()">📋 جرد السيارات</button>
-            <button class="btn-tool btn-users" onclick="showUsersTable()">👥 المسجلون</button>
-        `;
-        adminPanel.appendChild(toolsDiv);
-
-        // إنشاء حاوية الجداول (Pop-up)
-        const tableContainer = document.createElement('div');
-        tableContainer.id = 'adminDataTableContainer';
-        tableContainer.className = 'data-table-container';
-        document.body.appendChild(tableContainer);
-    }
-
-    // عرض جدول السيارات مع الحذف
-    window.showCarsTable = function() {
-        const container = document.getElementById('adminDataTableContainer');
-        container.style.display = 'block';
-        container.innerHTML = `
-            <div class="close-panel" onclick="this.parentElement.style.display='none'">إغلاق والعودة ✖</div>
-            <h3>📋 قائمة جميع السيارات (${cars.length})</h3>
-            <button onclick="bulkDeleteCars()" style="background:red; color:white; padding:10px; border:none; border-radius:8px; margin-bottom:10px;">🗑️ حذف الكل</button>
-            <table class="data-table">
-                <thead><tr><th><input type="checkbox" id="selectAllCars" onclick="toggleSelectAll(this)"></th><th>السيارة</th><th>الشاسيه</th><th>التحكم</th></tr></thead>
-                <tbody id="carsTableBody">
-                    ${cars.map((c, index) => `
-                        <tr>
-                            <td><input type="checkbox" class="car-checkbox" value="${index}"></td>
-                            <td>${c.name}</td>
-                            <td>${c.id}</td>
-                            <td><button class="btn-delete" onclick="deleteSingleCar(${index})">حذف</button></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-
-    // وظائف الحذف
-    window.deleteSingleCar = function(index) {
-        if(confirm("هل أنت متأكد من حذف هذه السيارة؟")) {
-            cars.splice(index, 1);
-            localStorage.setItem('cars', JSON.stringify(cars));
-            showCarsTable();
-            render();
-        }
-    }
-
-    window.bulkDeleteCars = function() {
-        if(confirm("سيتم مسح جميع السيارات بالموقع.. هل أنت متأكد؟")) {
-            cars = [];
-            localStorage.setItem('cars', JSON.stringify(cars));
-            showCarsTable();
-            render();
-        }
-    }
-
-    // عرض جدول المستخدمين والحظر
-    window.showUsersTable = function() {
-        const container = document.getElementById('adminDataTableContainer');
-        const registered = localStorage.getItem('registeredPhone') ? [localStorage.getItem('registeredPhone')] : [];
-        const banned = JSON.parse(localStorage.getItem('bannedUsers')) || [];
-
-        container.style.display = 'block';
-        container.innerHTML = `
-            <div class="close-panel" onclick="this.parentElement.style.display='none'">إغلاق والعودة ✖</div>
-            <h3>👥 الزوار المسجلون</h3>
-            <p style="font-size:12px; color:gray;">ملاحظة: هذا النظام يعرض المسجلين حالياً على الجهاز.</p>
-            <table class="data-table">
-                <thead><tr><th>رقم الهاتف</th><th>الحالة</th><th>التحكم</th></tr></thead>
-                <tbody>
-                    ${registered.map(phone => `
-                        <tr>
-                            <td>${phone}</td>
-                            <td style="color:${banned.includes(phone) ? 'red' : 'green'}">${banned.includes(phone) ? 'محظور' : 'نشط'}</td>
-                            <td><button class="btn-delete" onclick="toggleBan('${phone}')">${banned.includes(phone) ? 'إلغاء الحظر' : 'حظر'}</button></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-
-    window.toggleBan = function(phone) {
-        let banned = JSON.parse(localStorage.getItem('bannedUsers')) || [];
-        if(banned.includes(phone)) {
-            banned = banned.filter(p => p !== phone);
-            alert("تم إلغاء حظر الرقم");
-        } else {
-            banned.push(phone);
-            alert("تم حظر المستخدم من المراسلة");
-        }
-        localStorage.setItem('bannedUsers', JSON.stringify(banned));
-        showUsersTable();
-    }
-
-    // تفعيل الحظر على زر المراسلة
-    const originalCheckContact = window.checkContact;
-    window.checkContact = function(phone) {
-        const myPhone = localStorage.getItem('registeredPhone');
-        const banned = JSON.parse(localStorage.getItem('bannedUsers')) || [];
-        if(myPhone && banned.includes(myPhone)) {
-            alert("🚫 عذراً، لقد تم حظر حسابك من المراسلة في منصة السودان.");
-            return;
-        }
-        if(originalCheckContact) originalCheckContact(phone);
-    }
-
-    setTimeout(initAdminTools, 700);
-</script>
-<style class="smart-addon">
-    /* تحويل لوحة الإدارة لشاشة كاملة */
-    #adminPanel {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
-        background: white !important;
-        z-index: 3000 !important;
-        padding: 20px !important;
-        box-sizing: border-box !important;
-        overflow-y: auto !important;
-        display: none; /* تفتح فقط عند إدخال الباسورد */
-        border: none !important;
-        border-radius: 0 !important;
-    }
-
-    .admin-header-ui {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-bottom: 20px;
-        border-bottom: 2px solid #f0f2f8;
-        margin-bottom: 20px;
-    }
-
-    .btn-close-admin {
-        background: #ff4757;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 12px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .admin-title {
-        font-size: 18px;
-        color: var(--bg-dark);
-        font-weight: bold;
-    }
-</style>
-
-<script class="smart-addon">
-    function setupSeparateAdmin() {
-        const adminPanel = document.getElementById('adminPanel');
-        if (!adminPanel) return;
-
-        // إنشاء الهيدر الخاص بلوحة التحكم (العنوان + زر الإغلاق)
-        const adminHeader = document.createElement('div');
-        adminHeader.className = 'admin-header-ui';
-        adminHeader.innerHTML = `
-            <div class="admin-title">🛠️ لوحة تحكم المنصة</div>
-            <button class="btn-close-admin" onclick="closeAdminPanel()">إغلاق لوحة التحكم ✖</button>
-        `;
-
-        // إدراج الهيدر في بداية اللوحة
-        adminPanel.insertBefore(adminHeader, adminPanel.firstChild);
-    }
-
-    // وظيفة إغلاق اللوحة
-    window.closeAdminPanel = function() {
-        document.getElementById('adminPanel').style.display = 'none';
-        document.body.style.overflow = 'auto'; // إعادة التمرير للموقع
-    }
-
-    // تعديل وظيفة الفتح الأصلية لتعمل مع الشاشة الجديدة
-    const originalOpenAdmin = window.openAdmin;
-    window.openAdmin = function() {
-        const pass = prompt("كلمة السر الخاصة بالمدير:");
-        if (pass === "3344") {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // منع تمرير الموقع خلف اللوحة
-        } else if (pass !== null) {
-            alert("كلمة السر غير صحيحة");
-        }
-    }
-
-    setTimeout(setupSeparateAdmin, 800);
-</script>
-<script class="smart-addon">
-    function hideAdminIconForever() {
-        // 1. البحث عن أيقونة الترس وحذفها نهائياً من الواجهة
-        const adminElements = document.querySelectorAll('.admin-trigger, [onclick="openAdmin()"]');
-        adminElements.forEach(el => {
-            el.style.display = 'none'; // إخفاء تماماً
-            el.style.visibility = 'hidden'; 
-            el.removeAttribute('onclick'); // تعطيل وظيفة النقر من العنصر القديم
-        });
-
-        // 2. تفعيل الدخول السري عبر الصورة الشخصية (3 نقرات)
-        const profileImg = document.querySelector('.profile-img');
-        if (profileImg) {
-            let secretClicks = 0;
-            profileImg.style.cursor = 'pointer'; // لتعرف أنت مكان الضغط
-            profileImg.onclick = function() {
-                secretClicks++;
-                if (secretClicks === 3) {
-                    openAdmin(); // استدعاء لوحة التحكم
-                    secretClicks = 0;
-                }
-                // تصغير العداد إذا تأخرت في النقرات
-                setTimeout(() => { secretClicks = 0; }, 1500);
-            };
-        }
-    }
-
-    // تشغيل الإخفاء فوراً وعند اكتمال تحميل الصفحة
-    hideAdminIconForever();
-    window.addEventListener('load', hideAdminIconForever);
-</script>
-
-<style class="smart-addon">
-    /* تأكيد الإخفاء عبر CSS أيضاً */
-    .admin-trigger, [onclick="openAdmin()"] {
-        display: none !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
-    }
-</style>
-<script class="smart-addon">
-    function restoreAdminIconWithProtection() {
-        // 1. البحث عن مكان الهيدر لإضافة الترس فيه من جديد
-        const header = document.querySelector('.header');
-        if (header && !document.getElementById('protectedAdminBtn')) {
-            const adminBtn = document.createElement('div');
-            adminBtn.id = 'protectedAdminBtn';
-            // وضع الأيقونة في نفس مكانها القديم (أعلى اليسار)
-            adminBtn.style = "position: absolute; top: 25px; left: 20px; cursor: pointer; font-size: 20px; z-index: 1000;";
-            adminBtn.innerHTML = "⚙️";
-            
-            // إضافة الوظيفة الذكية عند الضغط
-            adminBtn.onclick = function() {
-                // سؤال الزوار أولاً: هل أنت المدير؟
-                const confirmManager = confirm("⚠️ تنبيه: هذه المنطقة مخصصة لإدارة منصة السودان فقط.\n\nهل أنت مدير الموقع؟");
-                
-                if (confirmManager) {
-                    // إذا أجاب بنعم، نطلب كلمة السر
-                    const pass = prompt("الرجاء إدخال كلمة سر المدير للوصول إلى لوحة التحكم:");
-                    if (pass === "3344") {
-                        // إذا كانت صحيحة تفتح اللوحة (يجب أن تكون وظيفة openAdmin موجودة في كودك)
-                        if (typeof openAdmin === "function") {
-                            openAdmin();
-                        } else {
-                            // إذا كانت اللوحة مخفية بـ CSS نظهرها
-                            const panel = document.getElementById('adminPanel');
-                            if(panel) panel.style.display = 'block';
-                        }
-                    } else if (pass !== null) {
-                        alert("❌ عذراً، كلمة السر غير صحيحة. لا تملك صلاحية الدخول.");
-                    }
-                } else {
-                    // إذا ضغط "إلغاء" تظهر له رسالة تحذير
-                    alert("🚫 الوصول ممنوع! تم تسجيل محاولة دخول غير مصرح بها.");
-                }
-            };
-            
-            header.appendChild(adminBtn);
-        }
-    }
-
-    // تشغيل الكود فوراً
-    setTimeout(restoreAdminIconWithProtection, 500);
-</script>
-<script class="smart-security-addon">
-    function ultraSecurityShield() {
-        const searchInput = document.getElementById('search');
-        
-        // 1. فحص هل المستخدم محظور أصلاً؟
-        let securityStatus = JSON.parse(localStorage.getItem('security_blacklist')) || { attempts: 0, banned: false };
-
-        if (securityStatus.banned) {
-            document.body.innerHTML = `
-                <div style="text-align:center; padding:50px; font-family:sans-serif; direction:rtl;">
-                    <h1 style="color:red; font-size:50px;">🚫 تم حظرك نهائياً</h1>
-                    <p style="font-size:20px;">نظام حماية منصة السودان رصد محاولات تخريبية متكررة من جهازك.</p>
-                    <p style="color:gray;">تم تسجيل بياناتك ورفعها للإدارة. الوصول للمنصة غير مسموح لك.</p>
-                </div>
-            `;
-            return;
-        }
-
-        const maliciousPatterns = [
-            /<script/i, /javascript:/i, /onerror/i, /onload/i, /alert\(/i, 
-            /eval\(/i, /<iframe/i, /document\.cookie/i, /union select/i
-        ];
-
-        const originalDoSearch = window.doSearch;
-        window.doSearch = function() {
-            const val = searchInput.value;
-            let isMalicious = maliciousPatterns.some(pattern => pattern.test(val));
-
-            if (isMalicious) {
-                securityStatus.attempts++;
-                
-                if (securityStatus.attempts >= 2) {
-                    securityStatus.banned = true;
-                    localStorage.setItem('security_blacklist', JSON.stringify(securityStatus));
-                    location.reload(); // لإظهار شاشة الحظر فوراً
-                } else {
-                    localStorage.setItem('security_blacklist', JSON.stringify(securityStatus));
-                    searchInput.value = "";
-                    alert(`⚠️ تحذير أمني (محاولة ${securityStatus.attempts}/2):\nتم رصد كود برمجي. المحاولة القادمة ستؤدي لحظر جهازك من المنصة نهائياً.`);
-                }
-                return;
-            }
-
-            if (originalDoSearch) originalDoSearch();
-        };
-    }
-
-    // تشغيل الدرع المطور
-    setTimeout(ultraSecurityShield, 1100);
-</script>
-<style class="smart-addon">
-    .data-table-container { width: 100%; overflow-x: auto; margin-top: 10px; }
-    .main-data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 15px; overflow: hidden; font-size: 13px; }
-    .main-data-table th { background: var(--bg-dark); color: white; padding: 12px; text-align: center; }
-    .main-data-table td { padding: 12px; border-bottom: 1px solid #eee; text-align: center; color: #333; }
-    .missing-data { color: #ff4757; font-weight: bold; font-size: 11px; }
-    .whatsapp-icon { font-size: 18px; cursor: pointer; color: #25d366; }
-</style>
-
-<script class="smart-addon">
-    // تحديث وظيفة العرض (Render) لتشمل الجدول الجديد
-    window.render = function(data = cars) {
-        const list = document.getElementById('carsList');
-        if (!list) return;
-
-        if (data.length === 0) {
-            list.innerHTML = "<p style='text-align:center; padding:20px; color:gray;'>لا توجد نتائج مطابقة</p>";
-            return;
-        }
-
-        let tableHTML = `
-            <div class="data-table-container">
-                <table class="main-data-table">
-                    <thead>
-                        <tr>
-                            <th>المركبة</th>
-                            <th>الشاسيه</th>
-                            <th>اللوحة</th>
-                            <th>تواصل</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-
-        tableHTML += data.slice(0, 30).map(c => {
-            // التحقق من وجود البيانات أو وضع "لا يوجد" باللون الأحمر
-            const nameDisp = c.name && c.name.trim() !== "" ? c.name : '<span class="missing-data">لا يوجد</span>';
-            const idDisp = c.id && c.id.trim() !== "" ? c.id : '<span class="missing-data">لا يوجد</span>';
-            const plateDisp = c.plate && c.plate.trim() !== "" ? c.plate : '<span class="missing-data">لا يوجد</span>';
-
-            return `
-                <tr>
-                    <td><b>${nameDisp}</b></td>
-                    <td>${idDisp}</td>
-                    <td>${plateDisp}</td>
-                    <td onclick="startChat('${c.phone || '249129642174'}')" class="whatsapp-icon">💬</td>
-                </tr>
-            `;
-        }).join('');
-
-        tableHTML += `</tbody></table></div>`;
-        list.innerHTML = tableHTML;
-
-        // تحديث الإحصائيات في القائمة الجانبية
-        if(document.getElementById('totalCars')) document.getElementById('totalCars').innerText = cars.length;
-    };
-
-    // تحديث وظيفة الإضافة (Bulk Add) لدعم "رقم اللوحة"
-    // الصيغة المتوقعة: اسم_السيارة رقم_الشاسيه رقم_اللوحة
-    window.addBulkCars = function() {
-        const input = document.getElementById('bulkInput').value;
-        if (!input.trim()) return;
-
-        const lines = input.split('\n');
-        lines.forEach(line => {
-            if (line.trim() === "") return;
-            
-            // تقسيم السطر بناءً على المسافات
-            const parts = line.split(/\s+/); 
-            
-            // محاولة استخراج البيانات (نفترض أول كلمة اسم، ثاني كلمة شاسيه، ثالث كلمة لوحة)
-            let name = parts[0] || "";
-            let chassis = parts[1] || "";
-            let plate = parts[2] || "";
-
-            // إذا لم يكن هناك شاسيه (أرقام)، نحاول البحث عنه في السطر
-            if (!chassis.match(/\d+/)) {
-                const matchId = line.match(/\d+/);
-                if (matchId) chassis = matchId[0];
-            }
-
-            if (chassis && !cars.some(c => c.id === chassis)) {
-                cars.unshift({
-                    name: name,
-                    id: chassis,
-                    plate: plate,
-                    phone: document.getElementById('customPhone')?.value || "249129642174"
-                });
-            }
-        });
-
-        localStorage.setItem('cars', JSON.stringify(cars));
-        alert("تم تحديث الجدول بنجاح");
-        render();
-        if(typeof closeAdmin === "function") closeAdmin();
-    };
-
-    // إعادة تشغيل العرض بالنمط الجديد
-    setTimeout(render, 600);
-</script>
-<style class="smart-addon">
-    .table-wrapper { 
-        width: 100%; 
-        margin-top: 15px; 
-        background: white; 
-        border-radius: 20px; 
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-        overflow: hidden; /* يمنع التمرير الجانبي */
-    }
-    .styled-table { width: 100%; border-collapse: collapse; font-size: 12px; table-layout: fixed; }
-    .styled-table th { background: #1a1f3c; color: white; padding: 12px 5px; text-align: center; }
-    .styled-table td { 
-        padding: 12px 5px; 
-        border-bottom: 1px solid #f2f2f2; 
-        text-align: center; 
-        word-wrap: break-word; /* لضمان عدم خروج النص الطويل عن الإطار */
-    }
-    .load-more-container { 
-        padding: 15px; 
-        text-align: center; 
-        background: #fdfdfd; 
-        border-top: 1px solid #eee; 
-    }
-    .load-more-btn { 
-        background: var(--accent-orange); 
-        color: white; 
-        border: none; 
-        padding: 8px 25px; 
-        border-radius: 12px; 
-        cursor: pointer; 
-        font-weight: bold; 
-        font-size: 13px; 
-    }
-    .no-data { color: #ff4757; font-weight: bold; font-size: 10px; }
-</style>
-
-<script class="smart-addon">
-    let currentLimit = 10; // العدد الابتدائي للعرض
-
-    window.render = function(data = window.cars || []) {
-        const list = document.getElementById('carsList');
-        if (!list) return;
-
-        if (data.length === 0) {
-            list.innerHTML = `<div style="text-align:center; padding:30px; color:gray; background:white; border-radius:20px;">🔍 لا توجد نتائج</div>`;
-            return;
-        }
-
-        // تحديد البيانات التي سيتم عرضها بناءً على الليميت
-        const displayData = data.slice(0, currentLimit);
-
-        let html = `
-            <div class="table-wrapper">
-                <table class="styled-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 30%;">المركبة</th>
-                            <th style="width: 30%;">الشاسيه</th>
-                            <th style="width: 25%;">اللوحة</th>
-                            <th style="width: 15%;">💬</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
-
-        html += displayData.map(c => {
-            const nameVal = (c.name && c.name.trim() !== "") ? `<b>${c.name}</b>` : `<span class="no-data">لا يوجد</span>`;
-            const idVal = (c.id && c.id.trim() !== "") ? c.id : `<span class="no-data">لا يوجد</span>`;
-            const plateVal = (c.plate && c.plate.trim() !== "") ? c.plate : `<span class="no-data">لا يوجد</span>`;
-            
-            return `
-                <tr>
-                    <td>${nameVal}</td>
-                    <td>${idVal}</td>
-                    <td>${plateVal}</td>
-                    <td><span style="cursor:pointer; font-size:18px;" onclick="window.startChat('${c.phone || '249129642174'}')">💬</span></td>
-                </tr>
-            `;
-        }).join('');
-
-        html += `</tbody></table>`;
-
-        // إضافة زر "عرض المزيد" إذا كان هناك بيانات متبقية
-        if (data.length > currentLimit) {
-            html += `
-                <div class="load-more-container">
-                    <button class="load-more-btn" onclick="window.loadMoreData()">عرض المزيد (${data.length - currentLimit})</button>
-                </div>
-            `;
-        }
-        
-        html += `</div>`;
-        list.innerHTML = html;
-    };
-
-    window.loadMoreData = function() {
-        currentLimit += 10; // زيادة العرض 10 سيارات إضافية في كل ضغطة
-        window.render(window.cars);
-    };
-
-    // إعادة تصفير العداد عند البحث لضمان ظهور النتائج الجديدة أولاً
-    const originalSearch = window.doSearch;
-    window.doSearch = function() {
-        currentLimit = 10; 
-        if(originalSearch) originalSearch();
-    };
-
-    setTimeout(() => { window.render(window.cars); }, 400);
-</script>
-
 </body>
 </html>
