@@ -3,314 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>فتش سيارتك - سفير القوافي</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --accent: #00ffc3; --bg: #0a0b10; --card: #11141d; }
-        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; padding: 0; }
-        .wrapper { max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; }
+    <title>منصة السيارات المفقودة - السودان</title>
+    <style id="main-styles">
+        /* الألوان والتنسيقات الأساسية */
+        :root { --gold: #d4af37; --black: #1a1a1a; --neon: #00f2ff; --red: #ff4d4d; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; }
         
-        /* الهوية البصرية */
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 2px solid var(--accent); margin-bottom: 10px; }
+        /* الهيدر والمستطيل الترحيبي */
+        .welcome-banner { background: #000; text-align: center; padding: 10px; border-bottom: 2px solid var(--gold); }
+        .welcome-banner img { max-height: 100px; border-radius: 5px; }
         
-        /* البحث والجدول */
-        .search-box { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; margin-bottom: 15px; outline: none; }
-        .table-area { background: var(--card); border-radius: 10px; padding: 5px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1e293b; font-size: 0.8rem; }
-        th { color: var(--accent); }
+        header { background: var(--black); color: var(--gold); padding: 30px; text-align: center; border-radius: 0 0 50% 50% / 0 0 20px 20px; position: relative; }
+        
+        /* محرك البحث */
+        .search-container { text-align: center; margin: 20px 0; }
+        .search-box { width: 80%; max-width: 500px; padding: 15px; border: 2px solid var(--gold); border-radius: 25px; font-size: 18px; outline: none; }
 
-        /* لوحة التحكم الكلاسيكية */
-        #admin-panel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; padding: 20px; box-sizing: border-box; }
-        .admin-box { background: var(--card); border-radius: 10px; padding: 20px; max-width: 400px; margin: 20px auto; }
-        input, textarea { width: 100%; background: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 10px; background: var(--accent); color: #000; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        /* الجدول الذهبي */
+        .table-container { width: 95%; margin: auto; overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: var(--gold); color: black; padding: 15px; text-align: center; border: 1px solid #b8952e; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; font-weight: 500; }
+        .missing { color: var(--red); font-weight: bold; }
+
+        /* بوابة الدخول ولوحة التحكم */
+        #admin-gate, #admin-dashboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+        #admin-gate { background: #000814; align-items: center; justify-content: center; display: none; }
+        .neon-box { border: 2px solid var(--neon); padding: 40px; border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: rgba(0, 18, 25, 0.9); }
         
-        /* زر فتح اللوحة */
-        .admin-btn { position: fixed; top: 15px; left: 15px; color: var(--accent); font-size: 22px; cursor: pointer; z-index: 100; }
+        #admin-dashboard { background: #111; color: white; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .admin-content { max-width: 900px; margin: auto; }
+        textarea { width: 100%; height: 150px; background: #222; color: #0f0; border: 1px solid var(--neon); padding: 10px; }
+        
+        footer { background: var(--black); color: var(--gold); text-align: center; padding: 20px; margin-top: 50px; border-top: 3px solid var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="admin-btn" onclick="openAdmin()"><i class="fas fa-bars"></i></div>
+<div id="public-view">
+    <div class="welcome-banner">
+        <img src="Welcome.gif" alt="ترحيب">
+    </div>
 
-    <div class="wrapper">
-        <img src="https://i.ibb.co/VWVvX9Y/1000027027.jpg" class="profile-img">
-        <h2>فتش سيارتك</h2>
-        <p>بإشراف: سفير القوافي</p>
+    <header>
+        <h1>منصة البحث عن السيارات المفقودة - السودان</h1>
+        <p>إدارة سفير القوافي ود أمطلحة</p>
+        <button onclick="showGate()" style="position: absolute; top: 10px; left: 10px; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer;">لوحة التحكم</button>
+    </header>
+
+    <div class="search-container">
+        <input type="text" class="search-box" id="searchInput" onkeyup="filterTable()" placeholder="ابحث برقم الشاسي أو اللوحة...">
+    </div>
+
+    <div class="table-container">
+        <table id="carsTable">
+            <thead>
+                <tr>
+                    <th>م</th>
+                    <th>رقم الشاسي (VIN)</th>
+                    <th>نوع السيارة وموديلها</th>
+                    <th>رقم اللوحة</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>جميع حقوق النشر محفوظة &copy; 2026</p>
+        <p>إدارة سفير القوافي - ود أمطلحة</p>
+    </footer>
+</div>
+
+<div id="admin-gate">
+    <div class="neon-box">
+        <h2 style="color: var(--neon);">نظام الدخول الآمن</h2>
+        <input type="password" id="passCode" placeholder="الرمز" style="padding: 10px; font-size: 20px; text-align: center; width: 100px;">
+        <br><br>
+        <button onclick="verifyPass()" style="padding: 10px 30px; background: var(--gold); border: none; cursor: pointer; font-weight: bold;">دخول</button>
+        <button onclick="hideGate()" style="padding: 10px 30px; background: #555; border: none; color: white; cursor: pointer; margin-right: 10px;">إلغاء</button>
+    </div>
+</div>
+
+<div id="admin-dashboard">
+    <div class="admin-content">
+        <h1 style="color: var(--neon);">لوحة التحكم الذكية</h1>
+        <hr border="1" color="#333">
         
-        <input type="text" class="search-box" id="sInp" placeholder="ابحث برقم الشاسي..." onkeyup="search()">
+        <h3>1. الإضافة المتعددة للسيارات</h3>
+        <textarea id="bulkInput" placeholder="أدخل بيانات السيارات هنا... (كل سيارة في سطر)"></textarea>
+        <button onclick="processData()" style="padding: 15px; background: var(--neon); color: black; border: none; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px;">تحليل وحقن البيانات في الجدول</button>
 
-        <div class="table-area">
-            <table>
-                <thead>
-                    <tr>
-                        <th>السيارة</th>
-                        <th>الشاسي</th>
-                        <th>تواصل</th>
-                    </tr>
-                </thead>
-                <tbody id="tBody"></tbody>
-            </table>
-        </div>
-    </div>
+        <h3>2. محرر CSS والحقن الذكي</h3>
+        <textarea id="cssInput" placeholder="أضف أكواد CSS أو أكواد برمجية هنا لتعمل تلقائياً..."></textarea>
+        <button onclick="injectCode()" style="padding: 10px; background: var(--gold); border: none; cursor: pointer; margin-top: 10px;">تحديث وتعديل الأكواد</button>
 
-    <div id="admin-panel">
-        <div class="admin-box">
-            <h3 style="display:flex; justify-content:space-between;">لوحة الإدارة <span onclick="closeAdmin()" style="cursor:pointer; color:red;">×</span></h3>
-            <textarea id="bulk" rows="4" placeholder="أدخل البيانات هنا..."></textarea>
-            <input type="text" id="phone" placeholder="رقم التواصل">
-            <button class="btn" onclick="save()">حفظ البيانات</button>
-        </div>
+        <br><br>
+        <button onclick="logout()" style="background: var(--red); color: white; border: none; padding: 10px 20px; cursor: pointer;">تسجيل خروج</button>
     </div>
+</div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
+    // قاعدة البيانات الأولية (التي أرسلتها)
+    let carsData = [
+        { model: "كورلا موديل 2008", vin: "799041409", plate: "" },
+        { model: "عربية صالون", vin: "00873327", plate: "2440" },
+        { model: "كلك موديل 2006", vin: "641244", plate: "" },
+        { model: "لاندكروزر 2011", vin: "4056958", plate: "28672" }
+        // ... سيتم إضافة البقية عبر لوحة التحكم
+    ];
 
-    function render() {
-        document.getElementById('tBody').innerHTML = db.map(item => `
-            <tr>
-                <td>${item.car}</td>
-                <td style="color:#00ffc3;">${item.chassis}</td>
-                <td><a href="https://wa.me/${item.phone}" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a></td>
-            </tr>
-        `).join('');
-    }
-
-    window.openAdmin = function() {
-        if(prompt("كلمة السر:") === "3344") document.getElementById('admin-panel').style.display='block';
-    };
-    
-    window.closeAdmin = function() { document.getElementById('admin-panel').style.display='none'; };
-
-    function search() {
-        let v = document.getElementById('sInp').value.toLowerCase();
-        let rs = document.querySelectorAll('#tBody tr');
-        rs.forEach(r => r.style.display = r.innerText.toLowerCase().includes(v) ? '' : 'none');
-    }
-
-    render();
-</script>
-    <div id="new-code-payload" style="display:none;">
-    </div>
-
-<script>
-(function() {
-    const payload = document.getElementById('new-code-payload');
-    
-    // فحص إذا كان هناك كود جديد بداخل الـ Payload
-    if (payload && payload.innerHTML.trim() !== "") {
-        // تخزين النسخة الجديدة في ذاكرة المتصفح
-        localStorage.setItem('site_core_update', payload.innerHTML);
-        // إعادة تحميل الصفحة لتفعيل التحديث
-        location.reload();
-    }
-
-    // استرجاع النسخة المحدثة وتطبيقها عند فتح الموقع
-    window.addEventListener('load', function() {
-        const savedUpdate = localStorage.getItem('site_core_update');
-        if (savedUpdate) {
-            document.body.innerHTML = savedUpdate;
-        }
-    });
-})();
-</script>
-<script>
-// 1. قاعدة البيانات والبيانات الأولية
-let db = JSON.parse(localStorage.getItem('chassisDB')) || [];
-
-// 2. المحرك الذكي لفرز النصوص العشوائية
-function smartParse(text, commonPhone) {
-    const lines = text.split(/\n\s*\n/); // تقسيم النص بناءً على الفراغات بين السيارات
-    const results = [];
-
-    lines.forEach(line => {
-        if (line.trim() === "") return;
-
-        // استخراج الموديل (رقم مكون من 4 خانات يبدأ بـ 20 أو 19)
-        const modelMatch = line.match(/\b(20\d{2}|19\d{2})\b/);
-        const model = modelMatch ? modelMatch[0] : '<span style="color:red;">لا يوجد رقم موديل</span>';
-
-        // استخراج رقم الشاسي (الرقم الأطول في النص عادة)
-        const allNumbers = line.match(/\d+/g) || [];
-        let chassis = "غير معروف";
-        if (allNumbers.length > 0) {
-            chassis = allNumbers.reduce((a, b) => a.length >= b.length ? a : b);
-        }
-
-        // استخراج رقم اللوحة (رقم مكون من 3 إلى 6 خانات بشرط ألا يكون هو الموديل أو الشاسي)
-        let plate = '<span style="color:red;">لا يوجد لوحة</span>';
-        const plateMatch = line.match(/(?:لوحة|رقم)\s*(\d+)/);
-        if (plateMatch) {
-            plate = plateMatch[1];
-        } else {
-            // محاولة إيجاد رقم آخر غير الشاسي والموديل
-            const otherNums = allNumbers.filter(n => n !== chassis && n !== modelMatch?.[0]);
-            if (otherNums.length > 0) plate = otherNums[0];
-        }
-
-        // استخراج اسم السيارة (أول كلمات تظهر قبل الأرقام)
-        let carName = line.split(/\d/)[0].replace(/عربية|رقم|الشاسي|موديل|لوحة/g, "").trim();
-        if (!carName) carName = "سيارة غير مسمى";
-
-        results.push({
-            car: carName,
-            model: model,
-            chassis: chassis,
-            plate: plate,
-            phone: commonPhone || "000000"
+    // نظام عرض البيانات مع منطق "غير موجود" بالأحمر
+    function renderTable() {
+        const body = document.getElementById('tableBody');
+        body.innerHTML = "";
+        carsData.forEach((car, index) => {
+            if (!car.vin) return; // قاعدة الشاسي: إذا لم يوجد لا تظهر السيارة
+            
+            let row = `<tr>
+                <td>${index + 1}</td>
+                <td>${car.vin}</td>
+                <td class="${!car.model ? 'missing' : ''}">${car.model || 'غير موجود'}</td>
+                <td class="${!car.plate ? 'missing' : ''}">${car.plate || 'غير موجود'}</td>
+            </tr>`;
+            body.innerHTML += row;
         });
-    });
-    return results;
-}
-
-// 3. دالة الحفظ الجماعي
-window.saveData = function() {
-    const text = document.getElementById('bulkData').value;
-    const phone = document.getElementById('commonPhone').value;
-    if (!text) return alert("الرجاء لصق القائمة أولاً");
-    
-    const newItems = smartParse(text, phone);
-    db = [...newItems, ...db]; // إضافة الجديد في البداية
-    localStorage.setItem('chassisDB', JSON.stringify(db));
-    alert("تم فرز وحفظ " + newItems.length + " سيارة بنجاح");
-    render();
-};
-
-// 4. دالة العرض (آخر 8 سيارات مع ميزة رؤية المزيد)
-let showAll = false;
-function render() {
-    const tableBody = document.getElementById('resTable');
-    const displayData = showAll ? db : db.slice(0, 8);
-    
-    tableBody.innerHTML = displayData.map(item => `
-        <tr>
-            <td>${item.car}</td>
-            <td>${item.model}</td>
-            <td style="color:#00ffc3; font-weight:bold;">${item.chassis}</td>
-            <td>${item.plate}</td>
-            <td><a href="https://wa.me/${item.phone}" style="color:#25d366;"><i class="fab fa-whatsapp"></i></a></td>
-        </tr>
-    `).join('');
-
-    // إظهار زر رؤية المزيد إذا كان هناك أكثر من 8 سيارات
-    const moreBtn = document.getElementById('viewMoreBtn');
-    if (db.length > 8) {
-        moreBtn.style.display = "block";
-        moreBtn.innerText = showAll ? "رؤية أقل" : "رؤية المزيد";
-    } else {
-        moreBtn.style.display = "none";
     }
-}
 
-window.toggleView = function() {
-    showAll = !showAll;
-    render();
-};
+    // نظام البحث
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toUpperCase();
+        let tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        for (let i = 0; i < tr.length; i++) {
+            tr[i].style.display = tr[i].innerText.toUpperCase().includes(input) ? "" : "none";
+        }
+    }
 
-// تشغيل العرض عند التحميل
-document.addEventListener('DOMContentLoaded', render);
-</script>
+    // إدارة الدخول
+    function showGate() { document.getElementById('admin-gate').style.display = 'flex'; }
+    function hideGate() { document.getElementById('admin-gate').style.display = 'none'; }
+    function verifyPass() {
+        if(document.getElementById('passCode').value === "3366") {
+            document.getElementById('admin-gate').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+        } else { alert("رمز خاطئ!"); }
+    }
+    function logout() { document.getElementById('admin-dashboard').style.display = 'none'; }
 
-<button id="viewMoreBtn" onclick="toggleView()" style="display:none; margin: 10px auto; background:none; border:1px solid #00ffc3; color:#00ffc3; padding:5px 15px; border-radius:20px; cursor:pointer;">رؤية المزيد</button>
-<script>
-// --- 1. محرك الفرز الذكي (Smart Parser) ---
-function smartParse(text, contactPhone) {
-    const blocks = text.split(/\n\s*\n/); // تقسيم النص عند كل فراغ بين سيارة وأخرى
-    const parsedData = [];
-
-    blocks.forEach(block => {
-        if (block.trim() === "") return;
-
-        const lines = block.split('\n');
-        let item = {
-            car: "غير معروف",
-            model: "<span style='color:red;'>لا يوجد رقم موديل</span>",
-            chassis: "---",
-            plate: "<span style='color:red;'>لا يوجد لوحة</span>",
-            phone: contactPhone || ""
-        };
-
-        block.split(/\s+/).forEach(word => {
-            // فرز اسم السيارة (كلمات عربية ليست "موديل" أو "شاسي")
-            if (/^[\u0600-\u06FF]+$/.test(word) && !["موديل", "شاسي", "رقم", "لوحة", "عربية"].includes(word)) {
-                item.car = (item.car === "غير معروف") ? word : item.car + " " + word;
-            }
-            // فرز الموديل (4 أرقام تبدأ بـ 20 أو 19)
-            if (/^(19|20)\d{2}$/.test(word)) {
-                item.model = word;
-            }
-            // فرز رقم الشاسي (رقم طويل أكثر من 5 خانات ولا يطابق الموديل)
-            if (/^\d{5,20}$/.test(word) && word !== item.model) {
-                item.chassis = word;
-            }
-            // فرز اللوحة (إذا جاءت بعد كلمة لوحة أو كانت رقم قصير)
-            if (block.includes("لوحة " + word)) {
-                item.plate = word;
+    // نظام الإضافة المتعددة والحقن الذكي
+    function processData() {
+        let input = document.getElementById('bulkInput').value.split('\n');
+        input.forEach(line => {
+            if(line.includes("شاسي")) {
+                let parts = line.split(' ');
+                // منطق بسيط لاستخراج البيانات (يمكن تطويره حسب دقة النص المدخل)
+                carsData.push({ model: "سيارة مضافة", vin: parts[parts.length-1], plate: "" });
             }
         });
-
-        if (item.chassis !== "---") parsedData.push(item);
-    });
-    return parsedData;
-}
-
-// --- 2. دالة الحفظ الجماعي المطورة ---
-window.saveGroup = function() {
-    const input = document.getElementById('groupInput').value;
-    const phone = document.getElementById('groupPhone').value;
-    
-    if (!input.trim()) return alert("الرجاء لصق القائمة أولاً");
-
-    const newCars = smartParse(input, phone);
-    db = [...newCars, ...db]; // إضافة الجديد في البداية
-    localStorage.setItem('chassisDB', JSON.stringify(db));
-    alert("تم فرز وحفظ " + newCars.length + " سيارة بنجاح");
-    renderUI();
-};
-
-// --- 3. تحديث الجدول في الواجهة (آخر 8 سيارات + رؤية المزيد) ---
-let showAll = false;
-function renderUI() {
-    const tableBody = document.getElementById('tableBody');
-    const displayData = showAll ? db : db.slice(0, 8); // عرض 8 فقط أو الكل
-
-    tableBody.innerHTML = displayData.map(item => `
-        <tr>
-            <td>${item.car}</td>
-            <td>${item.model}</td>
-            <td style="font-weight:bold; color:var(--accent);">${item.chassis}</td>
-            <td>${item.plate}</td>
-            <td><a href="https://wa.me/${item.phone}" style="color:#25d366; font-size:1.2rem;"><i class="fab fa-whatsapp"></i></a></td>
-        </tr>
-    `).join('');
-
-    // إضافة زر رؤية المزيد تحت الجدول
-    const existingBtn = document.getElementById('more-btn');
-    if (db.length > 8) {
-        if (!existingBtn) {
-            const btn = document.createElement('button');
-            btn.id = 'more-btn';
-            btn.style.cssText = "display:block; margin:10px auto; background:none; border:1px solid var(--accent); color:var(--accent); padding:8px 20px; border-radius:20px; cursor:pointer;";
-            btn.innerText = "رؤية المزيد";
-            btn.onclick = () => { showAll = !showAll; renderUI(); };
-            tableBody.parentElement.after(btn);
-        } else {
-            existingBtn.innerText = showAll ? "رؤية أقل" : "رؤية المزيد";
-        }
+        renderTable();
+        alert("تم معالجة البيانات بنجاح!");
     }
-}
 
-// --- 4. تغيير صورة البروفايل ---
-document.querySelector('.profile-img').src = "1000026112.jpg";
+    // نظام الحقن الذكي وتعديل CSS
+    function injectCode() {
+        let newStyles = document.getElementById('cssInput').value;
+        let styleTag = document.createElement('style');
+        styleTag.innerHTML = newStyles;
+        document.head.appendChild(styleTag);
+        alert("تم الحقن بنجاح في المكان المناسب!");
+    }
+
+    // تشغيل الجدول عند التحميل
+    window.onload = renderTable;
 </script>
-
-<style>
-/* تحسين شكل الجدول الخماسي */
-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-th, td { padding: 10px 5px; text-align: center; border-bottom: 1px solid #1e293b; font-size: 0.75rem; word-wrap: break-word; }
-th { color: var(--accent); background: rgba(255,255,255,0.05); }
-</style>
 
 </body>
 </html>
