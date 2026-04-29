@@ -3,130 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة سفير القوافي - الإدارة الشاملة</title>
-    <style id="system-base-style">
-        :root { --gold: #d4af37; --black: #000814; --neon: #00f2ff; --red: #ff4d4d; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f4f4; }
-        header { background: var(--black); color: var(--gold); padding: 40px; text-align: center; border-bottom: 4px solid var(--gold); position: relative; }
-        .admin-trigger { position: absolute; top: 10px; left: 10px; background: none; border: 1px solid var(--gold); color: var(--gold); padding: 5px 10px; cursor: pointer; border-radius: 4px; font-size: 12px; }
+    <title>منصة السيارات المفقودة - السودان</title>
+    <style id="main-styles">
+        /* الألوان والتنسيقات الأساسية */
+        :root { --gold: #d4af37; --black: #1a1a1a; --neon: #00f2ff; --red: #ff4d4d; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; }
         
-        /* بوابة الدخول */
-        #admin-gate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000814; display: none; align-items: center; justify-content: center; z-index: 9999; }
-        .neon-box { border: 2px solid var(--neon); padding: 40px; border-radius: 20px; box-shadow: 0 0 20px var(--neon); background: #001219; text-align: center; width: 300px; }
+        /* الهيدر والمستطيل الترحيبي */
+        .welcome-banner { background: #000; text-align: center; padding: 10px; border-bottom: 2px solid var(--gold); }
+        .welcome-banner img { max-height: 100px; border-radius: 5px; }
         
-        /* لوحة التحكم الاحترافية */
-        #admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; color: #fff; display: none; overflow-y: auto; z-index: 10000; padding: 20px; }
-        .dashboard-container { max-width: 1100px; margin: auto; background: #111; padding: 25px; border-radius: 15px; border: 1px solid #333; position: relative; }
-        .master-editor { width: 100%; height: 450px; background: #000; color: #0f0; border: 1px solid var(--neon); padding: 15px; font-family: 'Consolas', monospace; font-size: 14px; margin-top: 10px; border-radius: 8px; resize: vertical; }
-        .btn-save { width: 100%; padding: 15px; background: var(--gold); border: none; color: #000; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 8px; margin-top: 15px; transition: 0.3s; }
-        .btn-save:hover { background: #fff; box-shadow: 0 0 15px var(--gold); }
-        .close-btn { position: absolute; top: -15px; right: -15px; background: var(--red); color: white; border: 2px solid #fff; border-radius: 50%; width: 45px; height: 45px; cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; }
+        header { background: var(--black); color: var(--gold); padding: 30px; text-align: center; border-radius: 0 0 50% 50% / 0 0 20px 20px; position: relative; }
         
-        /* تنسيق الجدول */
-        .content-area { width: 95%; margin: 30px auto; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; text-align: center; }
-        th { background: var(--gold); color: #000; padding: 15px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
+        /* محرك البحث */
+        .search-container { text-align: center; margin: 20px 0; }
+        .search-box { width: 80%; max-width: 500px; padding: 15px; border: 2px solid var(--gold); border-radius: 25px; font-size: 18px; outline: none; }
+
+        /* الجدول الذهبي */
+        .table-container { width: 95%; margin: auto; overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: var(--gold); color: black; padding: 15px; text-align: center; border: 1px solid #b8952e; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; font-weight: 500; }
+        .missing { color: var(--red); font-weight: bold; }
+
+        /* بوابة الدخول ولوحة التحكم */
+        #admin-gate, #admin-dashboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
+        #admin-gate { background: #000814; align-items: center; justify-content: center; display: none; }
+        .neon-box { border: 2px solid var(--neon); padding: 40px; border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: rgba(0, 18, 25, 0.9); }
+        
+        #admin-dashboard { background: #111; color: white; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .admin-content { max-width: 900px; margin: auto; }
+        textarea { width: 100%; height: 150px; background: #222; color: #0f0; border: 1px solid var(--neon); padding: 10px; }
+        
+        footer { background: var(--black); color: var(--gold); text-align: center; padding: 20px; margin-top: 50px; border-top: 3px solid var(--gold); }
     </style>
 </head>
 <body>
 
-<div id="dynamic-app-container">
+<div id="public-view">
+    <div class="welcome-banner">
+        <img src="Welcome.gif" alt="ترحيب">
+    </div>
+
     <header>
-        <button class="admin-trigger" onclick="openGate()">لوحة التحكم</button>
-        <h1>منصة البحث عن السيارات المفقودة</h1>
-        <p>إدارة سفير القوافي - ود أمطلحة</p>
+        <h1>منصة البحث عن السيارات المفقودة - السودان</h1>
+        <p>إدارة سفير القوافي ود أمطلحة</p>
+        <button onclick="showGate()" style="position: absolute; top: 10px; left: 10px; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer;">لوحة التحكم</button>
     </header>
 
-    <div class="content-area">
+    <div class="search-container">
+        <input type="text" class="search-box" id="searchInput" onkeyup="filterTable()" placeholder="ابحث برقم الشاسي أو اللوحة...">
+    </div>
+
+    <div class="table-container">
         <table id="carsTable">
-            <thead><tr><th>م</th><th>رقم الشاسي</th><th>الموديل</th><th>اللوحة</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>م</th>
+                    <th>رقم الشاسي (VIN)</th>
+                    <th>نوع السيارة وموديلها</th>
+                    <th>رقم اللوحة</th>
+                </tr>
+            </thead>
             <tbody id="tableBody">
                 </tbody>
         </table>
     </div>
+
+    <footer>
+        <p>جميع حقوق النشر محفوظة &copy; 2026</p>
+        <p>إدارة سفير القوافي - ود أمطلحة</p>
+    </footer>
 </div>
 
 <div id="admin-gate">
     <div class="neon-box">
-        <h3 style="color: var(--neon);">دخول المسؤول</h3>
-        <input type="password" id="passCode" placeholder="الرمز" autocomplete="new-password" style="width: 100%; padding: 12px; text-align: center; border-radius: 5px; border: none; font-size: 20px;">
-        <button onclick="checkAccess()" style="width: 100%; margin-top: 15px; padding: 10px; background: var(--gold); border: none; cursor: pointer; font-weight: bold;">دخول</button>
-        <button onclick="closeGate()" style="width: 100%; margin-top: 5px; background: none; color: #888; border: none; cursor: pointer;">إلغاء</button>
+        <h2 style="color: var(--neon);">نظام الدخول الآمن</h2>
+        <input type="password" id="passCode" placeholder="الرمز" style="padding: 10px; font-size: 20px; text-align: center; width: 100px;">
+        <br><br>
+        <button onclick="verifyPass()" style="padding: 10px 30px; background: var(--gold); border: none; cursor: pointer; font-weight: bold;">دخول</button>
+        <button onclick="hideGate()" style="padding: 10px 30px; background: #555; border: none; color: white; cursor: pointer; margin-right: 10px;">إلغاء</button>
     </div>
 </div>
 
 <div id="admin-dashboard">
-    <div class="dashboard-container">
-        <button class="close-btn" onclick="closeDashboard()">×</button>
-        <h2 style="color: var(--gold);">المحرر البرمجي الشامل (Master Console)</h2>
-        <p style="color: #888; font-size: 14px;">ضع هنا أكواد HTML, CSS, JavaScript لتعديل النظام بالكامل دون لمس ملف index.html</p>
+    <div class="admin-content">
+        <h1 style="color: var(--neon);">لوحة التحكم الذكية</h1>
+        <hr border="1" color="#333">
         
-        <textarea id="masterEditor" class="master-editor" placeholder=""></textarea>
-        
-        <button onclick="saveAndPropagate()" class="btn-save">حفظ وتحديث بنية النظام فوراً</button>
-        <p style="text-align: center; color: #444; font-size: 12px; margin-top: 10px;">النظام يحفظ التعديلات في ذاكرة المتصفح الدائمة</p>
+        <h3>1. الإضافة المتعددة للسيارات</h3>
+        <textarea id="bulkInput" placeholder="أدخل بيانات السيارات هنا... (كل سيارة في سطر)"></textarea>
+        <button onclick="processData()" style="padding: 15px; background: var(--neon); color: black; border: none; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px;">تحليل وحقن البيانات في الجدول</button>
+
+        <h3>2. محرر CSS والحقن الذكي</h3>
+        <textarea id="cssInput" placeholder="أضف أكواد CSS أو أكواد برمجية هنا لتعمل تلقائياً..."></textarea>
+        <button onclick="injectCode()" style="padding: 10px; background: var(--gold); border: none; cursor: pointer; margin-top: 10px;">تحديث وتعديل الأكواد</button>
+
+        <br><br>
+        <button onclick="logout()" style="background: var(--red); color: white; border: none; padding: 10px 20px; cursor: pointer;">تسجيل خروج</button>
     </div>
 </div>
 
 <script>
-    // 1. نظام الذاكرة الدائمة
-    const STORAGE_KEY = 'safir_master_system_code';
+    // قاعدة البيانات الأولية (التي أرسلتها)
+    let carsData = [
+        { model: "كورلا موديل 2008", vin: "799041409", plate: "" },
+        { model: "عربية صالون", vin: "00873327", plate: "2440" },
+        { model: "كلك موديل 2006", vin: "641244", plate: "" },
+        { model: "لاندكروزر 2011", vin: "4056958", plate: "28672" }
+        // ... سيتم إضافة البقية عبر لوحة التحكم
+    ];
 
-    // 2. وظيفة الحقن العملاق (بنية النظام)
-    function saveAndPropagate() {
-        const fullCode = document.getElementById('masterEditor').value;
-        localStorage.setItem(STORAGE_KEY, fullCode);
-        applySystemChanges(fullCode);
-        alert("✅ تم تحديث بنية النظام وحفظها بنجاح!");
-    }
-
-    function applySystemChanges(code) {
-        // تنظيف الحقن السابق
-        const oldInjections = document.querySelectorAll('.injected-content');
-        oldInjections.forEach(el => el.remove());
-
-        // إنشاء حاوية للحقن الجديد
-        const wrapper = document.createElement('div');
-        wrapper.className = 'injected-content';
-        wrapper.innerHTML = code;
-        
-        // تنفيذ السكربتات يدوياً لأن innerHTML لا يشغل الـ <script> تلقائياً
-        document.body.appendChild(wrapper);
-        const scripts = wrapper.querySelectorAll('script');
-        scripts.forEach(oldScript => {
-            const newScript = document.createElement('script');
-            Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-            newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-            oldScript.parentNode.replaceChild(newScript, oldScript);
+    // نظام عرض البيانات مع منطق "غير موجود" بالأحمر
+    function renderTable() {
+        const body = document.getElementById('tableBody');
+        body.innerHTML = "";
+        carsData.forEach((car, index) => {
+            if (!car.vin) return; // قاعدة الشاسي: إذا لم يوجد لا تظهر السيارة
+            
+            let row = `<tr>
+                <td>${index + 1}</td>
+                <td>${car.vin}</td>
+                <td class="${!car.model ? 'missing' : ''}">${car.model || 'غير موجود'}</td>
+                <td class="${!car.plate ? 'missing' : ''}">${car.plate || 'غير موجود'}</td>
+            </tr>`;
+            body.innerHTML += row;
         });
     }
 
-    // 3. إدارة الوصول (3366)
-    function openGate() {
-        document.getElementById('passCode').value = ""; // مسح الخانة نهائياً
-        document.getElementById('admin-gate').style.display = 'flex';
-    }
-    function closeGate() { document.getElementById('admin-gate').style.display = 'none'; }
-    function checkAccess() {
-        if(document.getElementById('passCode').value === "3366") {
-            closeGate();
-            document.getElementById('admin-dashboard').style.display = 'block';
-        } else {
-            alert("رمز الدخول خاطئ!");
-            document.getElementById('passCode').value = "";
+    // نظام البحث
+    function filterTable() {
+        let input = document.getElementById("searchInput").value.toUpperCase();
+        let tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        for (let i = 0; i < tr.length; i++) {
+            tr[i].style.display = tr[i].innerText.toUpperCase().includes(input) ? "" : "none";
         }
     }
-    function closeDashboard() { document.getElementById('admin-dashboard').style.display = 'none'; }
 
-    // 4. تحميل النظام عند البدء (الترميم التلقائي)
-    window.onload = function() {
-        const savedCode = localStorage.getItem(STORAGE_KEY);
-        if(savedCode) {
-            document.getElementById('masterEditor').value = savedCode;
-            applySystemChanges(savedCode);
-        }
-    };
+    // إدارة الدخول
+    function showGate() { document.getElementById('admin-gate').style.display = 'flex'; }
+    function hideGate() { document.getElementById('admin-gate').style.display = 'none'; }
+    function verifyPass() {
+        if(document.getElementById('passCode').value === "3366") {
+            document.getElementById('admin-gate').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+        } else { alert("رمز خاطئ!"); }
+    }
+    function logout() { document.getElementById('admin-dashboard').style.display = 'none'; }
+
+    // نظام الإضافة المتعددة والحقن الذكي
+    function processData() {
+        let input = document.getElementById('bulkInput').value.split('\n');
+        input.forEach(line => {
+            if(line.includes("شاسي")) {
+                let parts = line.split(' ');
+                // منطق بسيط لاستخراج البيانات (يمكن تطويره حسب دقة النص المدخل)
+                carsData.push({ model: "سيارة مضافة", vin: parts[parts.length-1], plate: "" });
+            }
+        });
+        renderTable();
+        alert("تم معالجة البيانات بنجاح!");
+    }
+
+    // نظام الحقن الذكي وتعديل CSS
+    function injectCode() {
+        let newStyles = document.getElementById('cssInput').value;
+        let styleTag = document.createElement('style');
+        styleTag.innerHTML = newStyles;
+        document.head.appendChild(styleTag);
+        alert("تم الحقن بنجاح في المكان المناسب!");
+    }
+
+    // تشغيل الجدول عند التحميل
+    window.onload = renderTable;
 </script>
 
 </body>
