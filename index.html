@@ -177,6 +177,137 @@
     // تشغيل الجدول عند التحميل
     window.onload = renderTable;
 </script>
+<style>
+    :root {
+        --fb-blue: #3b5998;
+        --fb-bg: #eceff1;
+        --fb-white: #ffffff;
+        --fb-border: #dddfe2;
+    }
+
+    /* زر القائمة الجانبية العائم (ليناسب أي تصميم قديم لديك) */
+    .fb-menu-trigger {
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        background: var(--fb-blue);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        z-index: 9999;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* القائمة الجانبية بنظام السحب */
+    #side-menu {
+        position: fixed;
+        top: 0;
+        right: -100%; /* مخفية تماماً خارج الشاشة */
+        width: 85%; /* مناسبة جداً لشاشة A12 */
+        max-width: 300px;
+        height: 100%;
+        background: var(--fb-white);
+        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+        transition: 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #side-menu.open { right: 0; }
+
+    /* طبقة التعتيم */
+    #fb-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        z-index: 9999;
+    }
+
+    /* عناصر القائمة الجانبية */
+    .menu-header {
+        padding: 20px;
+        background: var(--fb-bg);
+        border-bottom: 1px solid var(--fb-border);
+        font-weight: bold;
+        color: var(--fb-blue);
+    }
+
+    .menu-item {
+        padding: 15px 20px;
+        border-bottom: 1px solid var(--fb-border);
+        font-size: 14px;
+        color: #1c1e21;
+        cursor: pointer;
+    }
+
+    /* تصغير المحرر داخل القائمة */
+    #admin-panel {
+        padding: 15px;
+        display: none;
+        background: #f9f9f9;
+    }
+
+    .active-panel { display: block !important; }
+
+    /* تنسيق النصوص والجداول لتبدو مثل Lite */
+    .lite-text { font-size: 13px !important; color: #4b4f56; }
+</style>
+
+<div class="fb-menu-trigger" onclick="toggleFBMenu()">☰ القائمة</div>
+
+<div id="fb-overlay" onclick="toggleFBMenu()"></div>
+
+<div id="side-menu">
+    <div class="menu-header">إعدادات سفير القوافي</div>
+    
+    <div class="menu-item" onclick="toggleAdminPanel()">📁 لوحة التحكم (إضافة بيانات)</div>
+    
+    <div id="admin-panel">
+        <textarea id="bulkDataInput" placeholder="الصق البيانات هنا..." style="width:100%; height:80px; border:1px solid #ddd;"></textarea>
+        <button onclick="processVehicleData()" style="width:100%; margin-top:5px; background:var(--fb-blue); color:white; border:none; padding:8px;">حفظ</button>
+    </div>
+
+    <div class="menu-item" onclick="location.reload()">🔄 تحديث البيانات</div>
+    <div class="menu-item" style="color: red;" onclick="toggleFBMenu()">❌ إغلاق</div>
+</div>
+
+<script>
+    function toggleFBMenu() {
+        const menu = document.getElementById('side-menu');
+        const overlay = document.getElementById('fb-overlay');
+        menu.classList.toggle('open');
+        overlay.style.display = menu.classList.contains('open') ? 'block' : 'none';
+    }
+
+    function toggleAdminPanel() {
+        document.getElementById('admin-panel').classList.toggle('active-panel');
+    }
+
+    function processVehicleData() {
+        let input = document.getElementById('bulkDataInput').value.trim();
+        if(!input) return;
+        let db = JSON.parse(localStorage.getItem('safir_db')) || [];
+        let lines = input.split('\n');
+        lines.forEach(line => {
+            if(line.includes("شاسي")) {
+                let vin = line.split("شاسي")[1].trim().split(" ")[0];
+                let model = line.split("شاسي")[0].replace("عربية", "").trim();
+                let plate = line.includes("لوحة") ? line.split("لوحة")[1].trim() : "غير موجود";
+                if(vin && !db.some(c => c.vin === vin)) db.push({ model, vin, plate });
+            }
+        });
+        localStorage.setItem('safir_db', JSON.stringify(db));
+        alert("تم الحفظ بنجاح");
+        location.reload();
+    }
+</script>
 
 </body>
 </html>
