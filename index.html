@@ -1,313 +1,39 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة السيارات المفقودة - السودان</title>
-    <style id="main-styles">
-        /* الألوان والتنسيقات الأساسية */
-        :root { --gold: #d4af37; --black: #1a1a1a; --neon: #00f2ff; --red: #ff4d4d; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; }
-        
-        /* الهيدر والمستطيل الترحيبي */
-        .welcome-banner { background: #000; text-align: center; padding: 10px; border-bottom: 2px solid var(--gold); }
-        .welcome-banner img { max-height: 100px; border-radius: 5px; }
-        
-        header { background: var(--black); color: var(--gold); padding: 30px; text-align: center; border-radius: 0 0 50% 50% / 0 0 20px 20px; position: relative; }
-        
-        /* محرك البحث */
-        .search-container { text-align: center; margin: 20px 0; }
-        .search-box { width: 80%; max-width: 500px; padding: 15px; border: 2px solid var(--gold); border-radius: 25px; font-size: 18px; outline: none; }
+-- 1. جدول المنتجات
+CREATE TABLE products (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name_ar VARCHAR(255) NOT NULL,
+    name_local VARCHAR(255) NOT NULL,
+    description TEXT,
+    category VARCHAR(100) NOT NULL,
+    price_sdg DECIMAL(12, 2) NOT NULL,
+    stock_quantity INTEGER NOT NULL DEFAULT 0,
+    images_urls JSONB DEFAULT '[]'::jsonb,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-        /* الجدول الذهبي */
-        .table-container { width: 95%; margin: auto; overflow-x: auto; background: white; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; }
-        th { background-color: var(--gold); color: black; padding: 15px; text-align: center; border: 1px solid #b8952e; }
-        td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; font-weight: 500; }
-        .missing { color: var(--red); font-weight: bold; }
+-- 2. جدول الطلبات
+CREATE TABLE orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(50) NOT NULL,
+    state VARCHAR(100) NOT NULL DEFAULT 'الجزيرة',
+    city VARCHAR(100) NOT NULL DEFAULT 'ود مدني',
+    address_details TEXT NOT NULL,
+    payment_method VARCHAR(50) NOT NULL, -- 'cash', 'bankak', 'fawry'
+    payment_receipt_url TEXT, -- رابط صورة الإشعار في حال التحويل
+    transaction_id VARCHAR(100), -- الرقم المرجعي للتحويل
+    delivery_fee DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    total_amount DECIMAL(12, 2) NOT NULL,
+    order_status VARCHAR(50) DEFAULT 'pending', -- 'pending', 'confirmed', 'delivered', 'cancelled'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
-        /* بوابة الدخول ولوحة التحكم */
-        #admin-gate, #admin-dashboard { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000; }
-        #admin-gate { background: #000814; align-items: center; justify-content: center; display: none; }
-        .neon-box { border: 2px solid var(--neon); padding: 40px; border-radius: 15px; box-shadow: 0 0 20px var(--neon); text-align: center; background: rgba(0, 18, 25, 0.9); }
-        
-        #admin-dashboard { background: #111; color: white; overflow-y: auto; padding: 20px; box-sizing: border-box; }
-        .admin-content { max-width: 900px; margin: auto; }
-        textarea { width: 100%; height: 150px; background: #222; color: #0f0; border: 1px solid var(--neon); padding: 10px; }
-        
-        footer { background: var(--black); color: var(--gold); text-align: center; padding: 20px; margin-top: 50px; border-top: 3px solid var(--gold); }
-    </style>
-</head>
-<body>
-
-<div id="public-view">
-    <div class="welcome-banner">
-        <img src="Welcome.gif" alt="ترحيب">
-    </div>
-
-    <header>
-        <h1>منصة البحث عن السيارات المفقودة - السودان</h1>
-        <p>إدارة سفير القوافي ود أمطلحة</p>
-        <button onclick="showGate()" style="position: absolute; top: 10px; left: 10px; background: transparent; border: 1px solid var(--gold); color: var(--gold); cursor: pointer;">لوحة التحكم</button>
-    </header>
-
-    <div class="search-container">
-        <input type="text" class="search-box" id="searchInput" onkeyup="filterTable()" placeholder="ابحث برقم الشاسي أو اللوحة...">
-    </div>
-
-    <div class="table-container">
-        <table id="carsTable">
-            <thead>
-                <tr>
-                    <th>م</th>
-                    <th>رقم الشاسي (VIN)</th>
-                    <th>نوع السيارة وموديلها</th>
-                    <th>رقم اللوحة</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
-    </div>
-
-    <footer>
-        <p>جميع حقوق النشر محفوظة &copy; 2026</p>
-        <p>إدارة سفير القوافي - ود أمطلحة</p>
-    </footer>
-</div>
-
-<div id="admin-gate">
-    <div class="neon-box">
-        <h2 style="color: var(--neon);">نظام الدخول الآمن</h2>
-        <input type="password" id="passCode" placeholder="الرمز" style="padding: 10px; font-size: 20px; text-align: center; width: 100px;">
-        <br><br>
-        <button onclick="verifyPass()" style="padding: 10px 30px; background: var(--gold); border: none; cursor: pointer; font-weight: bold;">دخول</button>
-        <button onclick="hideGate()" style="padding: 10px 30px; background: #555; border: none; color: white; cursor: pointer; margin-right: 10px;">إلغاء</button>
-    </div>
-</div>
-
-<div id="admin-dashboard">
-    <div class="admin-content">
-        <h1 style="color: var(--neon);">لوحة التحكم الذكية</h1>
-        <hr border="1" color="#333">
-        
-        <h3>1. الإضافة المتعددة للسيارات</h3>
-        <textarea id="bulkInput" placeholder="أدخل بيانات السيارات هنا... (كل سيارة في سطر)"></textarea>
-        <button onclick="processData()" style="padding: 15px; background: var(--neon); color: black; border: none; width: 100%; cursor: pointer; font-weight: bold; margin-top: 10px;">تحليل وحقن البيانات في الجدول</button>
-
-        <h3>2. محرر CSS والحقن الذكي</h3>
-        <textarea id="cssInput" placeholder="أضف أكواد CSS أو أكواد برمجية هنا لتعمل تلقائياً..."></textarea>
-        <button onclick="injectCode()" style="padding: 10px; background: var(--gold); border: none; cursor: pointer; margin-top: 10px;">تحديث وتعديل الأكواد</button>
-
-        <br><br>
-        <button onclick="logout()" style="background: var(--red); color: white; border: none; padding: 10px 20px; cursor: pointer;">تسجيل خروج</button>
-    </div>
-</div>
-
-<script>
-    // قاعدة البيانات الأولية (التي أرسلتها)
-    let carsData = [
-        { model: "كورلا موديل 2008", vin: "799041409", plate: "" },
-        { model: "عربية صالون", vin: "00873327", plate: "2440" },
-        { model: "كلك موديل 2006", vin: "641244", plate: "" },
-        { model: "لاندكروزر 2011", vin: "4056958", plate: "28672" }
-        // ... سيتم إضافة البقية عبر لوحة التحكم
-    ];
-
-    // نظام عرض البيانات مع منطق "غير موجود" بالأحمر
-    function renderTable() {
-        const body = document.getElementById('tableBody');
-        body.innerHTML = "";
-        carsData.forEach((car, index) => {
-            if (!car.vin) return; // قاعدة الشاسي: إذا لم يوجد لا تظهر السيارة
-            
-            let row = `<tr>
-                <td>${index + 1}</td>
-                <td>${car.vin}</td>
-                <td class="${!car.model ? 'missing' : ''}">${car.model || 'غير موجود'}</td>
-                <td class="${!car.plate ? 'missing' : ''}">${car.plate || 'غير موجود'}</td>
-            </tr>`;
-            body.innerHTML += row;
-        });
-    }
-
-    // نظام البحث
-    function filterTable() {
-        let input = document.getElementById("searchInput").value.toUpperCase();
-        let tr = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let i = 0; i < tr.length; i++) {
-            tr[i].style.display = tr[i].innerText.toUpperCase().includes(input) ? "" : "none";
-        }
-    }
-
-    // إدارة الدخول
-    function showGate() { document.getElementById('admin-gate').style.display = 'flex'; }
-    function hideGate() { document.getElementById('admin-gate').style.display = 'none'; }
-    function verifyPass() {
-        if(document.getElementById('passCode').value === "3366") {
-            document.getElementById('admin-gate').style.display = 'none';
-            document.getElementById('admin-dashboard').style.display = 'block';
-        } else { alert("رمز خاطئ!"); }
-    }
-    function logout() { document.getElementById('admin-dashboard').style.display = 'none'; }
-
-    // نظام الإضافة المتعددة والحقن الذكي
-    function processData() {
-        let input = document.getElementById('bulkInput').value.split('\n');
-        input.forEach(line => {
-            if(line.includes("شاسي")) {
-                let parts = line.split(' ');
-                // منطق بسيط لاستخراج البيانات (يمكن تطويره حسب دقة النص المدخل)
-                carsData.push({ model: "سيارة مضافة", vin: parts[parts.length-1], plate: "" });
-            }
-        });
-        renderTable();
-        alert("تم معالجة البيانات بنجاح!");
-    }
-
-    // نظام الحقن الذكي وتعديل CSS
-    function injectCode() {
-        let newStyles = document.getElementById('cssInput').value;
-        let styleTag = document.createElement('style');
-        styleTag.innerHTML = newStyles;
-        document.head.appendChild(styleTag);
-        alert("تم الحقن بنجاح في المكان المناسب!");
-    }
-
-    // تشغيل الجدول عند التحميل
-    window.onload = renderTable;
-</script>
-<style>
-    :root {
-        --fb-blue: #3b5998;
-        --fb-bg: #eceff1;
-        --fb-white: #ffffff;
-        --fb-border: #dddfe2;
-    }
-
-    /* زر القائمة الجانبية العائم (ليناسب أي تصميم قديم لديك) */
-    .fb-menu-trigger {
-        position: fixed;
-        top: 15px;
-        left: 15px;
-        background: var(--fb-blue);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-        z-index: 9999;
-        font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    /* القائمة الجانبية بنظام السحب */
-    #side-menu {
-        position: fixed;
-        top: 0;
-        right: -100%; /* مخفية تماماً خارج الشاشة */
-        width: 85%; /* مناسبة جداً لشاشة A12 */
-        max-width: 300px;
-        height: 100%;
-        background: var(--fb-white);
-        box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-        transition: 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
-        z-index: 10000;
-        display: flex;
-        flex-direction: column;
-    }
-
-    #side-menu.open { right: 0; }
-
-    /* طبقة التعتيم */
-    #fb-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: none;
-        z-index: 9999;
-    }
-
-    /* عناصر القائمة الجانبية */
-    .menu-header {
-        padding: 20px;
-        background: var(--fb-bg);
-        border-bottom: 1px solid var(--fb-border);
-        font-weight: bold;
-        color: var(--fb-blue);
-    }
-
-    .menu-item {
-        padding: 15px 20px;
-        border-bottom: 1px solid var(--fb-border);
-        font-size: 14px;
-        color: #1c1e21;
-        cursor: pointer;
-    }
-
-    /* تصغير المحرر داخل القائمة */
-    #admin-panel {
-        padding: 15px;
-        display: none;
-        background: #f9f9f9;
-    }
-
-    .active-panel { display: block !important; }
-
-    /* تنسيق النصوص والجداول لتبدو مثل Lite */
-    .lite-text { font-size: 13px !important; color: #4b4f56; }
-</style>
-
-<div class="fb-menu-trigger" onclick="toggleFBMenu()">☰ القائمة</div>
-
-<div id="fb-overlay" onclick="toggleFBMenu()"></div>
-
-<div id="side-menu">
-    <div class="menu-header">إعدادات سفير القوافي</div>
-    
-    <div class="menu-item" onclick="toggleAdminPanel()">📁 لوحة التحكم (إضافة بيانات)</div>
-    
-    <div id="admin-panel">
-        <textarea id="bulkDataInput" placeholder="الصق البيانات هنا..." style="width:100%; height:80px; border:1px solid #ddd;"></textarea>
-        <button onclick="processVehicleData()" style="width:100%; margin-top:5px; background:var(--fb-blue); color:white; border:none; padding:8px;">حفظ</button>
-    </div>
-
-    <div class="menu-item" onclick="location.reload()">🔄 تحديث البيانات</div>
-    <div class="menu-item" style="color: red;" onclick="toggleFBMenu()">❌ إغلاق</div>
-</div>
-
-<script>
-    function toggleFBMenu() {
-        const menu = document.getElementById('side-menu');
-        const overlay = document.getElementById('fb-overlay');
-        menu.classList.toggle('open');
-        overlay.style.display = menu.classList.contains('open') ? 'block' : 'none';
-    }
-
-    function toggleAdminPanel() {
-        document.getElementById('admin-panel').classList.toggle('active-panel');
-    }
-
-    function processVehicleData() {
-        let input = document.getElementById('bulkDataInput').value.trim();
-        if(!input) return;
-        let db = JSON.parse(localStorage.getItem('safir_db')) || [];
-        let lines = input.split('\n');
-        lines.forEach(line => {
-            if(line.includes("شاسي")) {
-                let vin = line.split("شاسي")[1].trim().split(" ")[0];
-                let model = line.split("شاسي")[0].replace("عربية", "").trim();
-                let plate = line.includes("لوحة") ? line.split("لوحة")[1].trim() : "غير موجود";
-                if(vin && !db.some(c => c.vin === vin)) db.push({ model, vin, plate });
-            }
-        });
-        localStorage.setItem('safir_db', JSON.stringify(db));
-        alert("تم الحفظ بنجاح");
-        location.reload();
-    }
-</script>
-
-</body>
-</html>
+-- 3. جدول عناصر الطلب (الربط بين المنتجات والطلبات)
+CREATE TABLE order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id),
+    quantity INTEGER NOT NULL DEFAULT 1,
+    price_at_purchase DECIMAL(12, 2) NOT NULL
+);
