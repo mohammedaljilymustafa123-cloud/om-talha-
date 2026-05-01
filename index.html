@@ -14,24 +14,29 @@
         body { font-family: 'Cairo', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-12">
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
     <header class="bg-gradient-to-r from-pink-800 to-rose-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-extrabold flex items-center gap-2" onclick="showCatalog()">
+            <div onclick="showCatalog()" class="cursor-pointer">
+                <h1 class="text-2xl font-extrabold flex items-center gap-2">
                     <i class="fa-solid fa-house-chimney text-yellow-300"></i> ست البيت
                 </h1>
                 <p class="text-xs text-pink-200">أجود أنواع العِدّة والمستلزمات في ود مدني</p>
             </div>
-            <button onclick="toggleCart()" class="relative bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
-                <i class="fa-solid fa-cart-shopping text-lg"></i> السلة 
-                <span id="cart-count" class="bg-yellow-400 text-pink-900 font-bold text-xs px-2 py-0.5 rounded-full">0</span>
-            </button>
+            <div class="flex items-center gap-3">
+                <button onclick="openAdminPanel()" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-xl text-sm flex items-center gap-1 transition cursor-pointer">
+                    <i class="fa-solid fa-lock text-yellow-300"></i> الإدارة
+                </button>
+                <button onclick="toggleCart()" class="relative bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i> السلة 
+                    <span id="cart-count" class="bg-yellow-400 text-pink-900 font-bold text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 mt-6">
+    <main class="max-w-5xl mx-auto px-4 mt-6 flex-grow w-full">
 
         <div id="success-view" class="hidden bg-green-50 border border-green-200 text-green-800 p-6 rounded-2xl text-center my-12 shadow-sm">
             <i class="fa-solid fa-circle-check text-5xl text-green-600 mb-3"></i>
@@ -130,11 +135,74 @@
                 </div>
         </div>
 
+        <div id="admin-view" class="hidden space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <h2 class="text-2xl font-extrabold text-pink-800">
+                    <i class="fa-solid fa-toolbox"></i> لوحة تحكم الإدارة
+                </h2>
+                <button onclick="showCatalog()" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-xl font-semibold transition cursor-pointer">
+                    الخروج للرئيسية
+                </button>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
+                    <h3 class="text-lg font-bold text-gray-700 mb-3">إضافة منتج جديد</h3>
+                    <form id="add-product-form" onsubmit="handleAddProduct(event)" class="space-y-3">
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">اسم المنتج بالفصحى</label>
+                            <input id="admin_name_ar" required type="text" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl" placeholder="مثال: طقم أواني طهي">
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">الاسم بالعامية (البحث)</label>
+                            <input id="admin_name_local" required type="text" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl" placeholder="مثال: طقم حلل عِدّة">
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">التصنيف</label>
+                            <select id="admin_category" required class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl">
+                                <option value="العِدّة">العِدّة</option>
+                                <option value="الجبنة والقهوة">الجبنة والقهوة</option>
+                                <option value="التقديم">التقديم</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">الوصف</label>
+                            <textarea id="admin_desc" required class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl" rows="2" placeholder="وصف المنتج وحجمه..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">السعر (ج.س)</label>
+                            <input id="admin_price" required type="number" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl" placeholder="مثال: 45000">
+                        </div>
+                        <div>
+                            <label class="block text-xs mb-1 font-semibold">رابط صورة المنتج (URL)</label>
+                            <input id="admin_image" required type="url" class="w-full p-2 bg-gray-50 border border-gray-200 rounded-xl" placeholder="https://image-url.com/img.jpg">
+                        </div>
+                        <button type="submit" class="w-full bg-pink-800 hover:bg-pink-900 text-white font-bold py-2.5 rounded-xl transition mt-2 cursor-pointer">
+                            <i class="fa-solid fa-plus"></i> إضافة المنتج للمنصة
+                        </button>
+                    </form>
+                </div>
+
+                <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold text-gray-700 mb-3">المنتجات الحالية</h3>
+                    <div id="admin-products-list" class="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
+                        </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
+    <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-sm text-gray-500">
+        <p class="font-semibold flex items-center justify-center gap-2">
+            جميع الحقوق محفوظة © <span class="text-pink-800 font-bold">مندوب ثقة</span> 2026
+        </p>
+    </footer>
+
     <script>
-        // بيانات المنتجات
-        const PRODUCTS = [
+        // المنتجات الأساسية
+        let PRODUCTS = [
             {
                 id: "1",
                 name_ar: "طقم حلل ألمونيوم",
@@ -152,27 +220,19 @@
                 category: "الجبنة والقهوة",
                 price: 12000,
                 image: "https://images.unsplash.com/photo-1517256011251-03c004a44131?auto=format&fit=crop&w=300&q=80"
-            },
-            {
-                id: "3",
-                name_ar: "طقم صواني تقديم خشبية",
-                name_local: "صواني تقديم الضيوف",
-                description: "صواني خشبية متينة بتصميم عصري وأنيق لتقديم المشروبات",
-                category: "التقديم",
-                price: 18500,
-                image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=300&q=80"
             }
         ];
 
         let cart = [];
         const deliveryFee = 3000;
+        const ADMIN_PASSWORD = "123456"; // رمز المرور للوصول للوحة التحكم
 
         // تشغيل البداية
         window.onload = () => {
             renderProducts(PRODUCTS);
         };
 
-        // عرض المنتجات
+        // عرض المنتجات للزبائن
         function renderProducts(items) {
             const grid = document.getElementById('products-grid');
             grid.innerHTML = '';
@@ -245,6 +305,7 @@
             }
             document.getElementById('catalog-view').classList.add('hidden');
             document.getElementById('success-view').classList.add('hidden');
+            document.getElementById('admin-view').classList.add('hidden');
             document.getElementById('checkout-view').classList.remove('hidden');
 
             renderCartSummary();
@@ -254,89 +315,3 @@
         function renderCartSummary() {
             const summaryContainer = document.getElementById('cart-summary-items');
             summaryContainer.innerHTML = '';
-            
-            let subtotal = 0;
-
-            cart.forEach(item => {
-                subtotal += item.price * item.quantity;
-                summaryContainer.innerHTML += `
-                    <div class="py-3 flex justify-between items-center">
-                        <div>
-                            <p class="font-bold text-sm">${item.name_local}</p>
-                            <p class="text-xs text-gray-500">الكمية: ${item.quantity} × ${item.price.toLocaleString()} ج.س</p>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-bold text-pink-700 text-sm">${(item.price * item.quantity).toLocaleString()} ج.س</span>
-                            <button onclick="removeFromCart('${item.id}')" class="text-red-500 hover:text-red-700 cursor-pointer">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('summary-subtotal').innerText = `${subtotal.toLocaleString()} ج.س`;
-            document.getElementById('summary-total').innerText = `${(subtotal + deliveryFee).toLocaleString()} ج.س`;
-        }
-
-        // حذف منتج من السلة
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCartUI();
-            if (cart.length === 0) {
-                showCatalog();
-            } else {
-                renderCartSummary();
-            }
-        }
-
-        // التبديل لطريقة دفع بنكك
-        function toggleBankDetails() {
-            const method = document.getElementById('payment_method').value;
-            const bankDetails = document.getElementById('bankak-details');
-            
-            if (method === 'bankak') {
-                bankDetails.classList.remove('hidden');
-                document.getElementById('transaction_id').required = true;
-            } else {
-                bankDetails.classList.add('hidden');
-                document.getElementById('transaction_id').required = false;
-            }
-        }
-
-        // إظهار صفحة المنتجات
-        function showCatalog() {
-            document.getElementById('checkout-view').classList.add('hidden');
-            document.getElementById('success-view').classList.add('hidden');
-            document.getElementById('catalog-view').classList.remove('hidden');
-        }
-
-        // معالجة وإرسال الطلب
-        function handleOrder(event) {
-            event.preventDefault();
-            
-            // قراءة البيانات من الفورم
-            const orderData = {
-                customer_name: document.getElementById('customer_name').value,
-                phone_number: document.getElementById('phone_number').value,
-                neighborhood: document.getElementById('neighborhood').value,
-                payment_method: document.getElementById('payment_method').value,
-                transaction_id: document.getElementById('transaction_id').value,
-                items: cart
-            };
-
-            // هنا في التطبيق الفعلي يتم استدعاء الـ API لحفظ البيانات
-            console.log('تم تسجيل الطلب:', orderData);
-
-            // تصفير السلة والفورم وعرض واجهة النجاح
-            cart = [];
-            updateCartUI();
-            document.getElementById('order-form').reset();
-            document.getElementById('bankak-details').classList.add('hidden');
-            
-            document.getElementById('checkout-view').classList.add('hidden');
-            document.getElementById('success-view').classList.remove('hidden');
-        }
-    </script>
-</body>
-</html>
